@@ -9,7 +9,6 @@ features:
 - weight
 - weight_diff
 - tansyo_odds
-- popularity
 - impost
 - agari
 - race_type

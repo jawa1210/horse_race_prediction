@@ -12,7 +12,7 @@ INPUT_DIR = DATA_DIR / "02_features"
 OUTPUT_DIR = DATA_DIR / "03_train"
 CONFIG_FILE = Path("config.yaml")
 
-def create_yaml(delete_col=["race_id", "date", "rank", "target","owner_id"] ):
+def create_yaml(delete_col=["race_id", "date", "rank", "target","popularity"]):
     features = pd.read_csv(INPUT_DIR / "features.csv", sep="\t")
 
     # 使用する特徴量を定義
@@ -55,6 +55,7 @@ class Trainer:
             self.params = config["params"]
         output_dir.mkdir(exist_ok=True, parents=True)
         self.output_dir = output_dir
+        self.ID_COLS = ["horse_id", "jockey_id", "trainer_id"]
 
     def create_dataset(self, test_start_date: str):
         # 目的変数
@@ -70,38 +71,71 @@ class Trainer:
         model_filename: str,
         importance_filename: str,
     ) -> pd.DataFrame:
-        # 学習データと検証データを作成
-        lgb_train = lgb.Dataset(train_df[self.feature_cols], train_df["target"])
+
+        # -------------------------
+        # 0) categorical対応（追加）
+        # -------------------------
+        # 使うID列（featuresに含まれてるものだけ）
+        cat_cols = [c for c in self.ID_COLS if c in self.feature_cols]
+
+        # category_map を train_df から作る（train 기준が重要）
+        category_map = {}
+        for c in cat_cols:
+            # 欠損は欠損のままにしたいので、str化は na を残す形にする
+            s_tr = train_df[c].astype("string")  # pandas StringDtype
+            category_map[c] = sorted(s_tr.dropna().unique().tolist())
+
+            # train/test を category にして categories を揃える
+            train_df[c] = s_tr.astype("category").cat.set_categories(category_map[c])
+            test_df[c] = test_df[c].astype("string").astype("category").cat.set_categories(category_map[c])
+
+        # 保存（modelとセットで）
+        with open(self.output_dir / "category_map.pkl", "wb") as f:
+            pickle.dump(category_map, f)
+
+        # -------------------------
+        # 1) Dataset作成（categorical_feature を渡す）
+        # -------------------------
+        lgb_train = lgb.Dataset(
+            train_df[self.feature_cols],
+            train_df["target"],
+            categorical_feature=cat_cols if len(cat_cols) else "auto",
+            free_raw_data=False,
+        )
         lgb_valid = lgb.Dataset(
-            test_df[self.feature_cols], test_df["target"], reference=lgb_train
+            test_df[self.feature_cols],
+            test_df["target"],
+            reference=lgb_train,
+            categorical_feature=cat_cols if len(cat_cols) else "auto",
+            free_raw_data=False,
         )
 
-        # 学習の実行
+        # -------------------------
+        # 2) 学習の実行（そのまま）
+        # -------------------------
         model = lgb.train(
             params=self.params,
             train_set=lgb_train,
             num_boost_round=10000,
-            valid_sets=[lgb_valid],  # evalua
-            valid_names=["valid"],  # 検証データの名前
+            valid_sets=[lgb_valid],
+            valid_names=["valid"],
             callbacks=[
                 lgb.log_evaluation(100),
                 lgb.early_stopping(stopping_rounds=100),
             ],
         )
 
-        # モデルの保存
+        # 以下はあなたの元コードのままでOK
         self.best_params = model.params
         with open(self.output_dir / model_filename, "wb") as f:
             pickle.dump(model, f)
 
-        # 特徴量重要度の可視化
         lgb.plot_importance(
             model, importance_type="gain", figsize=(30, 15), max_num_features=50
         )
         plt.savefig(self.output_dir / f"{importance_filename}.png")
         plt.close()
 
-        # 特徴量重要度を保存
         importance_df = pd.DataFrame(
             {
                 "feature": model.feature_name(),
@@ -112,17 +146,8 @@ class Trainer:
             self.output_dir / f"{importance_filename}.csv", index=False, sep="\t"
         )
 
-        # テストデータに対してスコアリング
         evaluation_df = test_df[
-            [
-                "race_id",
-                "horse_id",
-                "target",
-                "rank",
-                "tansyo_odds",
-                "popularity",
-                "umaban",
-            ]
+            ["race_id", "horse_id", "target", "rank", "tansyo_odds", "popularity", "umaban"]
         ].copy()
         evaluation_df["pred"] = model.predict(
             test_df[self.feature_cols], num_iteration=model.best_iteration
@@ -130,7 +155,9 @@ class Trainer:
         logloss = log_loss(evaluation_df["target"], evaluation_df["pred"])
         print("-" * 20 + "result" + "-" * 20)
         print(f"test_df's binary_logloss: {logloss}")
+        self.model=model
         return evaluation_df
+
 
 
     def run(
