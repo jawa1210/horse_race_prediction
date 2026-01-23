@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 import datetime as dt
 import time
-import re
 import math
+import re
 
 import pandas as pd
 from tqdm.notebook import tqdm
@@ -13,7 +13,6 @@ from tqdm.notebook import tqdm
 from feature_engineering import PredictionFeatureCreator, RAW_DATA_DIR, DATA_DIR
 from prediction import predict_win, predict_trifecta_topk
 import yaml
-import numpy as np
 
 from eval_strategies import (
     eval_strategies_for_date,
@@ -21,7 +20,8 @@ from eval_strategies import (
     format_summary_df_for_html,
 )
 
-POPULATION_CSV = RAW_DATA_DIR / "prediction_population" / "population.csv"
+# ========= Paths =========
+POPULATION_CSV_DIR = RAW_DATA_DIR / "prediction_population"
 
 OUT_DIR = DATA_DIR / "predictions_html"
 OUT_DIR.mkdir(exist_ok=True, parents=True)
@@ -32,11 +32,59 @@ CONF_CALIB_PATH = MODEL_DIR / "confidence_calib_tri.yaml"
 RESULTS_DIR = DATA_DIR / "results_cache"
 RESULTS_DIR.mkdir(exist_ok=True, parents=True)
 RESULTS_FLAT = RESULTS_DIR / "results_flat.csv"
+POPULATION_INPUT_DIR = RAW_DATA_DIR/"prediction_population"
+INPUT_DIR = DATA_DIR/"01_preprocessed"
+
+PAYBACK_FLAT = RESULTS_DIR / "payouts_flat.csv"
+
+def _load_payback_map(date: str) -> dict[str, pd.DataFrame]:
+    """race_id -> 払戻表DataFrame（payouts_flat.csv: date,race_id,bet_type,combo,pay100）"""
+    if not PAYBACK_FLAT.exists() or PAYBACK_FLAT.stat().st_size == 0:
+        return {}
+
+    try:
+        df = pd.read_csv(PAYBACK_FLAT, dtype={"race_id": str, "bet_type": str, "combo": str})
+    except pd.errors.EmptyDataError:
+        return {}
+
+    # ★ここが重要：pay100 を見る
+    need = {"date", "race_id", "bet_type", "combo", "pay100"}
+    if not need.issubset(df.columns):
+        return {}
+
+    df = df[df["date"].astype(str) == str(date)].copy()
+    if df.empty:
+        return {}
+
+    # 表示用の券種名
+    bt_map = {
+        "tansho": "単勝",
+        "fukusho": "複勝",
+        "umaren": "馬連",
+        "umatan": "馬単",
+        "wide": "ワイド",
+        "sanrenpuku": "三連複",
+        "sanrentan": "三連単",
+    }
+    df["式別"] = df["bet_type"].map(lambda x: bt_map.get(str(x), str(x)))
+    df["払戻(円/100円)"] = pd.to_numeric(df["pay100"], errors="coerce").fillna(0).astype(int)
+    df["組み合わせ"] = df["combo"].astype(str)
+
+    df = df[df["払戻(円/100円)"] > 0].copy()
+
+    # 表示順
+    order = ["単勝", "複勝", "馬連", "馬単","ワイド", "三連複", "三連単"]
+    df["__ord"] = df["式別"].map(lambda x: order.index(x) if x in order else 999)
+    df = df.sort_values(["race_id", "__ord", "払戻(円/100円)"], ascending=[True, True, False]).drop(columns="__ord")
+
+    out: dict[str, pd.DataFrame] = {}
+    for rid, g in df.groupby("race_id", sort=False):
+        out[str(rid)] = g[["式別", "組み合わせ", "払戻(円/100円)"]].reset_index(drop=True)
+
+    return out
 
 
-# ----------------------------
-# Small helpers（必要最低限だけ：既存を踏襲）
-# ----------------------------
+# ========= Small helpers =========
 def _attach_names_if_exist(df: pd.DataFrame, feats: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
     name_cols = []
@@ -46,9 +94,11 @@ def _attach_names_if_exist(df: pd.DataFrame, feats: pd.DataFrame) -> pd.DataFram
         name_cols.append("jockey_name")
     if not name_cols:
         return out
+
     key_cols = [c for c in ["race_id", "umaban"] if c in out.columns and c in feats.columns]
     if not key_cols:
         return out
+
     tmp = feats[key_cols + name_cols].drop_duplicates()
     return out.merge(tmp, on=key_cols, how="left")
 
@@ -60,6 +110,7 @@ def _format_odds_html(x) -> str:
         v = float(x)
     except Exception:
         return str(x)
+
     if v < 10:
         return f'<span class="odds1">{v:.1f}</span>'
     if v >= 100:
@@ -74,6 +125,7 @@ def _format_pop_html(x) -> str:
         v = int(float(x))
     except Exception:
         return str(x)
+
     if v <= 3:
         return f'<span class="pop1">{v:d}</span>'
     if v >= 10:
@@ -98,7 +150,8 @@ def _load_results_map(date: str) -> dict[tuple[str, int], int]:
     df["umaban"] = pd.to_numeric(df["umaban"], errors="coerce")
     df["rank"] = pd.to_numeric(df["rank"], errors="coerce")
     df = df.dropna(subset=["race_id", "umaban", "rank"])
-    out = {}
+
+    out: dict[tuple[str, int], int] = {}
     for r in df.itertuples(index=False):
         try:
             out[(str(r.race_id), int(r.umaban))] = int(r.rank)
@@ -121,8 +174,8 @@ def _result_class(rank: int | None) -> str | None:
 
 def _circled_number(n: int) -> str:
     circled = {
-        1:"①",2:"②",3:"③",4:"④",5:"⑤",6:"⑥",7:"⑦",8:"⑧",9:"⑨",10:"⑩",
-        11:"⑪",12:"⑫",13:"⑬",14:"⑭",15:"⑮",16:"⑯",17:"⑰",18:"⑱",19:"⑲",20:"⑳"
+        1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨", 10: "⑩",
+        11: "⑪", 12: "⑫", 13: "⑬", 14: "⑭", 15: "⑮", 16: "⑯", 17: "⑰", 18: "⑱", 19: "⑲", 20: "⑳"
     }
     try:
         n = int(n)
@@ -181,8 +234,16 @@ def _render_table_with_results(
         cls_attr = f' class="{classes}"' if classes else ""
 
         row_dict = row.to_dict()
-        if um is not None and rk_i is not None:
-            row_dict["馬番"] = f'{um} <span class="rankicon">{_rank_icon(rk_i)}</span>'
+        pred_tag = ""
+        if cls2 == "win-strong":
+            pred_tag = '<span class="predtag win">勝ち濃厚</span>'
+        elif cls2 == "third-strong":
+            pred_tag = '<span class="predtag third">3着濃厚</span>'
+
+        if um is not None:
+            icon = f' <span class="rankicon">{_rank_icon(rk_i)}</span>' if rk_i is not None else ""
+            row_dict["馬番"] = f'{um}{icon}{pred_tag}'
+
 
         tds = "".join([f"<td>{row_dict.get(c, '')}</td>" for c in cols])
         rows_html.append(f"<tr{cls_attr}>{tds}</tr>")
@@ -230,10 +291,14 @@ def _conf_bucket_from_score(conf_score: float, calib: dict) -> int:
     q40 = float(th.get("q40", 0.0))
     q60 = float(th.get("q60", 0.0))
     q80 = float(th.get("q80", 0.0))
-    if conf_score < q20: return 1
-    if conf_score < q40: return 2
-    if conf_score < q60: return 3
-    if conf_score < q80: return 4
+    if conf_score < q20:
+        return 1
+    if conf_score < q40:
+        return 2
+    if conf_score < q60:
+        return 3
+    if conf_score < q80:
+        return 4
     return 5
 
 
@@ -346,21 +411,58 @@ def _legend_html() -> str:
     """
 
 
-def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticket: int = 100) -> Path:
-    pop = pd.read_csv(POPULATION_CSV, sep="\t", dtype={"race_id": str})
+# ========= Main =========
+
+def build_html_report(
+    target_date: str,
+    read_file_name_csv: str = "population.csv",
+    read_horse_name_csv: str = "horse_results_prediction.csv",
+    topk_per_race: int = 18,
+    stake_per_ticket: int = 100,
+    roi_mode: str = "both",
+    skip_agg_horse: bool=True
+) -> Path:
+    population_csv = Path(read_file_name_csv)
+    horse_csv = Path(read_horse_name_csv)
+
+    payback_by_race = _load_payback_map(target_date)
+
+
+    # build_html_report 内でも「入力DIR補完」したいならここでやる
+    if population_csv.parent == Path("."):
+        population_csv = POPULATION_INPUT_DIR / population_csv
+    population_csv = population_csv.resolve()
+
+    if not population_csv.exists():
+        raise FileNotFoundError(f"population_csv not found: {population_csv}")
+
+    # horse_csv も population と同じく「絶対化 + 存在チェック」
+    horse_csv = Path(read_horse_name_csv)
+    if horse_csv.parent == Path("."):
+        horse_csv = INPUT_DIR / horse_csv
+    horse_csv = horse_csv.resolve()
+
+    if not horse_csv.exists():
+        raise FileNotFoundError(f"horse_csv not found: {horse_csv}")
+
+    pop = pd.read_csv(population_csv, sep="\t", dtype={"race_id": str})
     pop["date"] = pop["date"].astype(str).str.strip()
 
-    race_ids = sorted(pop.loc[pop["date"] == target_date, "race_id"].astype(str).unique())
-    if len(race_ids) == 0:
-        raise ValueError(f"{target_date} の race_id が population.csv にありません")
+    race_ids_all = sorted(pop.loc[pop["date"] == target_date, "race_id"].astype(str).unique())
+    if len(race_ids_all) == 0:
+        raise ValueError(f"{target_date} の race_id が {population_csv} にありません")
 
-    pfc = PredictionFeatureCreator()
+    pfc = PredictionFeatureCreator(population_file_name=population_csv,
+                                   horse_results_prediction_feile_name=horse_csv)
     pfc.agg_horse_n_races()
 
     now = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
     results_map = _load_results_map(target_date)
     has_results = len(results_map) > 0
     conf_calib = _load_conf_calib()
+
+    # 暫定（結果が1頭でも入ってるレースだけ）
+    race_ids_done = sorted(set([rid for (rid, _um) in results_map.keys()]) & set(race_ids_all))
 
     # ★戦略評価用に溜める
     pred_order_by_race: dict[str, list[int]] = {}
@@ -377,28 +479,33 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
          margin: 24px; background: #fafafa; color: #111; }}
   h1 {{ margin: 0 0 8px 0; font-size: 24px; }}
   .meta {{ color: #444; margin-bottom: 10px; }}
+
   .toc {{ background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 18px; }}
   .toc a {{ text-decoration: none; margin-right: 10px; white-space: nowrap; display: inline-block; padding: 6px 10px; border-radius: 999px; background: #f1f3f5; color: #111; }}
+
   .race {{ background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0; }}
   .race h2 {{ margin: 0 0 8px 0; font-size: 18px; }}
   .race.race-chaos h2 {{ color: #d60000; background: #fff0f0; border-left: 6px solid #d60000; padding-left: 10px; }}
+
   h3 {{ margin: 14px 0 8px 0; font-size: 16px; }}
   table {{ border-collapse: collapse; width: 100%; margin-bottom: 6px; }}
   th, td {{ border-bottom: 1px solid #eee; padding: 8px 8px; text-align: left; font-size: 14px; }}
   th {{ background: #fbfbfb; position: sticky; top: 0; z-index: 1; }}
+
   .note {{ color:#555; font-size: 13px; margin-top: 8px; }}
   .grid {{ display: grid; grid-template-columns: 1fr; gap: 12px; }}
   @media (min-width: 980px) {{ .grid {{ grid-template-columns: 1fr 1fr; }} }}
 
   .odds1 {{ color:#d60000; font-weight:600; }}
   .odds3 {{ color:#0057d8; font-weight:600; }}
+
   tr.hit-1 {{ background:#d9f7e6; font-weight:700; }}
   tr.hit-3 {{ background:#e7f0ff; }}
   tr.hit-5 {{ background:#f3f4ff; }}
+
   .pop1 {{ color:#d60000; font-weight:600; }}
   .pop10{{ color:#0057d8; font-weight:600; }}
-  tr.win-strong {{ background:#fff6cc; }}
-  tr.third-strong {{ background:#e9f7ff; }}
+
   .rankicon {{ margin-left:6px; }}
 
   .badge {{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px; vertical-align:middle; margin-left:8px; }}
@@ -417,26 +524,85 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
 
   .summary {{ background:#fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0; }}
   .summary h2 {{ margin: 0 0 8px 0; font-size: 18px; }}
+
+  /* 暫定/最終切替UI */
+  .modebar {{ background:#fff; border-radius:12px; padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); margin: 14px 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }}
+  .modebtn {{ border:1px solid #e5e5e5; background:#f7f7f7; padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:700; font-size:13px; }}
+  .modebtn.active {{ background:#111; color:#fff; border-color:#111; }}
+  .modebox {{ display:none; }}
+  .modebox.active {{ display:block; }}
+
+/* 予想強調は「左端セルのボーダー＋ラベル」にする（結果背景と混ざらない） */
+tr.win-strong td:first-child {{ border-left: 6px solid #e0b800; }}
+tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
+
+/* 予想ラベル */
+.predtag{{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  margin-left:8px;
+  border:1px solid transparent;
+}}
+.predtag.win {{ background:#fff6cc; color:#6b5500; border-color:#e9d98b; }}
+.predtag.third {{ background:#e9f7ff; color:#004a63; border-color:#a9dff1; }}
+
 </style>
 </head><body>
 <h1>予想表（{target_date}）</h1>
 <div class="meta">生成: {now} | 上位 {topk_per_race} 頭 / レース</div>
-<div class="meta">結果反映: {"あり" if has_results else "なし"}（results_flat.csv） / 払戻: payouts_flat.csv（100円単位）</div>
+<div class="meta">対象population: {read_file_name_csv} / 結果反映: {"あり" if has_results else "なし"}（results_flat.csv）</div>
+<div class="meta">暫定の確定済みレース: {len(race_ids_done)} / {len(race_ids_all)}（結果が入ってるレースのみ集計可能）</div>
 """)
 
     parts.append(_legend_html())
 
+    # ---- まずサマリ枠（あとで中身を差し込む） ----
+    parts.append("""
+<div class="modebar">
+  <span style="font-weight:800;">サマリ表示:</span>
+  <button class="modebtn active" data-mode="provisional">暫定（確定済みのみ）</button>
+  <button class="modebtn" data-mode="final">最終（当日全体）</button>
+  <span class="meta" id="modeNote"></span>
+</div>
+
+<div id="box-provisional" class="modebox active"></div>
+<div id="box-final" class="modebox"></div>
+<div id="box-cumulative" class="modebox active"></div>
+
+<script>
+(function(){
+  const btns = document.querySelectorAll(".modebtn");
+  const boxP = document.getElementById("box-provisional");
+  const boxF = document.getElementById("box-final");
+  const note = document.getElementById("modeNote");
+
+  function setMode(mode){
+    btns.forEach(b => b.classList.toggle("active", b.dataset.mode===mode));
+    boxP.classList.toggle("active", mode==="provisional");
+    boxF.classList.toggle("active", mode==="final");
+    if(mode==="provisional") note.textContent = "（結果・払戻が揃っているレースだけで計算）";
+    if(mode==="final") note.textContent = "（当日全体。未確定があると参考値）";
+  }
+  btns.forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  setMode("provisional");
+})();
+</script>
+""")
+
     # 目次
     parts.append('<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>')
-    for rid in race_ids:
+    for rid in race_ids_all:
         parts.append(f'<a href="#r{rid}">{rid}</a>')
     parts.append("</div>")
 
     errors = []
 
-    for rid in tqdm(race_ids, desc=f"Build HTML {target_date}"):
+    for rid in tqdm(race_ids_all, desc=f"Build HTML {target_date}"):
         try:
-            feats = pfc.create_features(race_id=rid, predict=True, skip_agg_horse=True)
+            feats = pfc.create_features(race_id=rid, predict=True, skip_agg_horse=skip_agg_horse)
 
             # --- 単勝
             pred_win = predict_win(
@@ -446,6 +612,17 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
                 category_map_path=MODEL_DIR / "category_map.pkl",
             )
             pred_win = _attach_names_if_exist(pred_win, feats)
+
+            # odds_map_by_race（戦略用）
+            odds_map: dict[int, float] = {}
+            if "tansyo_odds" in pred_win.columns and "umaban" in pred_win.columns:
+                tmp = pred_win[["umaban", "tansyo_odds"]].copy()
+                tmp["umaban"] = pd.to_numeric(tmp["umaban"], errors="coerce")
+                tmp["tansyo_odds"] = pd.to_numeric(tmp["tansyo_odds"], errors="coerce")
+                tmp = tmp.dropna()
+                for r in tmp.itertuples(index=False):
+                    odds_map[int(r.umaban)] = float(r.tansyo_odds)
+            odds_map_by_race[str(rid)] = odds_map
 
             dfw = pred_win.copy()
             if "tansyo_odds" in dfw.columns:
@@ -462,28 +639,11 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
             if "単勝Pred" in dfw.columns:
                 dfw["単勝Pred"] = dfw["単勝Pred"].map(lambda x: f"{float(x):.3f}" if pd.notna(x) else "")
             if "単勝" in dfw.columns:
-                # odds map 作成（戦略用）: 表示前の数値が欲しいので別で作る
-                pass
+                dfw["単勝"] = dfw["単勝"].map(_format_odds_html)
             if "人気" in dfw.columns:
                 dfw["人気"] = dfw["人気"].map(_format_pop_html)
             if "EV(単勝)" in dfw.columns:
                 dfw["EV(単勝)"] = dfw["EV(単勝)"].map(lambda x: f"{float(x):.2f}" if pd.notna(x) else "")
-
-            # odds_map_by_race（戦略用）
-            odds_map = {}
-            if "tansyo_odds" in pred_win.columns and "umaban" in pred_win.columns:
-                tmp = pred_win[["umaban", "tansyo_odds"]].copy()
-                tmp["umaban"] = pd.to_numeric(tmp["umaban"], errors="coerce")
-                tmp["tansyo_odds"] = pd.to_numeric(tmp["tansyo_odds"], errors="coerce")
-                tmp = tmp.dropna()
-                for r in tmp.itertuples(index=False):
-                    odds_map[int(r.umaban)] = float(r.tansyo_odds)
-            odds_map_by_race[str(rid)] = odds_map
-
-            if "単勝" in dfw.columns:
-                # 表示用の色付け
-                dfw["単勝"] = pred_win.loc[dfw.index, "tansyo_odds"].values  # いったん数値を入れる
-                dfw["単勝"] = dfw["単勝"].map(_format_odds_html)
 
             # --- 3連系（ランキング + TopK）
             pred_rank_df, tri_df = predict_trifecta_topk(
@@ -501,7 +661,7 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
             marg = _marginals_from_tri_df(tri_df)
             win_um, third_um = _pick_win_and_third_by_marginals(marg)
 
-            row_class_map = {}
+            row_class_map: dict[int, str] = {}
             if win_um is not None:
                 row_class_map[int(win_um)] = "win-strong"
             if third_um is not None:
@@ -527,14 +687,12 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
             if "Score" in dfr.columns:
                 dfr["Score"] = dfr["Score"].map(lambda x: f"{float(x):.3f}" if pd.notna(x) else "")
             if "単勝" in dfr.columns:
-                # 表示用：odds色
-                dfr["単勝"] = pd.to_numeric(pred_rank_df.sort_values("pred_rank").head(topk_per_race)["tansyo_odds"], errors="coerce").values
                 dfr["単勝"] = dfr["単勝"].map(_format_odds_html)
             if "人気" in dfr.columns:
                 dfr["人気"] = dfr["人気"].map(_format_pop_html)
 
-            # ★戦略用：予測順位の馬番リスト（Top5程度あればOK）
-            pred_order = []
+            # ★戦略用：予測順位の馬番リスト
+            pred_order: list[int] = []
             if "馬番" in dfr.columns:
                 for x in dfr["馬番"].tolist():
                     try:
@@ -570,7 +728,8 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
 
             parts.append('<div>')
             parts.append('<h3>3連系モデル（ランキング）</h3>')
-            parts.append(_render_table_with_results(dfr, rid, results_map, extra_row_class_map=row_class_map) if has_results else _render_table_with_results(dfr, rid, {}, extra_row_class_map=row_class_map))
+            parts.append(_render_table_with_results(dfr, rid, results_map, extra_row_class_map=row_class_map)
+                         if has_results else _render_table_with_results(dfr, rid, {}, extra_row_class_map=row_class_map))
             parts.append('</div>')
 
             parts.append('</div>')  # grid
@@ -579,58 +738,94 @@ def build_html_report(target_date: str, topk_per_race: int = 18, stake_per_ticke
             parts.append(tri.to_html(index=False, escape=False))
             parts.append('<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>')
 
+            # --- 払戻（結果が確定しているときだけ表示）---
+            pay_df = payback_by_race.get(str(rid))
+            if pay_df is not None and len(pay_df) > 0:
+                parts.append('<h3>払い戻し（確定）</h3>')
+                parts.append(pay_df.to_html(index=False, escape=False))
+            else:
+                # 出さないなら何もしない、出すなら薄く「未確定」を出す
+                parts.append('<div class="note">払い戻し：未確定</div>')
+
             parts.append('</div>')  # race
+
 
         except Exception as e:
             errors.append((rid, repr(e)))
 
         time.sleep(0.2)
 
-    # ---- ここで戦略評価してサマリをHTML先頭付近へ差し込み
-    # results/payouts が揃ってるときだけ回す（無いとROI計算できない）
+    # ---- サマリ生成（暫定/最終 切替） ----
+    def _summary_block(title: str, df: pd.DataFrame | None) -> str:
+        if df is None or len(df) == 0:
+            return f"<div class='summary'><h2>{title}</h2><div class='note'>（データなし）</div></div>"
+        return f"<div class='summary'><h2>{title}</h2>{df.to_html(index=False, escape=False)}</div>"
+
+    provisional_html = "<div class='summary'><h2>暫定サマリ</h2><div class='note'>未計算</div></div>"
+    final_html = "<div class='summary'><h2>最終サマリ</h2><div class='note'>未計算</div></div>"
+    cumulative_html = ""
+
     try:
-        per_race_eval, sum_by_venue, sum_total = eval_strategies_for_date(
-            target_date=target_date,
-            race_ids=race_ids,
-            pred_order_by_race=pred_order_by_race,
-            odds_map_by_race=odds_map_by_race,
-            stake_per_ticket=stake_per_ticket,
-        )
-        sum_total_disp = format_summary_df_for_html(sum_total)
-        sum_venue_disp = format_summary_df_for_html(sum_by_venue)
+        # 暫定：結果が入ってるレースだけ（途中経過）
+        if roi_mode in ["both", "provisional"]:
+            pr_eval, pr_venue, pr_total = eval_strategies_for_date(
+                target_date=target_date,
+                race_ids=race_ids_done,
+                pred_order_by_race=pred_order_by_race,
+                odds_map_by_race=odds_map_by_race,
+                stake_per_ticket=stake_per_ticket,
+            )
+            pr_total_disp = format_summary_df_for_html(pr_total)
+            pr_venue_disp = format_summary_df_for_html(pr_venue)
+            provisional_html = (
+                _summary_block(f"暫定（確定済み {len(race_ids_done)}/{len(race_ids_all)} レース）当日サマリ（戦略別）", pr_total_disp)
+                + _summary_block("暫定：開催場所別サマリ（戦略別）", pr_venue_disp)
+            )
+
+        # 最終：当日全レース（未確定があると参考値）
+        if roi_mode in ["both", "final"]:
+            fn_eval, fn_venue, fn_total = eval_strategies_for_date(
+                target_date=target_date,
+                race_ids=race_ids_all,
+                pred_order_by_race=pred_order_by_race,
+                odds_map_by_race=odds_map_by_race,
+                stake_per_ticket=stake_per_ticket,
+            )
+            fn_total_disp = format_summary_df_for_html(fn_total)
+            fn_venue_disp = format_summary_df_for_html(fn_venue)
+            final_html = (
+                _summary_block(f"最終（当日全 {len(race_ids_all)} レース）当日サマリ（戦略別）", fn_total_disp)
+                + _summary_block("最終：開催場所別サマリ（戦略別）", fn_venue_disp)
+            )
+
+        # 累計（常に表示）
         cum = load_cumulative_summary()
-        cum_disp = format_summary_df_for_html(cum)
-
-        # 先頭（凡例の後ろ）にまとめて挿入
-        insert_block = []
-        insert_block.append("<div class='summary'><h2>当日サマリ（戦略別）</h2>")
-        insert_block.append(sum_total_disp.to_html(index=False, escape=False))
-        insert_block.append("<div class='note'>hit_rate_race=レース単位 / hit_rate_ticket=券単位 / roi=回収率</div>")
-        insert_block.append("</div>")
-
-        insert_block.append("<div class='summary'><h2>開催場所別サマリ（戦略別）</h2>")
-        insert_block.append(sum_venue_disp.to_html(index=False, escape=False))
-        insert_block.append("</div>")
-
+        cum_disp = format_summary_df_for_html(cum) if cum is not None else None
         if cum_disp is not None and len(cum_disp):
-            insert_block.append("<div class='summary'><h2>累計サマリ（戦略別）</h2>")
-            insert_block.append(cum_disp.to_html(index=False, escape=False))
-            insert_block.append("</div>")
+            cumulative_html = _summary_block("累計サマリ（戦略別）", cum_disp)
 
-        # 凡例の直後（parts内で legend を入れてるので、その直後に入れる）
-        # parts[0]=html head, parts[1]=legend のはずなので index=2 に挿入
-        parts.insert(2, "\n".join(insert_block))
     except Exception as e:
-        # 評価が失敗しても予想HTMLは出す
-        parts.insert(2, f"<div class='summary'><h2>戦略サマリ</h2><div class='note'>サマリ生成に失敗: {repr(e)}</div></div>")
+        provisional_html = f"<div class='summary'><h2>暫定サマリ</h2><div class='note'>サマリ生成に失敗: {repr(e)}</div></div>"
+        final_html = f"<div class='summary'><h2>最終サマリ</h2><div class='note'>サマリ生成に失敗: {repr(e)}</div></div>"
 
+    # 先頭の modebox を中身で埋める（文字列置換）
+    html_all = "\n".join(parts)
+    html_all = html_all.replace('<div id="box-provisional" class="modebox active"></div>',
+                                f'<div id="box-provisional" class="modebox active">{provisional_html}</div>')
+    html_all = html_all.replace('<div id="box-final" class="modebox"></div>',
+                                f'<div id="box-final" class="modebox">{final_html}</div>')
+    # 累計は常時表示でよいので、暫定ボックスの下に置く（modebox active）
+    html_all = html_all.replace('<div id="box-cumulative" class="modebox active"></div>',
+                                f'<div id="box-cumulative" class="modebox active">{cumulative_html}</div>')
+
+    # エラー表
     if errors:
-        parts.append('<div class="race"><h2>予測できなかったレース</h2>')
-        parts.append(pd.DataFrame(errors, columns=["race_id", "error"]).to_html(index=False, escape=False))
-        parts.append("</div>")
+        html_all += '<div class="race"><h2>予測できなかったレース</h2>'
+        html_all += pd.DataFrame(errors, columns=["race_id", "error"]).to_html(index=False, escape=False)
+        html_all += "</div>"
 
-    parts.append("</body></html>")
+    html_all += "</body></html>"
 
     out_path = OUT_DIR / f"predictions_{target_date}.html"
-    out_path.write_text("\n".join(parts), encoding="utf-8")
+    out_path.write_text(html_all, encoding="utf-8")
     return out_path

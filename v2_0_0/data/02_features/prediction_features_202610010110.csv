@@ -1,10 +1,1 @@
-date	race_id	horse_id	jockey_id	trainer_id	rank	wakuban	umaban	sex	age	weight	weight_diff	tansyo_odds	popularity	impost	agari	race_type	around_dir	around_inout	course_abc	course_len	weather	ground_state	race_class	place	rank_3races	prize_3races	rank_5races	prize_5races	rank_10races	prize_10races	rank_1000races	prize_1000races
-2026-01-24	202610010110	2020104553	01161	01130		1	1	0	6					58.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2021105160	05339	01164		2	2	0	5					58.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2019100212	01091	01179		3	3	0	7					58.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2022104207	01126	01075		4	4	0	4					57.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2022105227	01209	01147		5	5	0	4					57.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2021105002	01157	01172		6	6	0	5					58.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2020106694	01015	01094		7	7	2	6					58.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2022104856	01192	01068		8	8	0	4					57.0		1	0	-1	0	2600	1	0	-1	8								
-2026-01-24	202610010110	2021105434	01102	01105		8	9	0	5					58.0		1	0	-1	0	2600	1	0	-1	8								
+jockey_id	trainer_id	rank	wakuban	umaban	sex	age	weight	weight_diff	tansyo_odds	popularity	impost	agari	race_type	around_dir	around_inout	course_abc	course_len	weather	ground_state	race_class	place	date	race_id	horse_id	rank_3races	prize_3races	rank_5races	prize_5races	rank_10races	prize_10races	rank_1000races	prize_1000races

@@ -72,8 +72,6 @@ course_abc_mapping = {"A": 0, "B": 1, "C": 2}
 inout_mapping = {"内": 0, "外": 1}
 
 
-
-
 def _loads_json_or_jsonp(text: str):
     text = (text or "").strip()
     if not text:
@@ -207,6 +205,7 @@ def scrape_html_target_race(race_id: str):
     time.sleep(1)
     return html
 
+
 def parse_course_meta_from_info1(info1_text: str):
     """
     info1_text 例:
@@ -293,7 +292,6 @@ def create_race_info(html) -> pd.DataFrame:
     return pd.DataFrame({"title": [title], "info1": [info1], "info2": [info2]})
 
 
-
 def scrape_html_db_race(race_id: str, past_predict=False):
     """
     db.netkeiba.com の race 詳細ページHTMLを取得（学習時と同じDOMが期待できる）
@@ -372,21 +370,55 @@ class FeatureCreator:
 class PredictionFeatureCreator:
     def __init__(
         self,
-        population_filepath: Path = POPULATION_INPUT_DIR/"population.csv",
-        horse_results_prediction_feilepath: Path = INPUT_DIR/"horse_results_prediction.csv",
+        population_file_name: str = "population.csv",
+        horse_results_prediction_feile_name: str = "horse_results_prediction.csv",
         output_dir: Path = OUTPUT_DIR,
-        past_predic=False
+        past_predic: bool = False,
     ):
-        self.population = pd.read_csv(population_filepath, sep="\t")
-        self.horse_results = pd.read_csv(horse_results_prediction_feilepath, sep="\t")
-        self.output_dir = output_dir     # ★追加
-        self.output_dir.mkdir(exist_ok=True, parents=True)  # ★ついでに安全
+        pop_path = Path(population_file_name)
+        horse_path = Path(horse_results_prediction_feile_name)
 
-        # ★キーを文字列に統一（前の修正が入ってるならここも）
+        # ファイル名だけなら既定DIRを補完、パスならそのまま
+        if pop_path.parent == Path("."):
+            pop_path = POPULATION_INPUT_DIR / pop_path
+        if horse_path.parent == Path("."):
+            horse_path = INPUT_DIR / horse_path
+
+            horse_path = Path(horse_results_prediction_feile_name)
+
+        if not horse_path.is_absolute():
+            horse_path = horse_path.resolve()
+
+        if not horse_path.exists():
+            raise FileNotFoundError(f"horse_results_prediction not found: {horse_path}")
+
+
+        self.population = pd.read_csv(pop_path, sep="\t", dtype={"race_id": str, "horse_id": str})
+        self.horse_results = pd.read_csv(horse_path, sep="\t", dtype={"horse_id": str})
+        # population date
+        if "date" in self.population.columns:
+            self.population["date"] = pd.to_datetime(self.population["date"], errors="coerce")
+
+        self.output_dir = output_dir
+        self.output_dir.mkdir(exist_ok=True, parents=True)
+
+        # population
+        if "date" in self.population.columns:
+            self.population["date"] = pd.to_datetime(self.population["date"], errors="coerce")
+
+        # horse_results（日付列名ゆれ吸収してから）
+        if "日付" in self.horse_results.columns and "date" not in self.horse_results.columns:
+            self.horse_results = self.horse_results.rename(columns={"日付": "date"})
+        if "date" in self.horse_results.columns:
+            self.horse_results["date"] = pd.to_datetime(self.horse_results["date"], errors="coerce")
+
+        # keyを文字列に統一
         self.population["race_id"] = self.population["race_id"].astype(str)
         self.population["horse_id"] = self.population["horse_id"].astype(str)
         self.horse_results["horse_id"] = self.horse_results["horse_id"].astype(str)
+
         self.past_predict = past_predic
+
 
     def agg_horse_n_races(self, n_races: list[int] = [3, 5, 10, 1000]):
         """
@@ -720,7 +752,6 @@ class PredictionFeatureCreator:
         # around
         around_dir, around_inout, course_abc = parse_course_meta_from_info1(info1_text)
 
-
         # weather（前日は入ってないことがある）
         m = re.search(r"(晴|曇|小雨|雨|小雪|雪)", t1)
         weather = weather_mapping.get(m.group(1), None) if m else None
@@ -749,7 +780,7 @@ class PredictionFeatureCreator:
             "race_type": race_type,
             "around_dir": around_dir,
             "around_inout": around_inout,
-            "course_abc" : course_abc,
+            "course_abc": course_abc,
             "course_len": course_len,
             "weather": weather,
             "ground_state": ground_state,
@@ -758,20 +789,20 @@ class PredictionFeatureCreator:
         }])
 
         # ★ここが重要：前日でも必ず数値にする（if不要）
-        race_info["race_type"]     = pd.to_numeric(race_info["race_type"], errors="coerce").fillna(-1).astype("int32")
-        race_info["around_dir"]    = pd.to_numeric(race_info["around_dir"], errors="coerce").fillna(-1).astype("int32")
-        race_info["around_inout"]  = pd.to_numeric(race_info["around_inout"], errors="coerce").fillna(-1).astype("int32")
-        race_info["course_abc"]    = pd.to_numeric(race_info["course_abc"], errors="coerce").fillna(-1).astype("int32")
-        race_info["race_class"]    = pd.to_numeric(race_info["race_class"], errors="coerce").fillna(-1).astype("int32")
-        race_info["place"]         = pd.to_numeric(race_info["place"], errors="coerce").fillna(-1).astype("int32")
+        race_info["race_type"] = pd.to_numeric(race_info["race_type"], errors="coerce").fillna(-1).astype("int32")
+        race_info["around_dir"] = pd.to_numeric(race_info["around_dir"], errors="coerce").fillna(-1).astype("int32")
+        race_info["around_inout"] = pd.to_numeric(race_info["around_inout"], errors="coerce").fillna(-1).astype("int32")
+        race_info["course_abc"] = pd.to_numeric(race_info["course_abc"], errors="coerce").fillna(-1).astype("int32")
+        race_info["race_class"] = pd.to_numeric(race_info["race_class"], errors="coerce").fillna(-1).astype("int32")
+        race_info["place"] = pd.to_numeric(race_info["place"], errors="coerce").fillna(-1).astype("int32")
 
-        race_info["weather"]       = pd.to_numeric(race_info["weather"], errors="coerce").fillna(6).astype("int32")
-        race_info["ground_state"]  = pd.to_numeric(race_info["ground_state"], errors="coerce").fillna(9).astype("int32")
-
+        race_info["weather"] = pd.to_numeric(race_info["weather"], errors="coerce").fillna(6).astype("int32")
+        race_info["ground_state"] = pd.to_numeric(race_info["ground_state"], errors="coerce").fillna(9).astype("int32")
 
         self.race_info = race_info
+        if "date" in self.race_info.columns:
+            self.race_info["date"] = pd.to_datetime(self.race_info["date"], errors="coerce")
         return race_info
-
 
     def create_features(self, race_id, predict=False, skip_agg_horse: bool = False) -> pd.DataFrame:
         """

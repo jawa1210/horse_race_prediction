@@ -7,6 +7,39 @@ from bs4 import BeautifulSoup
 
 from feature_engineering import RAW_DATA_DIR, DATA_DIR
 
+def _mmdd_from_date(target_date: str) -> str:
+    # "2026-01-18" -> "0118"
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", str(target_date))
+    if not m:
+        raise ValueError(f"invalid target_date: {target_date}")
+    return f"{m.group(2)}{m.group(3)}"
+
+def resolve_population_csv_for_date(
+    target_date: str,
+    population_csv: Path | None = None,
+    population_dir: Path | None = None,
+    prefer_daily: bool = True,
+) -> Path:
+    """
+    優先順位:
+      1) 引数 population_csv が指定されていればそれ
+      2) prefer_daily=True なら population_MMDD.csv があればそれ
+      3) なければ population.csv
+    """
+    if population_csv is not None:
+        return Path(population_csv).resolve()
+
+    population_dir = (population_dir or (RAW_DATA_DIR / "prediction_population")).resolve()
+
+    mmdd = _mmdd_from_date(target_date)
+    daily = population_dir / f"population_{mmdd}.csv"
+    default = population_dir / "population.csv"
+
+    if prefer_daily and daily.exists():
+        return daily.resolve()
+    return default.resolve()
+
+
 
 def _this_file_dir() -> Path:
     return Path(__file__).resolve().parent
@@ -50,6 +83,54 @@ def _read_bin_html(path: Path) -> bytes:
     b = b.replace(b"<diary_snap_cut>", b"").replace(b"</diary_snap_cut>", b"")
     return b
 
+def _unique_keep_order(xs: list[str]) -> list[str]:
+    seen = set()
+    out = []
+    for x in xs:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+def _extract_combos_from_td_text(bet_type: str, td_text: str) -> list[str]:
+    t = re.sub(r"\s+", " ", str(td_text))
+
+    if bet_type in ["tansho", "fukusho"]:
+        # 馬番だけ（重複は後で除去）
+        nums = re.findall(r"\d+", t)
+        combos = [str(int(n)) for n in nums]
+        return _unique_keep_order(combos)
+
+    if bet_type in ["umaren", "wide"]:
+        pairs = re.findall(r"\d+\s*-\s*\d+", t)
+        combos = [_norm_combo(bet_type, p) for p in pairs]
+        combos = [c for c in combos if c]
+        return _unique_keep_order(combos)
+
+    if bet_type in ["umatan"]:
+        # → があれば優先、なければ 2頭の順序付きっぽいもの
+        seq = re.findall(r"\d+\s*[→\-]\s*\d+", t)
+        combos = [_norm_combo(bet_type, s) for s in seq]
+        combos = [c for c in combos if c]
+        return _unique_keep_order(combos)
+
+    if bet_type in ["sanrenpuku"]:
+        tri = re.findall(r"\d+\s*-\s*\d+\s*-\s*\d+", t)
+        combos = [_norm_combo(bet_type, s) for s in tri]
+        combos = [c for c in combos if c]
+        return _unique_keep_order(combos)
+
+    if bet_type in ["sanrentan"]:
+        tri = re.findall(r"\d+\s*[→\-]\s*\d+\s*[→\-]\s*\d+", t)
+        combos = [_norm_combo(bet_type, s) for s in tri]
+        combos = [c for c in combos if c]
+        return _unique_keep_order(combos)
+
+    # fallback
+    c = _norm_combo(bet_type, t)
+    return [c] if c else []
+
+
 
 # 券種名 → bet_type
 BET_MAP = {
@@ -89,63 +170,87 @@ def _norm_combo(bet_type: str, combo: str) -> str:
     # umatan / sanrentan は順序
     return "-".join(map(str, [int(x) for x in nums]))
 
+def _extract_combo_candidates(bet_type: str, combo_text: str) -> list[str]:
+    t = re.sub(r"\s+", " ", str(combo_text)).strip()
+
+    # 単勝/複勝：馬番1つずつにする
+    if bet_type in ["tansho", "fukusho"]:
+        nums = re.findall(r"\d+", t)
+        return nums  # 1頭ずつ
+
+    # 馬単/三連単：順序あり（→ or - を含む形を優先）
+    if bet_type in ["umatan", "sanrentan"]:
+        c = re.findall(r"\d+\s*[→\-]\s*\d+(?:\s*[→\-]\s*\d+)?", t)
+        if c:
+            return c
+
+    # 馬連/ワイド：2頭（ハイフン結合を優先）
+    if bet_type in ["umaren", "wide"]:
+        c = re.findall(r"\d+\s*-\s*\d+", t)
+        if c:
+            return c
+
+    # 三連複：3頭（ハイフン結合）
+    if bet_type in ["sanrenpuku"]:
+        c = re.findall(r"\d+\s*-\s*\d+\s*-\s*\d+", t)
+        if c:
+            return c
+
+    # 最後の手段：数字全部を1候補
+    nums = re.findall(r"\d+", t)
+    return [" ".join(nums)] if nums else []
+
+
+def _extract_pay_candidates(pay_text: str) -> list[int]:
+    pays = re.findall(r"\d[\d,]*", str(pay_text))
+    out = []
+    for p in pays:
+        p2 = p.replace(",", "")
+        if p2.isdigit():
+            out.append(int(p2))
+    return out
+
+
+def _cell_lines(td) -> list[str]:
+    # <br> を行として扱えるようにする
+    txt = td.get_text("\n", strip=True)
+    return [x.strip() for x in txt.split("\n") if x.strip()]
+
+def _parse_pay_int(s: str) -> int | None:
+    s2 = re.sub(r"[^\d]", "", str(s))
+    return int(s2) if s2.isdigit() else None
+
 def _extract_payout_rows_from_pay_table(pay_table) -> list[dict]:
-    """
-    netkeibaの払戻表は race.bin 内に存在。
-    ただし HTML構造が微妙に揺れるので、
-    行ごとに「券種名(th)」「組み合わせ」「払戻」を拾う方式。
-    """
     rows = []
     for tr in pay_table.find_all("tr"):
         th = tr.find("th")
         tds = tr.find_all("td")
         if th is None or len(tds) < 2:
             continue
+
         key = th.get_text(strip=True)
         if key not in BET_MAP:
             continue
         bet_type = BET_MAP[key]
 
-        # 典型: td[0]=組み合わせ, td[1]=払戻
+        # ★ ここを “行分割” じゃなく “全文 regex 抽出” にする
         combo_text = tds[0].get_text(" ", strip=True)
-        pay_text = tds[1].get_text(" ", strip=True)
+        pay_text   = tds[1].get_text(" ", strip=True)
 
-        # 複勝/ワイドは複数候補が同じセルに並ぶことがあるので分割を試みる
-        # まず払戻を全部抜く
-        pays = re.findall(r"\d[\d,]*", pay_text)
-        pays = [p.replace(",", "") for p in pays]
-        pays = [int(p) for p in pays if p.isdigit()]
+        combos = _extract_combos_from_td_text(bet_type, combo_text)
 
-        # 組み合わせ側も数字列を取り出す（例: "3 7 10" や "3-7 7-10" など）
-        # ここでは単純化：pay数と対応させるため、"組み合わせ"の候補を複数抽出
-        # 1) "3-7" のようなハイフン結合を優先抽出
-        combo_candidates = re.findall(r"\d+\s*[-→]\s*\d+\s*[-→]?\s*\d*", combo_text)
-        if not combo_candidates:
-            # 2) 空白区切りの数字列
-            combo_candidates = re.findall(r"(?:\d+\s+){1,2}\d+", combo_text)
-        if not combo_candidates:
-            # 3) 最後の手段：数字だけ
-            combo_candidates = [" ".join(re.findall(r"\d+", combo_text))] if re.findall(r"\d+", combo_text) else []
+        # pay は数字を全部拾う（カンマ除去済）
+        pays = _extract_pay_candidates(pay_text)
 
-        # pays が1個ならそのまま
-        if len(pays) <= 1:
-            pay100 = pays[0] if pays else None
-            combo_norm = _norm_combo(bet_type, combo_text)
-            if pay100 is not None and combo_norm:
-                rows.append({"bet_type": bet_type, "combo": combo_norm, "pay100": pay100})
-            continue
-
-        # pays が複数なら、combo_candidates と対応づける
-        # 長さが合えばペアにする、合わなければ「候補を順に使う」
-        for i, pay100 in enumerate(pays):
-            if i < len(combo_candidates):
-                combo_norm = _norm_combo(bet_type, combo_candidates[i])
-            else:
-                combo_norm = _norm_combo(bet_type, combo_text)
-            if pay100 is not None and combo_norm:
-                rows.append({"bet_type": bet_type, "combo": combo_norm, "pay100": int(pay100)})
+        # ペアリング（数がズレても安全に min）
+        n = min(len(combos), len(pays))
+        for i in range(n):
+            if combos[i] and pays[i]:
+                rows.append({"bet_type": bet_type, "combo": combos[i], "pay100": int(pays[i])})
 
     return rows
+
+
 
 def _parse_payouts_from_race_html_bytes(race_id: str, html: bytes) -> pd.DataFrame:
     soup = BeautifulSoup(html, "lxml")
@@ -167,7 +272,16 @@ def _parse_payouts_from_race_html_bytes(race_id: str, html: bytes) -> pd.DataFra
         # 払戻がまだ出てない（未来レース等）
         return pd.DataFrame(columns=["race_id", "bet_type", "combo", "pay100"])
 
-    df = pd.DataFrame(rows).drop_duplicates(subset=["bet_type", "combo"], keep="last")
+    df = pd.DataFrame(rows)
+    if len(df):
+        # 同一 combo が複数出たら最大 pay を採用（保険）
+        df["pay100"] = pd.to_numeric(df["pay100"], errors="coerce")
+        df = (
+            df.dropna(subset=["pay100"])
+            .groupby(["bet_type", "combo"], as_index=False)["pay100"]
+            .max()
+        )
+
     df.insert(0, "race_id", str(race_id))
     df["pay100"] = pd.to_numeric(df["pay100"], errors="coerce").fillna(0).astype(int)
     df = df[df["pay100"] > 0].copy()
@@ -182,7 +296,15 @@ def update_payouts_flat_for_date(
     verbose: bool = True,
 ) -> tuple[pd.DataFrame, Path]:
     defaults = resolve_default_paths()
-    population_csv = (population_csv or defaults["population_csv"]).resolve()
+    population_csv = resolve_population_csv_for_date(
+        target_date=target_date,
+        population_csv=population_csv,
+        population_dir=None,   # ← 渡さない
+        prefer_daily=True,
+    )
+    html_race_dir = (html_race_dir or defaults["html_race_dir"]).resolve()
+    payouts_flat_path = (payouts_flat_path or defaults["payouts_flat_path"]).resolve()
+
     html_race_dir = (html_race_dir or defaults["html_race_dir"]).resolve()
     payouts_flat_path = (payouts_flat_path or defaults["payouts_flat_path"]).resolve()
 
@@ -230,10 +352,12 @@ def update_payouts_flat_for_date(
     merged["bet_type"] = merged["bet_type"].astype(str)
     merged["combo"] = merged["combo"].astype(str)
     merged["pay100"] = pd.to_numeric(merged["pay100"], errors="coerce").fillna(0).astype(int)
+    # まず並べ替えて「新しい方」が後ろに来るようにする（念のため）
+    merged = merged.sort_values(["date","race_id","bet_type","combo","pay100"])
 
     # 同一(date,race_id,bet_type,combo)は最後勝ち
     merged = merged.drop_duplicates(subset=["date","race_id","bet_type","combo"], keep="last")
-    merged = merged.sort_values(["date","race_id","bet_type","combo"])
+
     merged.to_csv(payouts_flat_path, index=False, encoding="utf-8")
 
     if verbose:

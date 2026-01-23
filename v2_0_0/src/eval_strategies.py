@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from feature_engineering import RAW_DATA_DIR, DATA_DIR
-from eval_core import (
+from eval_bets import (
     venue_name_from_race_id,
     actual_outcomes_from_results_map,
     payout_map_for_race,

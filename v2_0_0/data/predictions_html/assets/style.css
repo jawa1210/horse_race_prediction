@@ -29,7 +29,7 @@
     color: var(--text);
   }
   
-  table { width: 100%; border-collapse: collapse; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 6px; background:#fff; }
   th, td { border-bottom: 1px solid var(--line); padding: 8px; font-size: 14px; }
   th { background: #fbfbfb; position: sticky; top: 0; z-index: 1; }
   
