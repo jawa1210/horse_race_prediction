@@ -664,28 +664,30 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=8472&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=337&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31288&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31288 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31284&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31284 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31100&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31100 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31099&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31099 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31053&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31053 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31052&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31052 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=31051&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31051 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=20183&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 20183 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=20182&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 20182 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=19974&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 19974 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=8654&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 8654 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=8472&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 8472 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=8471&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 8471 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=2027&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 2027 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=337&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 337 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023100946&no=336&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 336 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->
@@ -847,7 +849,7 @@ get_horse_detail_note('2023100946', 'Horse_Note_Box');
 <th>³ÍÆÀ¾Þ¶â (Ãæ±û)</th>
 <td>
 
-1,080Ëü±ß
+2,695Ëü±ß
 </td>
 </tr>
 <tr>
@@ -859,7 +861,7 @@ get_horse_detail_note('2023100946', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ÄÌ»»À®ÀÓ</th>
-<td>3Àï1¾¡ [<a href="/horse/result/2023100946/" title="Á´¶¥ÁöÀ®ÀÓ">1-2-0-0</a>]</td>
+<td>4Àï1¾¡ [<a href="/horse/result/2023100946/" title="Á´¶¥ÁöÀ®ÀÓ">1-3-0-0</a>]</td>
 </tr>
 <tr>
 <th>¼ç¤Ê¾¡°È</th>

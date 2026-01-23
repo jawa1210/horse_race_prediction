@@ -664,11 +664,21 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=54582&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=50081&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=74756&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 74756 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=74755&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 74755 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=74754&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 74754 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=74753&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 74753 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=74752&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 74752 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=54583&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 54583 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=54582&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 54582 );"/></a>
@@ -678,10 +688,6 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=50084&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 50084 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=50081&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 50081 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=50080&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 50080 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022104432&no=30727&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 30727 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->
@@ -843,7 +849,7 @@ get_horse_detail_note('2022104432', 'Horse_Note_Box');
 <th>³ÍÆÀ¾Þ¶â (Ãæ±û)</th>
 <td>
 
-1,990Ëü±ß
+2,470Ëü±ß
 </td>
 </tr>
 <tr>
@@ -855,7 +861,7 @@ get_horse_detail_note('2022104432', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ÄÌ»»À®ÀÓ</th>
-<td>7Àï2¾¡ [<a href="/horse/result/2022104432/" title="Á´¶¥ÁöÀ®ÀÓ">2-1-0-4</a>]</td>
+<td>8Àï2¾¡ [<a href="/horse/result/2022104432/" title="Á´¶¥ÁöÀ®ÀÓ">2-2-0-4</a>]</td>
 </tr>
 <tr>
 <th>¼ç¤Ê¾¡°È</th>

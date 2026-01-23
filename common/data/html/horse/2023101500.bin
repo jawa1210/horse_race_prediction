@@ -833,7 +833,7 @@ get_horse_detail_note('2023101500', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-59万円
+299万円
 </td>
 </tr>
 <tr>
@@ -845,7 +845,7 @@ get_horse_detail_note('2023101500', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>2戦0勝 [<a href="/horse/result/2023101500/" title="全競走成績">0-0-0-2</a>]</td>
+<td>3戦0勝 [<a href="/horse/result/2023101500/" title="全競走成績">0-1-0-2</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
@@ -853,7 +853,7 @@ get_horse_detail_note('2023101500', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse/2022102105/" title="ハコダテサンバ">ハコダテサンバ</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2022102105/" title="ハコダテサンバ">ハコダテサンバ</a>、<a href="/horse/2025101141/" title="キタノオドリコの2025">キタノオドリコの2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

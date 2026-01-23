@@ -841,7 +841,7 @@ get_horse_detail_note('2023100722', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-84万円
+674万円
 </td>
 </tr>
 <tr>
@@ -853,15 +853,15 @@ get_horse_detail_note('2023100722', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>3戦0勝 [<a href="/horse/result/2023100722/" title="全競走成績">0-0-0-3</a>]</td>
+<td>4戦1勝 [<a href="/horse/result/2023100722/" title="全競走成績">1-0-0-3</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
-<td><a href="/race//" title=""></a><!--、<a href="/race//" title=""></a>--></td>
+<td><a href="/race/202606010701/" title="26'3歳未勝利">26'3歳未勝利</a><!--、<a href="/race//" title=""></a>--></td>
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse/2024100177/" title="マーガレットスカイの2024">マーガレットスカイの2024</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2024100177/" title="マーガレットスカイの2024">マーガレットスカイの2024</a>、<a href="/horse/2025100243/" title="マーガレットスカイの2025">マーガレットスカイの2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

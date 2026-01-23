@@ -851,7 +851,7 @@ get_horse_detail_note('2023107194', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>1戦0勝 [<a href="/horse/result/2023107194/" title="全競走成績">0-1-0-0</a>]</td>
+<td>2戦0勝 [<a href="/horse/result/2023107194/" title="全競走成績">0-1-0-1</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
@@ -859,7 +859,7 @@ get_horse_detail_note('2023107194', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse/2024106557/" title="ブランノワールの2024">ブランノワールの2024</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2024106557/" title="ブランノワールの2024">ブランノワールの2024</a>、<a href="/horse/2025107257/" title="ブランノワールの2025">ブランノワールの2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

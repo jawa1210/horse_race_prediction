@@ -660,7 +660,7 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2019103827&no=92834&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2019103827&no=124653&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
@@ -857,7 +857,7 @@ get_horse_detail_note('2019103827', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ƒÃªª¿Æ¿”</th>
-<td>36¿Ô2æ° [<a href="/horse/result/2019103827/" title="¡¥∂•¡ˆ¿Æ¿”">2-4-7-23</a>]</td>
+<td>37¿Ô2æ° [<a href="/horse/result/2019103827/" title="¡¥∂•¡ˆ¿Æ¿”">2-4-7-24</a>]</td>
 </tr>
 <tr>
 <th>ºÁ§ æ°∞»</th>

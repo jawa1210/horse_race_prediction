@@ -16,7 +16,7 @@ import random
 HTML_DIR = Path("..", "data", "html")
 HTML_RACE_DIR = HTML_DIR / "race"
 HTML_HORSE_DIR = HTML_DIR / "horse"
-HTML_RACE_PREDICT_DIR=HTML_DIR/"predict_race"
+HTML_RACE_PREDICT_DIR = HTML_DIR/"predict_race"
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
@@ -26,8 +26,10 @@ USER_AGENTS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
 ]
 
+
 def _sleep(base=1.2, jitter=1.0):
     time.sleep(base + random.random() * jitter)
+
 
 def _fetch(url: str, referer: str | None = None, timeout: int = 30, max_retry: int = 4) -> bytes:
     """
@@ -83,10 +85,33 @@ def scrape_kaisai_date(from_: str, to_: str) -> list[str]:
     return kaisai_date_list
 
 
-def scrape_race_id_list(kaisai_date_list: list[str]) -> list[str]:
+def load_existing_race_ids(bin_dir: Path) -> set[str]:
     """
-    ここが一番BANリスク高いので、sleep強め & 例外でbreakしない
+    bin_dir 配下にある *.bin から race_id を抽出
+    例: 202406010111.bin → 202406010111
     """
+    if not bin_dir.exists():
+        return set()
+
+    return {
+        p.stem
+        for p in bin_dir.glob("*.bin")
+        if re.fullmatch(r"\d{12}", p.stem)
+    }
+
+
+def scrape_race_id_list(
+    kaisai_date_list: list[str],
+    bin_dir: str | Path = HTML_RACE_DIR,
+) -> list[str]:
+    """
+    既に bin が存在する race_id はスキップする
+    """
+    bin_dir = HTML_RACE_DIR
+    existing_ids = load_existing_race_ids(bin_dir)
+
+    print(f"[INFO] existing race_id: {len(existing_ids)}")
+
     options = Options()
     options.add_argument("--headless=new")
     options.add_argument(f"--user-agent={random.choice(USER_AGENTS)}")
@@ -95,6 +120,7 @@ def scrape_race_id_list(kaisai_date_list: list[str]) -> list[str]:
     service = Service(chromedriver_path)
 
     race_id_list = []
+
     with webdriver.Chrome(service=service, options=options) as driver:
         for kaisai_date in tqdm(kaisai_date_list):
             url = f"https://race.netkeiba.com/top/race_list.html?kaisai_date={kaisai_date}"
@@ -106,15 +132,22 @@ def scrape_race_id_list(kaisai_date_list: list[str]) -> list[str]:
                 for li in li_list:
                     href = li.find_element(By.TAG_NAME, "a").get_attribute("href")
                     m = re.findall(r"race_id=(\d{12})", href)
-                    if m:
-                        race_id_list.append(m[0])
+                    if not m:
+                        continue
+
+                    race_id = m[0]
+
+                    # ★ ここが本体
+                    if race_id in existing_ids:
+                        continue
+
+                    race_id_list.append(race_id)
 
                 _sleep(1.0, 2.0)
 
             except Exception:
                 print(f"[WARN] stopped at {url}")
                 print(traceback.format_exc())
-                # breakじゃなくて次へ（大量欠損を防ぐ）
                 _sleep(5.0, 10.0)
                 continue
 
@@ -142,6 +175,7 @@ def scrape_html_race(race_id_list: list[str], save_dir: Path = HTML_RACE_DIR) ->
         _sleep(1.0, 2.5)
 
     return html_path_list
+
 
 def scrape_html_predict_race(race_id_list: list[str], save_dir: Path = HTML_RACE_DIR) -> list[Path]:
     html_path_list = []

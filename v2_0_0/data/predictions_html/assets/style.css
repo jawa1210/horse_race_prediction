@@ -1,0 +1,64 @@
+/* assets/style.css */
+:root {
+    --bg: #fafafa;
+    --card: #fff;
+    --text: #111;
+    --muted: #555;
+    --line: #eee;
+  
+    /* time status */
+    --soon: #fff7cc;      /* 60分以内 */
+    --verysoon: #ffe0b3;  /* 10分以内 */
+    --passed: #f0f0f0;    /* 発走後 */
+    --live: #e8f4ff;      /* レース中/直前の強調 */
+  
+    /* odds band */
+    --odds-low: #e7f7ec;
+    --odds-mid: #eef6ff;
+    --odds-high: #fff1f1;
+    --odds-veryhigh: #f7f1ff;
+  
+    /* results */
+    --hit1: #d9f7e6;  /* 1着 */
+    --hit3: #e7f0ff;  /* 3着以内 */
+    --hit5: #f3f4ff;  /* 5着以内 */
+  }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border-bottom: 1px solid var(--line); padding: 8px; font-size: 14px; }
+  th { background: #fbfbfb; position: sticky; top: 0; z-index: 1; }
+  
+  tr.time-soon    { background: var(--soon); }
+  tr.time-verysoon{ background: var(--verysoon); }
+  tr.time-passed  { background: var(--passed); color: #666; }
+  tr.time-live    { outline: 2px solid #7bb7ff; outline-offset: -2px; }
+  
+  tr.odds-low      { box-shadow: inset 4px 0 0 #3cb371; background: var(--odds-low); }
+  tr.odds-mid      { box-shadow: inset 4px 0 0 #3b82f6; background: var(--odds-mid); }
+  tr.odds-high     { box-shadow: inset 4px 0 0 #ef4444; background: var(--odds-high); }
+  tr.odds-veryhigh { box-shadow: inset 4px 0 0 #8b5cf6; background: var(--odds-veryhigh); }
+  
+  tr.hit-1 { background: var(--hit1) !important; font-weight: 700; }
+  tr.hit-3 { background: var(--hit3) !important; }
+  tr.hit-5 { background: var(--hit5) !important; }
+  
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #111;
+    color: #fff;
+    margin-left: 8px;
+  }
+  .badge.muted { background: #999; }
+  .badge.hit1 { background: #18a957; }
+  .badge.hit3 { background: #2563eb; }
+  .badge.hit5 { background: #6d28d9; }
+  
+  

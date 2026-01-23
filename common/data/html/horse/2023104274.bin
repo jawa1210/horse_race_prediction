@@ -834,8 +834,8 @@ get_horse_detail_note('2023104274', 'Horse_Note_Box');
 <tr>
 <th>³ÍÆÀ¾Þ¶â (Ãæ±û)</th>
 <td>
-0Ëü±ß
 
+150Ëü±ß
 </td>
 </tr>
 <tr>
@@ -847,7 +847,7 @@ get_horse_detail_note('2023104274', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ÄÌ»»À®ÀÓ</th>
-<td>2Àï0¾¡ [<a href="/horse/result/2023104274/" title="Á´¶¥ÁöÀ®ÀÓ">0-0-0-2</a>]</td>
+<td>3Àï0¾¡ [<a href="/horse/result/2023104274/" title="Á´¶¥ÁöÀ®ÀÓ">0-0-1-2</a>]</td>
 </tr>
 <tr>
 <th>¼ç¤Ê¾¡°È</th>

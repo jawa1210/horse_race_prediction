@@ -844,7 +844,7 @@ get_horse_detail_note('2023109074', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>1戦0勝 [<a href="/horse/result/2023109074/" title="全競走成績">0-0-0-1</a>]</td>
+<td>2戦0勝 [<a href="/horse/result/2023109074/" title="全競走成績">0-0-0-2</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
@@ -852,7 +852,7 @@ get_horse_detail_note('2023109074', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse//" title=""></a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2025105214/" title="メイオールの2025">メイオールの2025</a><a href="/horse//" title=""></a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

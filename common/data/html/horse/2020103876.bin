@@ -660,11 +660,13 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=29894&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=38842&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=115716&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 115716 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=114327&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 114327 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=114321&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 114321 );"/></a>
@@ -682,8 +684,6 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=101170&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 101170 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=99844&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 99844 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2020103876&no=98480&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 98480 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->
@@ -845,7 +845,7 @@ get_horse_detail_note('2020103876', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-9,145万円
+1億1,382万円
 </td>
 </tr>
 <tr>
@@ -857,11 +857,11 @@ get_horse_detail_note('2020103876', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>26戦4勝 [<a href="/horse/result/2020103876/" title="全競走成績">4-5-3-14</a>]</td>
+<td>27戦5勝 [<a href="/horse/result/2020103876/" title="全競走成績">5-5-3-14</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
-<td><a href="/race/202506050310/" title="25'アクアラインS(3勝クラス)">25'アクアラインS(3勝クラス)</a><!--、<a href="/race/202506040209/" title=25'浦安特別(2勝クラス)"">25'浦安特別(2勝クラス)</a>--></td>
+<td><a href="/race/202606010710/" title="26'ジャニュアリーS(OP)">26'ジャニュアリーS(OP)</a><!--、<a href="/race/202506050310/" title=25'アクアラインS(3勝クラス)"">25'アクアラインS(3勝クラス)</a>--></td>
 </tr>
 <tr>
 <th>近親馬</th>
