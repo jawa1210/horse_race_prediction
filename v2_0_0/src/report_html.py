@@ -38,6 +38,45 @@ _INV_PLACE  = {v: k for k, v in race_course_mapping.items()}
 _INV_RTYPE  = {v: k for k, v in race_type_mapping.items()}
 _INV_GROUND = {v: k for k, v in ground_state_mapping.items()}
 
+# --- netkeiba race_id 用（JRA）: PP=01..10 ---
+_NETKEIBA_JRA_PLACE = {
+    1: "札幌",
+    2: "函館",
+    3: "福島",
+    4: "新潟",
+    5: "東京",
+    6: "中山",
+    7: "中京",
+    8: "京都",
+    9: "阪神",
+    10: "小倉",
+}
+
+def _place_from_race_id_netkeiba(rid: str) -> str:
+    """
+    netkeiba race_id(12桁想定): YYYYPPKKDDRR
+      PP = 開催場コード(01..10)
+    """
+    s = re.sub(r"\D", "", str(rid))
+    if len(s) >= 12:
+        # netkeiba の基本形: YYYYPPKKDDRR
+        try:
+            pp = int(s[4:6])
+            return _NETKEIBA_JRA_PLACE.get(pp, f"場{pp:02d}")
+        except Exception:
+            return ""
+    # フォールバック（もし別形式が混ざった時用）
+    if len(s) >= 4:
+        try:
+            pp = int(s[-4:-2])
+            return _NETKEIBA_JRA_PLACE.get(pp, f"場{pp:02d}")
+        except Exception:
+            return ""
+    return ""
+
+
+
+
 def _circled_number(n: int) -> str:
     circled = {
         1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨", 10: "⑩",
@@ -210,27 +249,17 @@ def _race_condition_text(feats: pd.DataFrame) -> str:
     return s
 
 def _toc_label_from_race_id(rid: str) -> str:
-    """race_id から '中山 1R' みたいな表示名を作る"""
     rid = str(rid)
+    place = _place_from_race_id_netkeiba(rid)
 
-    # 開催（末尾4桁のうち、先頭2桁が場所コードの想定）
-    # 例: 202606010801 -> "08" が場所、"01" がR
-    place = ""
-    try:
-        place_code = int(rid[-4:-2])
-        place = _INV_PLACE.get(place_code, "")
-    except Exception:
-        pass
-
-    # R番号（末尾2桁）
     rnum = ""
     try:
         rnum = f"{int(rid[-2:])}R"
     except Exception:
         pass
 
-    # placeが取れなかったらridそのまま
     return " ".join([x for x in [place, rnum] if x]) or rid
+
 
 def add_agari_badge(df: pd.DataFrame, col="上り") -> pd.DataFrame:
     df = df.copy()
@@ -1396,12 +1425,8 @@ function toggleHitDetail(id){
                     race_name = str(v)
 
             # 開催（中山など）
-            place = ""
-            if "place" in feats.columns and pd.notna(feats.iloc[0]["place"]):
-                try:
-                    place = _INV_PLACE.get(int(feats.iloc[0]["place"]), "")
-                except Exception:
-                    place = ""
+            # 開催（race_id 由来: netkeiba PP）
+            place = _place_from_race_id_netkeiba(rid)
 
             # 芝/ダ + 距離 + 馬場
             cond = _race_condition_text(feats)   # 例: "中山 芝1600m 良"
