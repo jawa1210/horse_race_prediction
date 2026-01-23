@@ -1012,7 +1012,9 @@ def build_html_report(
 
   tr.hit-1 {{ background:#d9f7e6; font-weight:700; }}
   tr.hit-3 {{ background:#e7f0ff; }}
-  tr.hit-5 {{ background:#f3f4ff; }}
+tr.hit-5 {{ background:#ededed; }}
+
+
 
   .pop1 {{ color:#d60000; font-weight:600; }}
   .pop10{{ color:#0057d8; font-weight:600; }}
@@ -1126,7 +1128,11 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
 
 .agari{{ font-weight:900; padding:1px 6px; border-radius:8px; }}
 .agari.g{{ background:#ffe08a; }}
-.agari.s{{background:#e8eef5; }}
+.agari.s{{
+  background:#0b5ed7;  /* 濃い青 */
+  color:#fff;
+}}
+
 .agari.b{{ background:#ffd1b0; }}
 
 /* 的中したレースのタイトルを赤く */
