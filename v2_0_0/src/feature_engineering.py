@@ -384,14 +384,11 @@ class PredictionFeatureCreator:
         if horse_path.parent == Path("."):
             horse_path = INPUT_DIR / horse_path
 
-            horse_path = Path(horse_results_prediction_feile_name)
-
-        if not horse_path.is_absolute():
-            horse_path = horse_path.resolve()
+        pop_path = pop_path.resolve()
+        horse_path = horse_path.resolve()
 
         if not horse_path.exists():
             raise FileNotFoundError(f"horse_results_prediction not found: {horse_path}")
-
 
         self.population = pd.read_csv(pop_path, sep="\t", dtype={"race_id": str, "horse_id": str})
         self.horse_results = pd.read_csv(horse_path, sep="\t", dtype={"horse_id": str})
@@ -464,6 +461,19 @@ class PredictionFeatureCreator:
             raise ValueError("出馬表のテーブルが見つかりません。HTML構造が変わった可能性があります。")
 
         df = pd.read_html(self.html)[0]
+        if df.columns.duplicated().any():
+            new_cols = []
+            seen = {}
+            for c in df.columns:
+                if c not in seen:
+                    seen[c] = 0
+                    new_cols.append(c)
+                else:
+                    seen[c] += 1
+                    new_cols.append(f"{c}.{seen[c]}")
+            df.columns = new_cols
+
+        
 
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(-1)
@@ -482,6 +492,29 @@ class PredictionFeatureCreator:
 
         def _pad_or_trim(values: list, n: int, fill=None) -> list:
             return (values[:n] + [fill] * n)[:n]
+
+        # ------------------------------------------------------------
+        # ★ 馬名 / 騎手名（DOMから直接取得）
+        #   ※ pd.read_html の表には無いタイプの出馬表に対応
+        # ------------------------------------------------------------
+        horse_names = []
+        jockey_names = []
+
+        rows = soup_table.find_all("tr", id=re.compile(r"^tr_"))
+
+        for tr in rows:
+            # 馬名: td.HorseInfo の中の span.HorseName
+            h = tr.select_one("td.HorseInfo span.HorseName")
+            horse_names.append(h.get_text(strip=True) if h else None)
+
+            # 騎手名: td.Jockey の a
+            j = tr.select_one("td.Jockey a")
+            jockey_names.append(j.get_text(strip=True) if j else None)
+
+        df["horse_name"] = _pad_or_trim(horse_names, n, fill=None)
+        df["jockey_name"] = _pad_or_trim(jockey_names, n, fill=None)
+
+
 
         # ------------------------------------------------------------
         # 1) horse_id / jockey_id / trainer_id
@@ -585,6 +618,10 @@ class PredictionFeatureCreator:
         df["性齢"] = df.get("性齢", "").astype(str)
         df["sex"] = df["性齢"].str[0].map(sex_mapping)
         df["age"] = pd.to_numeric(df["性齢"].str[1:], errors="coerce")
+        # 表示用: 牡3 / 牝4 / セン7（性齢が "セ7" のときは "セン7" にする）
+        df["sex_age_disp"] = df["性齢"].astype(str).str.strip()
+        df["sex_age_disp"] = df["sex_age_disp"].str.replace(r"^セ", "セン", regex=True)
+
 
         bw_col = "馬体重 (増減)"
         if bw_col in df.columns:
@@ -605,14 +642,21 @@ class PredictionFeatureCreator:
             df = df.sort_values(["umaban"], na_position="last")
 
         use_cols = [
-            "race_id", "horse_id", "jockey_id", "trainer_id", "rank",
+            "race_id", "horse_id",
+            "horse_name",             # ← 入る
+            "sex_age_disp",           # ← ★追加（牡3など）
+            "jockey_id", "jockey_name",
+            "trainer_id", "rank",
             "wakuban", "umaban", "sex", "age", "weight", "weight_diff",
             "tansyo_odds", "popularity", "impost", "agari",
         ]
+
+        # ★先に列の存在を保証してから切り出す
         for c in use_cols:
             if c not in df.columns:
                 df[c] = np.nan
         df = df[use_cols]
+
 
         df["race_id"] = df["race_id"].astype(str)
         df["horse_id"] = df["horse_id"].astype(str)
@@ -741,6 +785,27 @@ class PredictionFeatureCreator:
         info1_text = str(df_info.loc[0, "info1"])
         info2_text = str(df_info.loc[0, "info2"])
 
+        # --- レース名（出馬表HTMLから直接取得） ---
+        race_name = None
+
+        soup = BeautifulSoup(self.html, "lxml")
+
+        # netkeiba 出馬表の確定構造
+        node = soup.select_one("h1.RaceName")
+        if node:
+            race_name = node.get_text(strip=True)
+
+        # 念のためのフォールバック
+        if not race_name:
+            node = soup.select_one("title")
+            if node:
+                race_name = re.sub(r"\s*[｜\-].*$", "", node.get_text(strip=True))
+
+        # 整形
+        if race_name:
+            race_name = re.sub(r"^\d+R\s*", "", race_name).strip()
+
+
         # 空白・改行を潰す（表記揺れ対策）
         t1 = re.sub(r"\s+", "", info1_text)
         t2 = re.sub(r"\s+", "", info2_text)
@@ -774,9 +839,11 @@ class PredictionFeatureCreator:
         m = re.search(rf"({regex_race_course})", t2)
         place = race_course_mapping.get(m.group(1), None) if m else None
 
+        # --- レース名の取得 ---
         race_info = pd.DataFrame([{
             "race_id": self.race_id,
             "date": date,
+            "race_name": race_name,      # ← ★追加
             "race_type": race_type,
             "around_dir": around_dir,
             "around_inout": around_inout,

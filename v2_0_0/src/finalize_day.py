@@ -39,7 +39,7 @@ def resolve_horse_csv_for_date(
     return default.resolve()
 
 
-def finalize_day(date: str, topk_per_race: int = 18, verbose: bool = True):
+def finalize_day(date: str, skip_agg_horse: bool = False, topk_per_race: int = 18, verbose: bool = True):
     pop_path = resolve_population_csv_for_date(
         target_date=date,
         population_dir=RAW_DATA_DIR / "prediction_population",
@@ -60,6 +60,7 @@ def finalize_day(date: str, topk_per_race: int = 18, verbose: bool = True):
         read_file_name_csv=str(pop_path),
         read_horse_name_csv=str(horse_path),  # ★これが必要
         topk_per_race=topk_per_race,
+        skip_agg_horse=skip_agg_horse
     )
 
     if verbose:

@@ -1,1 +1,12 @@
-jockey_id	trainer_id	rank	wakuban	umaban	sex	age	weight	weight_diff	tansyo_odds	popularity	impost	agari	race_type	around_dir	around_inout	course_abc	course_len	weather	ground_state	race_class	place	date	race_id	horse_id	rank_3races	prize_3races	rank_5races	prize_5races	rank_10races	prize_10races	rank_1000races	prize_1000races
+date	race_id	horse_id	horse_name	sex_age_disp	jockey_id	jockey_name	trainer_id	rank	wakuban	umaban	sex	age	weight	weight_diff	tansyo_odds	popularity	impost	agari	race_name	race_type	around_dir	around_inout	course_abc	course_len	weather	ground_state	race_class	place	rank_3races	prize_3races	rank_5races	prize_5races	rank_10races	prize_10races	rank_1000races	prize_1000races
+2026-01-24	202608010812	2022102635	バンブルビー	牡4	00660	横山典	00405		1	1	0	4			4.2	2	57.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2020104825	スカプラリオ	牝6	01195	▲川端	00429		2	2	1	6			17.8	7	53.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2017110086	ジッピーレーサー	セン9	01181	秋山稔	01090		3	3	2	9			50.3	9	58.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2018103368	メイショウカイト	牝8	01213	高杉	01095		4	4	1	8			3.6	1	56.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2021100873	アオイミモザ	セン5	01187	◇永島	01205		5	5	2	5			20.2	8	56.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2021101580	メイショウヨゾラ	牝5	01170	横山武	01118		6	6	1	5			6.9	4	56.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2018103473	サヴァビアン	牡8	01208	田口	01116		6	7	0	8			55.0	10	58.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2021104167	エイムフォーエース	牡5	01174	岩田望	01147		7	8	0	5			5.4	3	58.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2022107309	コスタデラルス	牡4	01222	▲森田	01143		7	9	0	4			195.8	11	54.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2020105299	リアライズ	牡6	01186	角田和	01140		8	10	0	6			6.9	5	58.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								
+2026-01-24	202608010812	2021104929	ルトゥール	牝5	01141	中井	01137		8	11	1	5			7.9	6	56.0		4歳以上2勝クラス	1	0	1	0	1400	0	0	-1	3								

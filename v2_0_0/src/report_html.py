@@ -20,6 +20,443 @@ from eval_strategies import (
     format_summary_df_for_html,
 )
 
+from strategies import build_strategy_catalog
+from eval_bets import (
+    actual_outcomes_from_results_map,
+    payout_map_for_race,
+    eval_one_race_tickets,
+)
+
+# feature_engineering.py に mapping がある前提（なければ同等の辞書をここに用意）
+from feature_engineering import (
+    race_course_mapping,   # 例: {"中山": 5, ...}
+    race_type_mapping,     # 例: {"芝": 0, "ダ": 1, ...}
+    ground_state_mapping,  # 例: {"良": 0, "稍重": 1, ...}
+)
+
+_INV_PLACE  = {v: k for k, v in race_course_mapping.items()}
+_INV_RTYPE  = {v: k for k, v in race_type_mapping.items()}
+_INV_GROUND = {v: k for k, v in ground_state_mapping.items()}
+
+def _circled_number(n: int) -> str:
+    circled = {
+        1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨", 10: "⑩",
+        11: "⑪", 12: "⑫", 13: "⑬", 14: "⑭", 15: "⑮", 16: "⑯", 17: "⑰", 18: "⑱", 19: "⑲", 20: "⑳"
+    }
+    try:
+        n = int(n)
+    except Exception:
+        return ""
+    return circled.get(n, str(n))
+
+def _strategy_label_ja(name: str) -> str:
+    """
+    入力例:
+      sanrentan_1-234-234     -> 三連単①-②③④-②③④
+      sanrentan_1-23-2345     -> 三連単①-②③-②③④⑤
+      sanrenpuku_box4         -> 三連複BOX4
+      umatan_nagashi4         -> 馬単流4
+      wide_nagashi5           -> ワイド流5
+      tansho_p1               -> 単勝①
+    """
+    s = str(name)
+
+    # bet type 部分を判定（先頭の種別）
+    bet_map = {
+        "sanrentan": "三連単",
+        "sanrenpuku": "三連複",
+        "umatan": "馬単",
+        "umaren": "馬連",
+        "wide": "ワイド",
+        "tansho": "単勝",
+        "fukusho": "複勝",
+    }
+
+    bet = ""
+    rest = s
+    for k, v in bet_map.items():
+        if s.startswith(k + "_"):
+            bet = v
+            rest = s[len(k) + 1:]  # 先頭 "k_" を落とす
+            break
+        if s == k:
+            bet = v
+            rest = ""
+            break
+
+    if bet == "":
+        # 変換できないものはそのまま（保険）
+        return s
+
+    # パターン1: box4 / box5
+    m = re.fullmatch(r"box(\d+)", rest)
+    if m:
+        return f"{bet}BOX{m.group(1)}"
+
+    # パターン2: nagashi4 / nagashi5
+    m = re.fullmatch(r"nagashi(\d+)", rest)
+    if m:
+        return f"{bet}流{m.group(1)}"
+
+    # パターン3: p1 (単勝1点とか)
+    m = re.fullmatch(r"p(\d+)", rest)
+    if m:
+        n = int(m.group(1))
+        return f"{bet}{_circled_number(n)}"
+
+    # パターン4: フォーメーション 1-234-234 / 1-23-2345 など
+    # rest が "1-234-234" の形式なら、数字列を「②③④」みたいに展開
+    def _expand_group(g: str) -> str:
+        # "234" -> "②③④" / "12" -> "①②" / "8" -> "⑧"
+        out = []
+        for ch in g:
+            if ch.isdigit():
+                out.append(_circled_number(int(ch)))
+        return "".join(out) if out else g
+
+    if re.fullmatch(r"[0-9]+(-[0-9]+)+", rest):
+        parts = rest.split("-")
+        parts_ja = [_expand_group(p) for p in parts]
+        return bet + ("-".join(parts_ja))
+
+    # それ以外（念のため）
+    # 例: "box4_extra" みたいなのが来たら詰めて返す
+    rest = rest.replace("nagashi", "流").replace("box", "BOX").replace("_", "")
+    return bet + rest
+
+
+def _roi_to_mult_text(roi_percent: float) -> str:
+    """ROI% -> +倍率（+39.6倍）"""
+    try:
+        roi = float(roi_percent)
+    except Exception:
+        return ""
+    mult = roi / 100.0
+    sign = "+" if mult >= 0 else ""
+    return f"{sign}{mult:.1f}倍"
+
+def _mult_class_from_roi(roi_percent: float) -> str:
+    """
+    ROI% -> 倍率クラス（濃さ）
+    目安:
+      <2倍: m0
+      <5倍: m1
+      <10倍: m2
+      <20倍: m3
+      >=20倍: m4
+    """
+    try:
+        mult = float(roi_percent) / 100.0
+    except Exception:
+        return "m0"
+    if mult < 2.0:
+        return "m0"
+    if mult < 5.0:
+        return "m1"
+    if mult < 10.0:
+        return "m2"
+    if mult < 20.0:
+        return "m3"
+    return "m4"
+
+
+def _roi_to_mult_html(roi_percent: float) -> str:
+    """ROI% -> <span class="mult mX">+39.6倍</span>"""
+    txt = _roi_to_mult_text(roi_percent)
+    cls = _mult_class_from_roi(roi_percent)
+    if txt == "":
+        return ""
+    return f'<span class="mult {cls}">{txt}</span>'
+
+
+
+def _race_condition_text(feats: pd.DataFrame) -> str:
+    """feats(1レース全馬)から見出し用の条件文字列を作る: '中山 芝1600m 良'"""
+    if feats is None or len(feats) == 0:
+        return ""
+
+    r0 = feats.iloc[0]
+
+    def _get_int(name: str) -> int | None:
+        if name not in feats.columns:
+            return None
+        v = r0.get(name)
+        if pd.isna(v):
+            return None
+        try:
+            return int(v)
+        except Exception:
+            return None
+
+    place_code  = _get_int("place")
+    rtype_code  = _get_int("race_type")
+    ground_code = _get_int("ground_state")
+
+    # course_len は int じゃない時があるので別処理
+    dist = None
+    if "course_len" in feats.columns:
+        v = r0.get("course_len")
+        if pd.notna(v):
+            try:
+                dist = int(float(v))
+            except Exception:
+                dist = None
+
+    place  = _INV_PLACE.get(place_code, "")
+    rtype  = _INV_RTYPE.get(rtype_code, "")
+    ground = _INV_GROUND.get(ground_code, "")
+
+    s = " ".join([x for x in [place, f"{rtype}{dist}m" if (rtype or dist) else "", ground] if x])
+    return s
+
+def _toc_label_from_race_id(rid: str) -> str:
+    """race_id から '中山 1R' みたいな表示名を作る"""
+    rid = str(rid)
+
+    # 開催（末尾4桁のうち、先頭2桁が場所コードの想定）
+    # 例: 202606010801 -> "08" が場所、"01" がR
+    place = ""
+    try:
+        place_code = int(rid[-4:-2])
+        place = _INV_PLACE.get(place_code, "")
+    except Exception:
+        pass
+
+    # R番号（末尾2桁）
+    rnum = ""
+    try:
+        rnum = f"{int(rid[-2:])}R"
+    except Exception:
+        pass
+
+    # placeが取れなかったらridそのまま
+    return " ".join([x for x in [place, rnum] if x]) or rid
+
+def add_agari_badge(df: pd.DataFrame, col="上り") -> pd.DataFrame:
+    df = df.copy()
+    if col not in df.columns:
+        return df
+
+    a = pd.to_numeric(df[col], errors="coerce")
+
+    # 小さいほど速い → dense rank（同着は同じ順位）
+    r = a.rank(method="dense", ascending=True)
+
+    def _badge(v, rk):
+        if pd.isna(v):
+            return ""
+        v = float(v)
+        if pd.isna(rk):
+            return f"{v:.1f}"
+        rk = int(rk)
+        if rk == 1:
+            return f'<span class="agari g">{v:.1f}</span>'  # gold
+        if rk == 2:
+            return f'<span class="agari s">{v:.1f}</span>'  # silver
+        if rk == 3:
+            return f'<span class="agari b">{v:.1f}</span>'  # bronze
+        return f"{v:.1f}"
+
+    df[col] = [
+        _badge(v, rk) for v, rk in zip(a.tolist(), r.tolist())
+    ]
+    return df
+
+
+def _hit_badge_html_for_race(
+    target_date: str,
+    rid: str,
+    pred_order: list[int],
+    odds_map: dict[int, float],
+    results_map: dict[tuple[str, int], int],
+    payouts_df: pd.DataFrame,
+    stake_per_ticket: int,
+) -> str:
+    outcomes = actual_outcomes_from_results_map(results_map, rid)
+    if not outcomes:
+        return ""
+
+    pay_map = payout_map_for_race(payouts_df, target_date, rid)
+    if not pay_map:
+        return ""
+
+    catalog = build_strategy_catalog()
+
+    hit_items: list[tuple[str, float, dict]] = []
+    for strat_name, gen in catalog:
+        tickets = gen(pred_order, odds_map)
+        ev = eval_one_race_tickets(
+            rid=rid,
+            tickets=tickets,
+            outcomes=outcomes,
+            pay_map=pay_map,
+            stake_per_ticket=stake_per_ticket,
+        )
+        ret = float(ev.get("return", 0.0))
+        stake = float(ev.get("stake", 0.0))
+        roi = float(ev.get("roi", (ret / stake * 100.0) if stake > 0 else 0.0))
+        if ret > 0:
+            hit_items.append((strat_name, roi, ev))
+
+    if not hit_items:
+        return ""
+
+    hit_items.sort(key=lambda x: x[1], reverse=True)
+
+    # ---- 表示短縮：上位3つ + 他+N ----
+    show_k = 3
+    shown = hit_items[:show_k]
+    rest_n = max(0, len(hit_items) - len(shown))
+
+    inside_parts = []
+    for name, roi, _ev in shown:
+        inside_parts.append(f"{_strategy_label_ja(name)}｜{_roi_to_mult_html(roi)}")
+
+    inside = " / ".join(inside_parts)
+    if rest_n > 0:
+        inside += f" / 他+{rest_n}"
+
+    detail_id = f"hitdetail-{rid}"
+    badge_html = (
+        f'<span class="hitbadge" onclick="toggleHitDetail(\'{detail_id}\')">'
+        f'的中🎯({inside})'
+        f'</span>'
+    )
+
+    # ---- 折りたたみ内訳：全部出す（同じ表記・色付き）----
+    detail_lines = []
+    for strat_name, roi, _ev in hit_items:
+        ja = _strategy_label_ja(strat_name)
+        detail_lines.append(f"<li><b>{ja}</b>｜{_roi_to_mult_html(roi)}</li>")
+
+    detail_html = (
+        f'<div id="{detail_id}" class="hitdetail">'
+        f'<b>的中内訳</b>'
+        f'<ul>{"".join(detail_lines)}</ul>'
+        f'</div>'
+    )
+
+    return badge_html + detail_html
+
+
+def _stars(conf: int) -> str:
+    conf = int(conf) if conf is not None else 3
+    conf = max(1, min(5, conf))
+    return "★" * conf + "☆" * (5 - conf)
+
+def _chaos_label(entropy: float) -> str:
+    """
+    entropy から荒れ度ラベル
+    目安は調整してOK（とりあえず分かりやすい閾値）
+    """
+    try:
+        h = float(entropy)
+    except Exception:
+        return ""
+    if h >= 2.10:
+        return "大荒"
+    if h >= 1.90:
+        return "中荒"
+    if h >= 1.75:
+        return "小荒"
+    return ""
+
+def _fmt_roi_red(x) -> str:
+    """
+    回収率の色分け（HTML）
+      - >=200%: 濃い赤
+      - >=100%: 薄い赤
+      - <100% : 通常
+    """
+    if x is None or (isinstance(x, float) and pd.isna(x)):
+        return ""
+    s = str(x).strip()
+    try:
+        v = float(s.replace("%", ""))
+    except Exception:
+        return s
+
+    # 表示文字
+    txt = f"{v:.1f}%"
+
+    if v >= 200.0:
+        # 濃赤（視認性重視）
+        return f'<span style="color:#b00000; font-weight:900;">{txt}</span>'
+    if v >= 100.0:
+        # 薄赤
+        return f'<span style="color:#e05a5a; font-weight:900;">{txt}</span>'
+    return txt
+
+
+
+def _format_summary_table(df: pd.DataFrame, mode: str) -> pd.DataFrame:
+    """
+    mode:
+      - "total": 暫定/最終（戦略別）
+      - "venue": 暫定/最終（開催場所別）
+      - "cum": 累計（戦略別）
+    """
+    if df is None or len(df) == 0:
+        return df
+
+    out = df.copy()
+
+    # 1) 列名の日本語化（最低限）
+    col_rename = {
+        "races": "レース数",
+        "tickets": "券数",
+        "hit_rate_race": "的中率(レース)",
+        "hit_rate_ticket": "的中率(券)",
+        "stake": "投資(円)",
+        "return": "払戻(円)",
+        "roi": "回収率",
+        "venue": "競馬場",
+        "strategy": "買い目",
+    }
+    out = out.rename(columns={k: v for k, v in col_rename.items() if k in out.columns})
+
+    # 2) strategy を日本語化
+    if "買い目" in out.columns:
+        # "(sanrentan_box4,)" みたいなのが来る場合があるので掃除
+        def _clean_strategy(s):
+            t = str(s).strip()
+
+            # "(sanrenpuku_box4,)" 形式も "'sanrenpuku_box4'" 形式も両対応
+            t = t.strip()                 # whitespace
+            t = t.strip("()")             # remove outer parentheses
+            t = t.replace(",", " ").strip()
+            t = t.replace("'", "").replace('"', "")  # ★ クォート除去
+            t = t.split()[0] if t else t             # 余計なゴミが残ったら先頭だけ
+            return t
+        out["買い目"] = out["買い目"].map(lambda x: _strategy_label_ja(_clean_strategy(x)))
+
+    # 3) 回収率を赤く（HTML）
+    if "回収率" in out.columns:
+        out["回収率"] = out["回収率"].map(_fmt_roi_red)
+
+    # 4) 金額列は見やすく（整数カンマ）
+    for c in ["投資(円)", "払戻(円)"]:
+        if c in out.columns:
+            out[c] = pd.to_numeric(out[c], errors="coerce").fillna(0).astype(int).map(lambda v: f"{v:,}")
+
+    # 5) 並び替え（要望通り）
+    if mode == "total":
+        # 1つ目：買い目 → 競馬場 → …
+        pref = ["買い目", "競馬場", "レース数", "券数", "的中率(レース)", "的中率(券)", "投資(円)", "払戻(円)", "回収率"]
+    elif mode == "venue":
+        # 2つ目：競馬場 → 買い目 → …
+        pref = ["競馬場", "買い目", "レース数", "券数", "的中率(レース)", "的中率(券)", "投資(円)", "払戻(円)", "回収率"]
+    else:  # "cum"
+        pref = ["買い目", "レース数", "券数", "的中率(レース)", "的中率(券)", "投資(円)", "払戻(円)", "回収率"]
+
+    cols = [c for c in pref if c in out.columns] + [c for c in out.columns if c not in pref]
+    out = out[cols]
+
+    return out
+
+
+
+
 # ========= Paths =========
 POPULATION_CSV_DIR = RAW_DATA_DIR / "prediction_population"
 
@@ -85,23 +522,26 @@ def _load_payback_map(date: str) -> dict[str, pd.DataFrame]:
 
 
 # ========= Small helpers =========
-def _attach_names_if_exist(df: pd.DataFrame, feats: pd.DataFrame) -> pd.DataFrame:
+
+def _attach_display_if_exist(df: pd.DataFrame, feats: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-    name_cols = []
-    if "horse_name" in feats.columns:
-        name_cols.append("horse_name")
-    if "jockey_name" in feats.columns:
-        name_cols.append("jockey_name")
-    if not name_cols:
-        return out
 
     key_cols = [c for c in ["race_id", "umaban"] if c in out.columns and c in feats.columns]
     if not key_cols:
         return out
 
-    tmp = feats[key_cols + name_cols].drop_duplicates()
+    add_cols = []
+    for c in ["horse_name", "jockey_name", "sex_age_disp", "wakuban", "impost"]:
+        if c in feats.columns:
+            add_cols.append(c)
+
+    if not add_cols:
+        return out
+
+    tmp = feats[key_cols + add_cols].drop_duplicates()
     return out.merge(tmp, on=key_cols, how="left")
 
+_attach_names_if_exist = _attach_display_if_exist
 
 def _format_odds_html(x) -> str:
     if x is None or (isinstance(x, float) and pd.isna(x)) or x == "":
@@ -133,31 +573,55 @@ def _format_pop_html(x) -> str:
     return f"{v:d}"
 
 
-def _load_results_map(date: str) -> dict[tuple[str, int], int]:
+def _load_results_maps(date: str) -> tuple[dict[tuple[str, int], int], dict[tuple[str, int], float]]:
+    """
+    results_flat.csv から
+      rank_map[(race_id, umaban)] = rank
+      agari_map[(race_id, umaban)] = agari
+    を作って返す
+    """
     if not RESULTS_FLAT.exists() or RESULTS_FLAT.stat().st_size == 0:
-        return {}
+        return {}, {}
+
     try:
         df = pd.read_csv(RESULTS_FLAT, dtype={"race_id": str})
     except pd.errors.EmptyDataError:
-        return {}
+        return {}, {}
+
     need = {"date", "race_id", "umaban", "rank"}
     if not need.issubset(df.columns):
-        return {}
+        return {}, {}
+
     df = df[df["date"].astype(str) == str(date)].copy()
     if df.empty:
-        return {}
+        return {}, {}
+
     df["race_id"] = df["race_id"].astype(str)
     df["umaban"] = pd.to_numeric(df["umaban"], errors="coerce")
     df["rank"] = pd.to_numeric(df["rank"], errors="coerce")
-    df = df.dropna(subset=["race_id", "umaban", "rank"])
+    if "agari" in df.columns:
+        df["agari"] = pd.to_numeric(df["agari"], errors="coerce")
+    else:
+        df["agari"] = pd.NA
 
-    out: dict[tuple[str, int], int] = {}
+    df = df.dropna(subset=["race_id", "umaban", "rank"]).copy()
+    df["umaban"] = df["umaban"].astype(int)
+    df["rank"] = df["rank"].astype(int)
+
+    rank_map: dict[tuple[str, int], int] = {}
+    agari_map: dict[tuple[str, int], float] = {}
+
     for r in df.itertuples(index=False):
+        key = (str(r.race_id), int(r.umaban))
+        rank_map[key] = int(r.rank)
         try:
-            out[(str(r.race_id), int(r.umaban))] = int(r.rank)
+            if pd.notna(r.agari):
+                agari_map[key] = float(r.agari)
         except Exception:
             pass
-    return out
+
+    return rank_map, agari_map
+
 
 
 def _result_class(rank: int | None) -> str | None:
@@ -170,18 +634,6 @@ def _result_class(rank: int | None) -> str | None:
     if rank <= 5:
         return "hit-5"
     return None
-
-
-def _circled_number(n: int) -> str:
-    circled = {
-        1: "①", 2: "②", 3: "③", 4: "④", 5: "⑤", 6: "⑥", 7: "⑦", 8: "⑧", 9: "⑨", 10: "⑩",
-        11: "⑪", 12: "⑫", 13: "⑬", 14: "⑭", 15: "⑮", 16: "⑯", 17: "⑰", 18: "⑱", 19: "⑲", 20: "⑳"
-    }
-    try:
-        n = int(n)
-    except Exception:
-        return ""
-    return circled.get(n, str(n))
 
 
 def _rank_icon(rank: int | None) -> str:
@@ -200,8 +652,10 @@ def _render_table_with_results(
     df: pd.DataFrame,
     rid: str,
     results_map: dict[tuple[str, int], int],
+    agari_map: dict[tuple[str, int], float] | None = None,
     extra_row_class_map: dict[int, str] | None = None,
 ) -> str:
+    agari_map = agari_map or {}
     df = df.copy()
     extra_row_class_map = extra_row_class_map or {}
 
@@ -215,7 +669,23 @@ def _render_table_with_results(
         ranks.append("" if rk is None else str(rk))
     df.insert(0, "結果", ranks)
 
-    cols = list(df.columns)
+    # results_flat の agari を「上り」に差し込む（列名は "上り" を想定）
+    if "上り" in df.columns:
+        new_agari = []
+        for _, row in df.iterrows():
+            try:
+                um = int(str(row.get("馬番")).split()[0])
+            except Exception:
+                um = None
+            a = agari_map.get((str(rid), um)) if um is not None else None
+            new_agari.append(a if a is not None else row.get("上り"))
+        df["上り"] = new_agari
+
+        # ここで badge 化（表に出ている馬の中で順位付け）
+        df = add_agari_badge(df, col="上り")
+
+
+    cols = [c for c in df.columns if c != "__wakuban"]
     ths = "".join([f"<th>{c}</th>" for c in cols])
 
     rows_html = []
@@ -242,8 +712,20 @@ def _render_table_with_results(
 
         if um is not None:
             icon = f' <span class="rankicon">{_rank_icon(rk_i)}</span>' if rk_i is not None else ""
-            row_dict["馬番"] = f'{um}{icon}{pred_tag}'
 
+            # 枠番（帽子色）は __wakuban から読む
+            waku_cls = ""
+            w = row.get("__wakuban", None)
+            try:
+                if w is not None and pd.notna(w):
+                    w_i = int(float(w))
+                    if 1 <= w_i <= 8:
+                        waku_cls = f"w{w_i}"
+            except Exception:
+                pass
+
+            badge = f'<span class="umabadge {waku_cls}">{um}</span>' if waku_cls else str(um)
+            row_dict["馬番"] = f'{badge}{icon}{pred_tag}'
 
         tds = "".join([f"<td>{row_dict.get(c, '')}</td>" for c in cols])
         rows_html.append(f"<tr{cls_attr}>{tds}</tr>")
@@ -457,7 +939,7 @@ def build_html_report(
     pfc.agg_horse_n_races()
 
     now = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
-    results_map = _load_results_map(target_date)
+    results_map, agari_map = _load_results_maps(target_date)
     has_results = len(results_map) > 0
     conf_calib = _load_conf_calib()
 
@@ -485,7 +967,7 @@ def build_html_report(
 
   .race {{ background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0; }}
   .race h2 {{ margin: 0 0 8px 0; font-size: 18px; }}
-  .race.race-chaos h2 {{ color: #d60000; background: #fff0f0; border-left: 6px solid #d60000; padding-left: 10px; }}
+
 
   h3 {{ margin: 14px 0 8px 0; font-size: 16px; }}
   table {{ border-collapse: collapse; width: 100%; margin-bottom: 6px; }}
@@ -539,15 +1021,107 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
 /* 予想ラベル */
 .predtag{{
   display:inline-block;
-  padding:2px 8px;
-  border-radius:999px;
+  padding:2px 10px;          /* ← 少し横に余裕 */
+  border-radius:999px;       /* ← 丸バッジ */
   font-size:12px;
   font-weight:800;
-  margin-left:8px;
+  margin-left:14px;          /* ← 8→14 にして離す */
   border:1px solid transparent;
+  line-height:1.2;
+  vertical-align:middle;
 }}
-.predtag.win {{ background:#fff6cc; color:#6b5500; border-color:#e9d98b; }}
-.predtag.third {{ background:#e9f7ff; color:#004a63; border-color:#a9dff1; }}
+
+.predtag.win{{
+  background:#fff2a8;        /* 少し濃いめ */
+  color:#4a3a00;
+  border-color:#d9be3a;
+  box-shadow:0 1px 0 rgba(0,0,0,0.06);
+}}
+.predtag.third{{
+  background:#dff4ff;
+  color:#003b52;
+  border-color:#67c4e6;
+  box-shadow:0 1px 0 rgba(0,0,0,0.06);
+}}
+
+
+/* 的中詳細（折りたたみ） */
+.hitdetail {{
+  display:none;
+  margin-top:8px;
+  padding:10px 12px;
+  background:#fff7f7;
+  border:1px solid #f2caca;
+  border-radius:10px;
+  font-size:13px;
+}}
+.hitdetail ul {{
+  margin:6px 0 0 18px;
+}}
+.hitdetail li {{
+  margin:4px 0;
+}}
+.hitbadge {{
+  cursor:pointer;
+  user-select:none;
+}}
+.racecond{{
+  display:inline-block;
+  margin-left:10px;
+  padding:3px 10px;
+  border-radius:999px;
+  background:#f1f3f5;
+  border:1px solid #e5e5e5;
+  color:#333;
+  font-weight:800;
+  font-size:12px;
+  vertical-align:middle;
+}}
+.umabadge{{
+  display:inline-block;
+  min-width: 28px;
+  padding:2px 8px;
+  border-radius:999px;
+  font-weight:900;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.15);
+}}
+.w1{{ background:#ffffff; color:#111; }}
+.w2{{ background:#111111; color:#fff; }}
+.w3{{ background:#d60000; color:#fff; }}
+.w4{{ background:#0057d8; color:#fff; }}
+.w5{{ background:#ffd200; color:#111; }}
+.w6{{ background:#18a000; color:#fff; }}
+.w7{{ background:#ff8a00; color:#111; }}
+.w8{{ background:#ff4fc3; color:#111; }}  /* ピンク */
+
+.agari{{ font-weight:900; padding:1px 6px; border-radius:8px; }}
+.agari.g{{ background:#ffe08a; }}
+.agari.s{{background:#e8eef5; }}
+.agari.b{{ background:#ffd1b0; }}
+
+/* 的中したレースのタイトルを赤く */
+.race-title.hit {{
+  color: #d60000;
+}}
+
+/* 倍率バッジ（+xx.x倍）を色分け */
+.mult {{
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  margin-left: 4px;
+  vertical-align: middle;
+}}
+.mult.m0 {{ background: #f1f3f5; color:#444; }}  /* 〜+2倍程度 */
+.mult.m1 {{ background: #e7f0ff; color:#1f4dd8; }}
+.mult.m2 {{ background: #e8fff2; color:#0a7a3a; }}
+.mult.m3 {{ background: #fff1db; color:#a85a00; }}
+.mult.m4 {{ background: #ffe0e0; color:#c40000; }} /* 爆高 */
+
 
 </style>
 </head><body>
@@ -590,12 +1164,21 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
   setMode("provisional");
 })();
 </script>
+                 <script>
+function toggleHitDetail(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = (el.style.display === "none" || el.style.display === "")
+    ? "block" : "none";
+}
+</script>
 """)
 
     # 目次
     parts.append('<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>')
     for rid in race_ids_all:
-        parts.append(f'<a href="#r{rid}">{rid}</a>')
+        label = _toc_label_from_race_id(rid)
+        parts.append(f'<a href="#r{rid}">{label}</a>')
     parts.append("</div>")
 
     errors = []
@@ -611,7 +1194,9 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
                 config_filepath="config.yaml",
                 category_map_path=MODEL_DIR / "category_map.pkl",
             )
-            pred_win = _attach_names_if_exist(pred_win, feats)
+
+            pred_win = _attach_display_if_exist(pred_win, feats)
+
 
             # odds_map_by_race（戦略用）
             odds_map: dict[int, float] = {}
@@ -628,22 +1213,48 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
             if "tansyo_odds" in dfw.columns:
                 dfw["EV(単勝)"] = dfw["pred"] * dfw["tansyo_odds"]
 
-            cols_w = ["umaban", "horse_name", "jockey_name", "tansyo_odds", "popularity", "agari", "pred", "EV(単勝)"]
+            # まず rename_map を先に用意
+            rename_map = {
+                "umaban": "馬番",
+                "horse_name": "馬名",
+                "sex_age_disp": "性齢",
+                "jockey_name": "騎手",
+                "impost": "斤量",
+                "tansyo_odds": "単勝",
+                "popularity": "人気",
+                "agari": "上り",
+                "pred": "単勝Pred",
+            }
+
+            # 色付け用の隠し列（wakubanを残す）
+            dfw["__wakuban"] = dfw.get("wakuban")
+
+            cols_w = [
+                "umaban",
+                "__wakuban",   # ← これを残す
+                "horse_name",
+                "sex_age_disp",
+                "jockey_name",
+                "impost",
+                "tansyo_odds",
+                "popularity",
+                "agari",
+                "pred",
+                "EV(単勝)",
+            ]
             cols_w = [c for c in cols_w if c in dfw.columns]
-            dfw = dfw[cols_w].sort_values("pred", ascending=False).head(topk_per_race).reset_index(drop=True)
-            dfw = dfw.rename(columns={
-                "umaban": "馬番", "horse_name": "馬名", "jockey_name": "騎手",
-                "tansyo_odds": "単勝", "popularity": "人気", "agari": "上り",
-                "pred": "単勝Pred"
-            })
-            if "単勝Pred" in dfw.columns:
-                dfw["単勝Pred"] = dfw["単勝Pred"].map(lambda x: f"{float(x):.3f}" if pd.notna(x) else "")
-            if "単勝" in dfw.columns:
-                dfw["単勝"] = dfw["単勝"].map(_format_odds_html)
-            if "人気" in dfw.columns:
-                dfw["人気"] = dfw["人気"].map(_format_pop_html)
-            if "EV(単勝)" in dfw.columns:
-                dfw["EV(単勝)"] = dfw["EV(単勝)"].map(lambda x: f"{float(x):.2f}" if pd.notna(x) else "")
+
+            dfw = (
+                dfw[cols_w]
+                .sort_values("pred", ascending=False)
+                .head(topk_per_race)
+                .reset_index(drop=True)
+            )
+
+            # 表示名に変える（__wakuban はそのまま残す）
+            dfw = dfw.rename(columns=rename_map)
+
+
 
             # --- 3連系（ランキング + TopK）
             pred_rank_df, tri_df = predict_trifecta_topk(
@@ -655,9 +1266,10 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
                 topk=30,
                 temperature=1.0,
             )
-            pred_rank_df = _attach_names_if_exist(pred_rank_df, feats)
+            pred_rank_df = _attach_display_if_exist(pred_rank_df, feats)
 
             is_chaos, chaos_h = _is_chaotic_race_by_triscore(pred_rank_df, topn=8, entropy_th=1.80)
+            chaos_tag = _chaos_label(chaos_h)  # "小荒"/"中荒"/"大荒"/""
             marg = _marginals_from_tri_df(tri_df)
             win_um, third_um = _pick_win_and_third_by_marginals(marg)
 
@@ -677,19 +1289,58 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
                 conf, exp_hit = 3, ""
 
             dfr = pred_rank_df.copy()
-            cols_r = ["pred_rank", "umaban", "horse_name", "jockey_name", "tansyo_odds", "popularity", "agari", "score"]
+
+            # 色付け用の隠し列
+            dfr["__wakuban"] = dfr.get("wakuban")
+
+            cols_r = [
+                "pred_rank",
+                "umaban",
+                "__wakuban",   # ← これを残す
+                "horse_name",
+                "sex_age_disp",
+                "jockey_name",
+                "impost",
+                "tansyo_odds",
+                "popularity",
+                "agari",
+                "score",
+            ]
             cols_r = [c for c in cols_r if c in dfr.columns]
-            dfr = dfr[cols_r].sort_values("pred_rank").head(topk_per_race).reset_index(drop=True)
-            dfr = dfr.rename(columns={
-                "pred_rank": "予測順位", "umaban": "馬番", "horse_name": "馬名", "jockey_name": "騎手",
-                "tansyo_odds": "単勝", "popularity": "人気", "agari": "上り", "score": "Score"
-            })
+
+            dfr = (
+                dfr[cols_r]
+                .sort_values("pred_rank")
+                .head(topk_per_race)
+                .reset_index(drop=True)
+            )
+
+            rename_map_r = {
+                "pred_rank": "予測順位",
+                "umaban": "馬番",
+                "horse_name": "馬名",
+                "sex_age_disp": "性齢",
+                "jockey_name": "騎手",
+                "impost": "斤量",
+                "tansyo_odds": "単勝",
+                "popularity": "人気",
+                "agari": "上り",
+                "score": "Score",
+            }
+
+            dfr = dfr.rename(columns=rename_map_r)
+
+
+            # 表示フォーマット
             if "Score" in dfr.columns:
                 dfr["Score"] = dfr["Score"].map(lambda x: f"{float(x):.3f}" if pd.notna(x) else "")
             if "単勝" in dfr.columns:
                 dfr["単勝"] = dfr["単勝"].map(_format_odds_html)
             if "人気" in dfr.columns:
                 dfr["人気"] = dfr["人気"].map(_format_pop_html)
+            if "斤量" in dfr.columns:
+                dfr["斤量"] = dfr["斤量"].map(lambda x: "" if pd.isna(x) else f"{float(x):.0f}")
+
 
             # ★戦略用：予測順位の馬番リスト
             pred_order: list[int] = []
@@ -711,25 +1362,92 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
             else:
                 tri = pd.DataFrame([{"1着": "", "2着": "", "3着": "", "確率(近似)": "（候補不足）"}])
 
-            race_div_class = "race race-chaos" if is_chaos else "race"
-            badge_text = f'自信度 {conf}/5' + (f'（hit@K {exp_hit}）' if exp_hit else '')
-            badge = f'<span class="badge c{conf}">{badge_text}</span>'
+            race_div_class = "race"
+            # badge_text = f'自信度 {conf}/5' + (f'（hit@K {exp_hit}）' if exp_hit else '')
+            hit_txt = f"Hit{exp_hit}" if exp_hit else ""
+            chaos_txt = chaos_tag  # 空なら何も出さない
 
-            parts.append(f'<div class="{race_div_class}" id="r{rid}"><h2>Race {rid}{badge}</h2>')
-            parts.append(f'<div class="note">荒れ指数(Entropy, top8 score): {chaos_h:.3f}（閾値 1.80 以上で赤）</div>')
+            tail = "｜".join([x for x in [hit_txt, chaos_txt] if x])
+            badge = f'<span class="racecond">自信{_stars(conf)}{"｜"+tail if tail else ""}</span>'
+
+
+            hit_badge = ""
+            if has_results and PAYBACK_FLAT.exists() and PAYBACK_FLAT.stat().st_size > 0:
+                payouts_df = pd.read_csv(PAYBACK_FLAT, dtype={"race_id": str, "bet_type": str, "combo": str})
+                hit_badge = _hit_badge_html_for_race(
+                    target_date=str(target_date),
+                    rid=str(rid),
+                    pred_order=pred_order,
+                    odds_map=odds_map,
+                    results_map=results_map,
+                    payouts_df=payouts_df,
+                    stake_per_ticket=stake_per_ticket,
+                )
+            is_hit = (hit_badge != "")
+
+
+            cond = _race_condition_text(feats)
+            cond_html = f' <span class="racecond">{cond}</span>' if cond else ""
+            # --- 見出し用レース情報 ---
+            race_name = ""
+            if "race_name" in feats.columns:
+                v = feats.iloc[0]["race_name"]
+                if pd.notna(v):
+                    race_name = str(v)
+
+            # 開催（中山など）
+            place = ""
+            if "place" in feats.columns and pd.notna(feats.iloc[0]["place"]):
+                try:
+                    place = _INV_PLACE.get(int(feats.iloc[0]["place"]), "")
+                except Exception:
+                    place = ""
+
+            # 芝/ダ + 距離 + 馬場
+            cond = _race_condition_text(feats)   # 例: "中山 芝1600m 良"
+
+            # cond から「芝1600m 良」だけ抜く
+            cond_tail = cond
+            if place and cond.startswith(place):
+                cond_tail = cond[len(place):].strip()
+
+            # R番号（race_id の末尾2桁）
+            try:
+                rnum = int(str(rid)[-2:])
+                rnum = f"{rnum}R"
+            except Exception:
+                rnum = ""
+
+            title_main = " ".join([x for x in [place, rnum, race_name] if x])
+            title_sub  = cond_tail
+            title_cls = "race-title hit" if is_hit else "race-title"
+            parts.append(
+                f'<div class="{race_div_class}" id="r{rid}">'
+                f'<h2><span class="{title_cls}">{title_main}</span> <span class="racecond">{title_sub}</span>{badge}{hit_badge}</h2>'
+            )
+
+            parts.append(f'<div class="note">荒れ指数(Entropy, top8 score): {chaos_h:.3f}</div>')
+
 
             parts.append('<div class="grid">')
 
             parts.append('<div>')
             parts.append('<h3>単勝モデル（分類）</h3>')
-            parts.append(_render_table_with_results(dfw, rid, results_map) if has_results else dfw.to_html(index=False, escape=False))
+            parts.append(
+                _render_table_with_results(dfw, rid, results_map, agari_map)
+                if has_results
+                else dfw.to_html(index=False, escape=False)
+            )
+
+
             parts.append('<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>')
             parts.append('</div>')
 
             parts.append('<div>')
             parts.append('<h3>3連系モデル（ランキング）</h3>')
-            parts.append(_render_table_with_results(dfr, rid, results_map, extra_row_class_map=row_class_map)
-                         if has_results else _render_table_with_results(dfr, rid, {}, extra_row_class_map=row_class_map))
+            parts.append(_render_table_with_results(dfr, rid, results_map, agari_map, extra_row_class_map=row_class_map)
+             if has_results else _render_table_with_results(dfr, rid, {}, {}, extra_row_class_map=row_class_map))
+
             parts.append('</div>')
 
             parts.append('</div>')  # grid
@@ -775,8 +1493,17 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
                 odds_map_by_race=odds_map_by_race,
                 stake_per_ticket=stake_per_ticket,
             )
-            pr_total_disp = format_summary_df_for_html(pr_total)
-            pr_venue_disp = format_summary_df_for_html(pr_venue)
+            pr_total_disp = _format_summary_table(
+                format_summary_df_for_html(pr_total),
+                mode="total"
+            )
+
+            pr_venue_disp = _format_summary_table(
+                format_summary_df_for_html(pr_venue),
+                mode="venue"
+            )
+
+
             provisional_html = (
                 _summary_block(f"暫定（確定済み {len(race_ids_done)}/{len(race_ids_all)} レース）当日サマリ（戦略別）", pr_total_disp)
                 + _summary_block("暫定：開催場所別サマリ（戦略別）", pr_venue_disp)
@@ -791,8 +1518,16 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
                 odds_map_by_race=odds_map_by_race,
                 stake_per_ticket=stake_per_ticket,
             )
-            fn_total_disp = format_summary_df_for_html(fn_total)
-            fn_venue_disp = format_summary_df_for_html(fn_venue)
+            fn_total_disp = _format_summary_table(
+                format_summary_df_for_html(fn_total),
+                mode="total"
+            )
+
+            fn_venue_disp = _format_summary_table(
+                format_summary_df_for_html(fn_venue),
+                mode="venue"
+            )
+
             final_html = (
                 _summary_block(f"最終（当日全 {len(race_ids_all)} レース）当日サマリ（戦略別）", fn_total_disp)
                 + _summary_block("最終：開催場所別サマリ（戦略別）", fn_venue_disp)
@@ -800,7 +1535,7 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
 
         # 累計（常に表示）
         cum = load_cumulative_summary()
-        cum_disp = format_summary_df_for_html(cum) if cum is not None else None
+        cum_disp = _format_summary_table(format_summary_df_for_html(cum), mode="cum") if cum is not None else None
         if cum_disp is not None and len(cum_disp):
             cumulative_html = _summary_block("累計サマリ（戦略別）", cum_disp)
 
