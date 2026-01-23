@@ -1,3 +1,5 @@
+import zlib
+import base64
 from pathlib import Path
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -66,14 +68,11 @@ race_course_mapping = {
     "東京": 0, "阪神": 1, "中山": 2, "京都": 3, "中京": 4, "札幌": 5, "函館": 6, "新潟": 7,
     "小倉": 8, "福島": 9, "函館": 10, "盛岡": 11, "水沢": 12, "金沢": 13, "高知": 14, "大井": 15, "川崎": 16, "浦和": 17, "船橋": 18, "名古屋": 19, "笠松": 20, "園田": 21, "姫路": 22, "門別": 23, "帯広": 24
 }
+course_abc_mapping = {"A": 0, "B": 1, "C": 2}
+inout_mapping = {"内": 0, "外": 1}
 
-import re
-import json
-import base64
-import zlib
-import requests
-import pandas as pd
-from bs4 import BeautifulSoup
+
+
 
 def _loads_json_or_jsonp(text: str):
     text = (text or "").strip()
@@ -83,6 +82,7 @@ def _loads_json_or_jsonp(text: str):
     if m:
         text = m.group(1).strip()
     return json.loads(text)
+
 
 def _decompress_netkeiba_data(data_str: str):
     raw = base64.b64decode(data_str)
@@ -97,6 +97,7 @@ def _decompress_netkeiba_data(data_str: str):
     except Exception:
         return s  # HTML/文字列の可能性もあるのでそのまま返す
 
+
 def _print_keys(prefix, obj, max_items=30):
     if isinstance(obj, dict):
         print(prefix, "dict keys:", list(obj.keys())[:max_items])
@@ -104,6 +105,7 @@ def _print_keys(prefix, obj, max_items=30):
         print(prefix, "list len:", len(obj), "first:", str(obj[0])[:120] if obj else None)
     else:
         print(prefix, "type:", type(obj), "head:", str(obj)[:200])
+
 
 def fetch_odds_ninki_map_via_api(race_id: str, session: requests.Session | None = None, timeout: int = 10):
     sess = session or requests.Session()
@@ -194,7 +196,6 @@ def parse_tansho_and_ninki_from_payload(payload: dict) -> tuple[dict[int, float]
     return umaban_to_odds, umaban_to_ninki
 
 
-
 def scrape_html_target_race(race_id: str):
     """
     netkeiba.comのraceページのhtmlをスクレイピングして、htmlを取得する関数
@@ -206,51 +207,106 @@ def scrape_html_target_race(race_id: str):
     time.sleep(1)
     return html
 
+def parse_course_meta_from_info1(info1_text: str):
+    """
+    info1_text 例:
+      "芝2000m (右 外 A)"
+      "ダ1200m (左内 B)"
+      "障3000m"  # 何も無いこともある
+    """
+    t = re.sub(r"\s+", "", str(info1_text))
+
+    # 右左直
+    m = re.search(r"(右|左|直)", t)
+    around_dir = around_mapping.get(m.group(1), None) if m else None
+
+    # 内外
+    m = re.search(r"(内|外)", t)
+    around_inout = inout_mapping.get(m.group(1), None) if m else None
+
+    # A/B/C（括弧内に出ることが多い）
+    m = re.search(r"(A|B|C)", t)
+    course_abc = course_abc_mapping.get(m.group(1), None) if m else None
+
+    return around_dir, around_inout, course_abc
+
+
+# def create_race_info(html) -> pd.DataFrame:
+#     soup = BeautifulSoup(html, "lxml")
+
+#     # 予測(出馬表)と学習(レース詳細)でDOMが違うので、候補を複数探 demonstrated
+#     intro = soup.find("div", class_="data_intro")
+#     if intro is None:
+#         # shutubaページ側でよくある候補（サイト改修で変わりうる）
+#         intro = soup.find("div", class_="RaceData01")
+#     if intro is None:
+#         intro = soup.find("div", class_="RaceData02")
+
+#     if intro is None:
+#         # デバッグ用：titleだけでも見て状況を掴む
+#         title_tag = soup.find("title")
+#         title_txt = title_tag.get_text(strip=True) if title_tag else "(no title)"
+#         raise ValueError(f"race info block not found. page title={title_txt}")
+
+#     info_dict = {}
+#     h1 = intro.find("h1") or soup.find("h1")
+#     info_dict["title"] = h1.get_text(strip=True) if h1 else ""
+
+#     p_list = intro.find_all("p")
+#     # pが無い場合もあるのでガード
+#     p0 = p_list[0].get_text(" ", strip=True) if len(p_list) > 0 else ""
+#     p1 = p_list[1].get_text(" ", strip=True) if len(p_list) > 1 else ""
+
+#     info_dict["info1"] = [p0]
+#     info_dict["info2"] = [p1]
+
+#     df = pd.DataFrame(info_dict)
+#     # ここでは race_id がHTMLにないので呼び出し元で付けるほうが安全
+#     return df
 
 def create_race_info(html) -> pd.DataFrame:
     soup = BeautifulSoup(html, "lxml")
 
-    # 予測(出馬表)と学習(レース詳細)でDOMが違うので、候補を複数探 demonstrated
+    # title はどっちのページでも拾える
+    h1 = soup.find("h1")
+    title = h1.get_text(strip=True) if h1 else ""
+
+    # --- ① 出馬表ページ（race.netkeiba / shutuba）: RaceData01/02 の span 群 ---
+    rd1 = soup.select_one("div.RaceData01")
+    rd2 = soup.select_one("div.RaceData02")
+    if rd1 or rd2:
+        info1 = rd1.get_text(" ", strip=True) if rd1 else ""
+        info2 = rd2.get_text(" ", strip=True) if rd2 else ""
+        return pd.DataFrame({"title": [title], "info1": [info1], "info2": [info2]})
+
+    # --- ② 学習側（db.netkeiba）: data_intro の p ---
     intro = soup.find("div", class_="data_intro")
     if intro is None:
-        # shutubaページ側でよくある候補（サイト改修で変わりうる）
-        intro = soup.find("div", class_="RaceData01")
-    if intro is None:
-        intro = soup.find("div", class_="RaceData02")
-
-    if intro is None:
-        # デバッグ用：titleだけでも見て状況を掴む
         title_tag = soup.find("title")
         title_txt = title_tag.get_text(strip=True) if title_tag else "(no title)"
         raise ValueError(f"race info block not found. page title={title_txt}")
 
-    info_dict = {}
-    h1 = intro.find("h1") or soup.find("h1")
-    info_dict["title"] = h1.get_text(strip=True) if h1 else ""
-
     p_list = intro.find_all("p")
-    # pが無い場合もあるのでガード
-    p0 = p_list[0].get_text(" ", strip=True) if len(p_list) > 0 else ""
-    p1 = p_list[1].get_text(" ", strip=True) if len(p_list) > 1 else ""
+    info1 = p_list[0].get_text(" ", strip=True) if len(p_list) > 0 else ""
+    info2 = p_list[1].get_text(" ", strip=True) if len(p_list) > 1 else ""
 
-    info_dict["info1"] = [p0]
-    info_dict["info2"] = [p1]
+    return pd.DataFrame({"title": [title], "info1": [info1], "info2": [info2]})
 
-    df = pd.DataFrame(info_dict)
-    # ここでは race_id がHTMLにないので呼び出し元で付けるほうが安全
-    return df
 
-def scrape_html_db_race(race_id: str):
+
+def scrape_html_db_race(race_id: str, past_predict=False):
     """
     db.netkeiba.com の race 詳細ページHTMLを取得（学習時と同じDOMが期待できる）
     """
-    url = f"https://db.netkeiba.com/race/{race_id}"
+    if past_predict:
+        url = f"https://db.netkeiba.com/race/{race_id}"
+    else:
+        url = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}rf=race_list"
     headers = {"User-Agent": "Mozilla/5.0"}
     request = Request(url, headers=headers)
     html = urlopen(request).read()
     time.sleep(1)
     return html
-
 
 
 class FeatureCreator:
@@ -319,6 +375,7 @@ class PredictionFeatureCreator:
         population_filepath: Path = POPULATION_INPUT_DIR/"population.csv",
         horse_results_prediction_feilepath: Path = INPUT_DIR/"horse_results_prediction.csv",
         output_dir: Path = OUTPUT_DIR,
+        past_predic=False
     ):
         self.population = pd.read_csv(population_filepath, sep="\t")
         self.horse_results = pd.read_csv(horse_results_prediction_feilepath, sep="\t")
@@ -329,6 +386,7 @@ class PredictionFeatureCreator:
         self.population["race_id"] = self.population["race_id"].astype(str)
         self.population["horse_id"] = self.population["horse_id"].astype(str)
         self.horse_results["horse_id"] = self.horse_results["horse_id"].astype(str)
+        self.past_predict = past_predic
 
     def agg_horse_n_races(self, n_races: list[int] = [3, 5, 10, 1000]):
         """
@@ -453,18 +511,18 @@ class PredictionFeatureCreator:
             popularity_list = _pad_or_trim(popularity_list, n, fill=None)
 
             df["tansyo_odds"] = pd.to_numeric(tansyo_odds_list, errors="coerce")
-            df["popularity"]  = pd.to_numeric(popularity_list, errors="coerce")
+            df["popularity"] = pd.to_numeric(popularity_list, errors="coerce")
 
         else:
             # ★必ず先に列を用意（KeyError防止）
             df["tansyo_odds"] = np.nan
-            df["popularity"]  = np.nan
+            df["popularity"] = np.nan
 
             # ここでAPIから埋める
             umaban_to_odds, umaban_to_ninki = fetch_odds_ninki_map_via_api(str(self.race_id))
 
             waku = pd.to_numeric(df["枠"], errors="coerce")
-            uma  = pd.to_numeric(df["馬 番"], errors="coerce")
+            uma = pd.to_numeric(df["馬 番"], errors="coerce")
 
             fixed_odds = []
             fixed_ninki = []
@@ -478,7 +536,7 @@ class PredictionFeatureCreator:
                 fixed_ninki.append(umaban_to_ninki.get(u_i))
 
             df["tansyo_odds"] = pd.to_numeric(fixed_odds, errors="coerce")
-            df["popularity"]  = pd.to_numeric(fixed_ninki, errors="coerce")
+            df["popularity"] = pd.to_numeric(fixed_ninki, errors="coerce")
 
             print("[INFO] tansyo_odds via API:", int(df["tansyo_odds"].notna().sum()), "/", len(df))
             print("[INFO] popularity  via API:", int(df["popularity"].notna().sum()), "/", len(df))
@@ -486,7 +544,6 @@ class PredictionFeatureCreator:
             # 人気が取れない時だけ保険
             if df["popularity"].isna().all() and df["tansyo_odds"].notna().any():
                 df["popularity"] = df["tansyo_odds"].rank(method="dense", ascending=True)
-
 
         # ------------------------------------------------------------
         # 3) 学習時と同じ前処理
@@ -508,7 +565,7 @@ class PredictionFeatureCreator:
 
         df["impost"] = pd.to_numeric(df["斤量"], errors="coerce") if "斤量" in df.columns else np.nan
         df["wakuban"] = pd.to_numeric(df["枠"], errors="coerce") if "枠" in df.columns else np.nan
-        df["umaban"]  = pd.to_numeric(df["馬 番"], errors="coerce") if "馬 番" in df.columns else np.nan
+        df["umaban"] = pd.to_numeric(df["馬 番"], errors="coerce") if "馬 番" in df.columns else np.nan
 
         df["agari"] = np.nan
 
@@ -516,9 +573,9 @@ class PredictionFeatureCreator:
             df = df.sort_values(["umaban"], na_position="last")
 
         use_cols = [
-            "race_id","horse_id","jockey_id","trainer_id","rank",
-            "wakuban","umaban","sex","age","weight","weight_diff",
-            "tansyo_odds","popularity","impost","agari",
+            "race_id", "horse_id", "jockey_id", "trainer_id", "rank",
+            "wakuban", "umaban", "sex", "age", "weight", "weight_diff",
+            "tansyo_odds", "popularity", "impost", "agari",
         ]
         for c in use_cols:
             if c not in df.columns:
@@ -532,9 +589,6 @@ class PredictionFeatureCreator:
 
         self.results = df
         return df
-
-
-
 
     # def fetch_race_info(self) -> pd.DataFrame:
     #     """
@@ -637,68 +691,65 @@ class PredictionFeatureCreator:
     #     self.race_info = race_info
 
     def fetch_race_info(self) -> pd.DataFrame:
-        """
-        レース情報を取得し、学習時と同じ形式に前処理する（予測用）
-        - 出馬表ページではなく db.netkeiba.com/race/{race_id} を使う（DOMが安定）
-        """
-        # 1) db側raceページを取得
-        html_db = scrape_html_db_race(self.race_id)
+        self.race_id = str(self.race_id)
 
-        # 2) data_intro から info1/info2 を作る（学習側と同じ取り方）
-        df_info = create_race_info(html_db)  # <- あなたの create_race_info は info1/info2 を1行で返す想定
-        # df_info は 1行想定なので 0行ならエラーにする
-        if len(df_info) == 0:
-            raise ValueError(f"race_info parse failed for race_id={self.race_id}")
+        # date は population から（HTMLから取らない）
+        try:
+            date = str(self.population.query("race_id == @self.race_id").iloc[0]["date"])
+        except Exception:
+            date = None
+
+        # db→ダメなら shutuba(self.html) にフォールバック
+        try:
+            html_db = scrape_html_db_race(self.race_id)
+            df_info = create_race_info(html_db)
+        except Exception:
+            df_info = create_race_info(self.html)
 
         info1_text = str(df_info.loc[0, "info1"])
         info2_text = str(df_info.loc[0, "info2"])
 
-        # 3) info1 から抽出
-        race_type = re.findall(r"[芝ダ障]+", info1_text)
-        race_type = race_type_mapping.get(race_type[0], None) if race_type else None
+        # 空白・改行を潰す（表記揺れ対策）
+        t1 = re.sub(r"\s+", "", info1_text)
+        t2 = re.sub(r"\s+", "", info2_text)
 
-        around = re.findall(r"[右左直]+", info1_text)
-        around = around_mapping.get(around[0], None) if around else None
+        # race_type
+        m = re.search(r"(芝|ダ|障)", t1)
+        race_type = race_type_mapping.get(m.group(1), None) if m else None
 
-        regex_weather = "|".join(weather_mapping.keys())
-        weather = re.findall(rf"({regex_weather})", info1_text)
-        weather = weather_mapping.get(weather[0], None) if weather else None
+        # around
+        around_dir, around_inout, course_abc = parse_course_meta_from_info1(info1_text)
 
-        course_len_m = re.findall(r"\d+", info1_text)
-        course_len = int(course_len_m[0]) if course_len_m else None
 
-        ground_state = re.findall(r"[良稍重不]+", info1_text)
-        ground_state = ground_state_mapping.get(ground_state[0], None) if ground_state else None
+        # weather（前日は入ってないことがある）
+        m = re.search(r"(晴|曇|小雨|雨|小雪|雪)", t1)
+        weather = weather_mapping.get(m.group(1), None) if m else None
 
-        # 4) info2 から抽出
-        regex_race_class = "|".join(race_class_mapping.keys())
-        race_class = re.findall(rf"({regex_race_class})", info2_text)
-        race_class = race_class_mapping.get(race_class[0], None) if race_class else None
+        # course_len
+        m = re.search(r"(\d+)\s*m", t1) or re.search(r"(\d+)", t1)
+        course_len = int(m.group(1)) if m else None
 
-        regex_race_course = "|".join(race_course_mapping.keys())
-        race_course = re.findall(rf"({regex_race_course})", info2_text)
-        place = race_course_mapping.get(race_course[0], None) if race_course else None
+        # ground_state（長い語を優先）
+        m = re.search(r"(不良|稍重|良|重|稍|不)", t1)
+        ground_state = ground_state_mapping.get(m.group(1), None) if m else None
 
-        # 日付
-        pattern = r"(\d{4})年(\d{1,2})月(\d{1,2})日"
-        matches = re.findall(pattern, info2_text)
-        if matches:
-            year, month, day = matches[0]
-            date = f"{year}-{int(month):02d}-{int(day):02d}"
-        else:
-            # 最悪 population から引く（同race_idがpopulationにある想定）
-            # それも無理なら None
-            try:
-                date = str(self.population.query("race_id == @self.race_id").iloc[0]["date"])
-            except Exception:
-                date = None
+        # race_class
+        regex_race_class = "|".join(map(re.escape, race_class_mapping.keys()))
+        m = re.search(rf"({regex_race_class})", t2)
+        race_class = race_class_mapping.get(m.group(1), None) if m else None
 
-        # 5) 1行のDataFrameにする
+        # place
+        regex_race_course = "|".join(map(re.escape, race_course_mapping.keys()))
+        m = re.search(rf"({regex_race_course})", t2)
+        place = race_course_mapping.get(m.group(1), None) if m else None
+
         race_info = pd.DataFrame([{
             "race_id": self.race_id,
             "date": date,
             "race_type": race_type,
-            "around": around,
+            "around_dir": around_dir,
+            "around_inout": around_inout,
+            "course_abc" : course_abc,
             "course_len": course_len,
             "weather": weather,
             "ground_state": ground_state,
@@ -706,8 +757,19 @@ class PredictionFeatureCreator:
             "place": place,
         }])
 
+        # ★ここが重要：前日でも必ず数値にする（if不要）
+        race_info["race_type"]     = pd.to_numeric(race_info["race_type"], errors="coerce").fillna(-1).astype("int32")
+        race_info["around_dir"]    = pd.to_numeric(race_info["around_dir"], errors="coerce").fillna(-1).astype("int32")
+        race_info["around_inout"]  = pd.to_numeric(race_info["around_inout"], errors="coerce").fillna(-1).astype("int32")
+        race_info["course_abc"]    = pd.to_numeric(race_info["course_abc"], errors="coerce").fillna(-1).astype("int32")
+        race_info["race_class"]    = pd.to_numeric(race_info["race_class"], errors="coerce").fillna(-1).astype("int32")
+        race_info["place"]         = pd.to_numeric(race_info["place"], errors="coerce").fillna(-1).astype("int32")
+
+        race_info["weather"]       = pd.to_numeric(race_info["weather"], errors="coerce").fillna(6).astype("int32")
+        race_info["ground_state"]  = pd.to_numeric(race_info["ground_state"], errors="coerce").fillna(9).astype("int32")
+
+
         self.race_info = race_info
-        race_info["race_id"] = race_info["race_id"].astype(str)
         return race_info
 
 
@@ -720,10 +782,10 @@ class PredictionFeatureCreator:
         if not skip_agg_horse:
             self.agg_horse_n_races()
 
-        self.predict=predict
+        self.predict = predict
 
         # 各種テーブルの取得
-        self.race_id=race_id
+        self.race_id = race_id
         self.fetch_syutuba_table_html(race_id)  # race_idを使用
         self.fetch_results(self.predict)
         self.fetch_race_info()
@@ -754,9 +816,8 @@ class PredictionFeatureCreator:
 
         features.to_csv(self.output_dir / f"prediction_features_{race_id}.csv", sep="\t", index=None)
         return features
-    
+
     def debug(self):
         print("odds- in html?", "odds-" in self.prior_df)
         print("ninki- in html?", "ninki-" in self.prior_df)
         print("Popular in html?", "Popular" in self.prior_df)
-

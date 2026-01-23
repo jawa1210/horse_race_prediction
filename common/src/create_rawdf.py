@@ -7,6 +7,21 @@ import requests
 import time
 import random
 
+around_mapping = {"右":0, "左":1, "直":2}
+inout_mapping = {"内":0, "外":1}
+course_abc_mapping = {"A":0, "B":1, "C":2}
+
+def parse_course_meta_from_info1(info1_text: str):
+    t = re.sub(r"\s+", "", str(info1_text))
+    m = re.search(r"(右|左|直)", t)
+    around_dir = around_mapping.get(m.group(1), None) if m else None
+    m = re.search(r"(内|外)", t)
+    around_inout = inout_mapping.get(m.group(1), None) if m else None
+    m = re.search(r"(A|B|C)", t)
+    course_abc = course_abc_mapping.get(m.group(1), None) if m else None
+    return around_dir, around_inout, course_abc
+
+
 RAWDF_DIR = Path("..", "data", "rawdf")
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
@@ -78,6 +93,15 @@ def create_results(html_path_list: list[Path], save_dir: Path = RAWDF_DIR, save_
     save_dir.mkdir(parents=True, exist_ok=True)
     concat_df.to_csv(save_dir/save_filename, sep="\t")
     return concat_df
+
+def _extract_race_ids_from_html_fragment(html_fragment: str) -> list[str]:
+    soup = BeautifulSoup(html_fragment, "lxml")
+    race_ids = []
+    for a in soup.find_all("a", href=True):
+        m = re.search(r"/race/(\d{12})", a["href"])
+        if m:
+            race_ids.append(m.group(1))
+    return race_ids
 
 
 def create_horse_results(
@@ -162,6 +186,15 @@ def create_horse_results(
             df = tables[0].copy()
             df["日付"] = pd.to_datetime(df["日付"], errors="coerce")
 
+            # ★追加：race_id を html_fragment 内のリンクから抽出して付与
+            race_ids = _extract_race_ids_from_html_fragment(html_fragment)
+
+            # 表の行数に合わせて調整（多すぎ/少なすぎ対策）
+            if len(race_ids) >= len(df):
+                df["race_id"] = race_ids[:len(df)]
+            else:
+                df["race_id"] = race_ids + [None] * (len(df) - len(race_ids))
+
             last_date = last_date_map.get(horse_id)
             if last_date is not None:
                 df = df[df["日付"] > last_date]
@@ -211,39 +244,67 @@ def create_horse_results(
 
 
 def create_race_info(
-        html_path_list: list[Path],
-        save_dir: Path = RAWDF_DIR,
-        save_filename: str = "race_info.csv"
+    html_path_list: list[Path],
+    save_dir: Path = RAWDF_DIR,
+    save_filename: str = "race_info.csv",
 ) -> pd.DataFrame:
-    """
-    raceの詳細ページのhtmlを読み込んで、レース情報テーブルに加工する関数
-    """
-    dfs = {}
-    for html_path in tqdm(html_path_list):
-        with open(html_path, "rb") as f:
-            try:
-                html = f.read()
-                soup = BeautifulSoup(html, "lxml").find("div", class_="data_intro")
-                info_dict = {}
-                info_dict = {}
-                info_dict["title"] = soup.find("h1").text
-                p_list = soup.find_all("p")
-                info_dict["info1"] = re.findall(
-                    r"[\w:]+", p_list[0].text.replace(" ", "")
-                )
-                info_dict["info2"] = re.findall(r"\w+", p_list[1].text)
-                df=pd.DataFrame().from_dict(info_dict, orient="index").T
+        """
+        db.netkeiba.com の race詳細HTMLから race_info(raw) を作る
+        - info1/info2 は生テキストで保存
+        - around_dir / around_inout / course_abc を追加
+        """
+        dfs: dict[str, pd.DataFrame] = {}
 
-                # ファイル名からrace_idを取得
-                race_id = html_path.stem
-                df.index = [race_id]*len(df)
+        for html_path in tqdm(html_path_list):
+            race_id = str(html_path.stem)
+            try:
+                with open(html_path, "rb") as f:
+                    html = f.read()
+
+                intro = BeautifulSoup(html, "lxml").find("div", class_="data_intro")
+                if intro is None:
+                    print(f"data_intro not found at {race_id}")
+                    continue
+
+                h1 = intro.find("h1")
+                p_list = intro.find_all("p")
+                if len(p_list) < 2:
+                    print(f"p_list too short at {race_id}")
+                    continue
+
+                info1_text = p_list[0].get_text(" ", strip=True)
+                info2_text = p_list[1].get_text(" ", strip=True)
+
+                around_dir, around_inout, course_abc = parse_course_meta_from_info1(info1_text)
+
+                df = pd.DataFrame([{
+                    "race_id": race_id,
+                    "title": h1.get_text(strip=True) if h1 else "",
+                    "info1": info1_text,
+                    "info2": info2_text,
+                    "around_dir": around_dir,
+                    "around_inout": around_inout,
+                    "course_abc": course_abc,
+                }])
+
                 dfs[race_id] = df
-            except IndexError as e:
-                print(f"table not found at {race_id}")
+
+            except Exception as e:
+                print(f"failed at {race_id}: {e}")
                 continue
-    concat_df = pd.concat(dfs.values())
-    concat_df.index.name = "race_id"
-    concat_df.columns = concat_df.columns.str.replace(" ", "")
-    save_dir.mkdir(parents=True, exist_ok=True)
-    concat_df.to_csv(save_dir/save_filename, sep="\t")
-    return concat_df.reset_index()
+
+        if not dfs:
+            cols = ["race_id", "title", "info1", "info2", "around_dir", "around_inout", "course_abc"]
+            out = pd.DataFrame(columns=cols)
+            save_dir.mkdir(parents=True, exist_ok=True)
+            out.to_csv(save_dir / save_filename, sep="\t", index=False)
+            return out
+
+        concat_df = pd.concat(dfs.values(), ignore_index=True)
+
+        for c in ["around_dir", "around_inout", "course_abc"]:
+            concat_df[c] = pd.to_numeric(concat_df[c], errors="coerce").fillna(-1).astype("int32")
+
+        save_dir.mkdir(parents=True, exist_ok=True)
+        concat_df.to_csv(save_dir / save_filename, sep="\t", index=False)
+        return concat_df

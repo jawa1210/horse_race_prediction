@@ -90,7 +90,7 @@ class Trainer:
             test_df[c] = test_df[c].astype("string").astype("category").cat.set_categories(category_map[c])
 
         # 保存（modelとセットで）
-        with open(self.output_dir / "category_map.pkl", "wb") as f:
+        with open(self.output_dir / "category_map_win.pkl", "wb") as f:
             pickle.dump(category_map, f)
 
         # -------------------------

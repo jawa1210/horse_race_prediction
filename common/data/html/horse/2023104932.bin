@@ -851,7 +851,7 @@ get_horse_detail_note('2023104932', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>4戦0勝 [<a href="/horse/result/2023104932/" title="全競走成績">0-0-0-4</a>]</td>
+<td>5戦0勝 [<a href="/horse/result/2023104932/" title="全競走成績">0-0-0-5</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
@@ -859,7 +859,7 @@ get_horse_detail_note('2023104932', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse/2024101963/" title="タカンナの2024">タカンナの2024</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2024101963/" title="タカンナの2024">タカンナの2024</a>、<a href="/horse/2025105955/" title="タカンナの2025">タカンナの2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

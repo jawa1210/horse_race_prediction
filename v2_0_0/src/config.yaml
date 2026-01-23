@@ -8,11 +8,12 @@ features:
 - age
 - weight
 - weight_diff
-- tansyo_odds
 - impost
 - agari
 - race_type
-- around
+- around_dir
+- around_inout
+- course_abc
 - course_len
 - weather
 - ground_state

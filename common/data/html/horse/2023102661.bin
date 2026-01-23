@@ -835,7 +835,7 @@ get_horse_detail_note('2023102661', 'Horse_Note_Box');
 <th>³ÍÆÀ¾Þ¶â (Ãæ±û)</th>
 <td>
 
-419Ëü±ß
+659Ëü±ß
 </td>
 </tr>
 <tr>
@@ -847,7 +847,7 @@ get_horse_detail_note('2023102661', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ÄÌ»»À®ÀÓ</th>
-<td>5Àï0¾¡ [<a href="/horse/result/2023102661/" title="Á´¶¥ÁöÀ®ÀÓ">0-0-1-4</a>]</td>
+<td>6Àï0¾¡ [<a href="/horse/result/2023102661/" title="Á´¶¥ÁöÀ®ÀÓ">0-1-1-4</a>]</td>
 </tr>
 <tr>
 <th>¼ç¤Ê¾¡°È</th>
@@ -855,7 +855,7 @@ get_horse_detail_note('2023102661', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>¶á¿ÆÇÏ</th>
-<td><a href="/horse//" title=""></a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2025102851/" title="¥¿¥Ê¥Î¥Õ¥í¡¼¥é¤Î2025">¥¿¥Ê¥Î¥Õ¥í¡¼¥é¤Î2025</a><a href="/horse//" title=""></a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

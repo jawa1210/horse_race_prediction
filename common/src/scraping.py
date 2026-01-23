@@ -16,6 +16,7 @@ import random
 HTML_DIR = Path("..", "data", "html")
 HTML_RACE_DIR = HTML_DIR / "race"
 HTML_HORSE_DIR = HTML_DIR / "horse"
+HTML_RACE_PREDICT_DIR=HTML_DIR/"predict_race"
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
@@ -133,6 +134,28 @@ def scrape_html_race(race_id_list: list[str], save_dir: Path = HTML_RACE_DIR) ->
             continue
 
         url = f"https://db.netkeiba.com/race/{race_id}"
+        html = _fetch(url, referer="https://db.netkeiba.com/")
+        with open(filepath, "wb") as f:
+            f.write(html)
+        html_path_list.append(filepath)
+
+        _sleep(1.0, 2.5)
+
+    return html_path_list
+
+def scrape_html_predict_race(race_id_list: list[str], save_dir: Path = HTML_RACE_DIR) -> list[Path]:
+    html_path_list = []
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    for race_id in tqdm(race_id_list):
+        filepath = save_dir / f"{race_id}.bin"
+
+        if filepath.is_file():
+            print(f"skipped:{race_id}")
+            html_path_list.append(filepath)
+            continue
+
+        url = f"https://race.netkeiba.com/race/shutuba.html?race_id={race_id}&rf=race_list"
         html = _fetch(url, referer="https://db.netkeiba.com/")
         with open(filepath, "wb") as f:
             f.write(html)
