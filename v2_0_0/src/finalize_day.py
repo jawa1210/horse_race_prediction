@@ -1,13 +1,19 @@
-# finalize_day.py
+# v2_0_0/src/finalize_day.py
 from __future__ import annotations
 
 from pathlib import Path
 import re
+import datetime as dt
 
+from feature_engineering import RAW_DATA_DIR, DATA_DIR
+from report_html import build_html_report
+
+# 後日(bin)更新
 from update_results_flat import update_results_flat_for_date, resolve_population_csv_for_date
 from update_payouts_flat import update_payouts_flat_for_date
-from report_html import build_html_report
-from feature_engineering import RAW_DATA_DIR, DATA_DIR
+
+# 当日(realtime)更新
+from live_update import live_update_two_stage
 
 INPUT_DIR = DATA_DIR / "01_preprocessed"
 
@@ -39,7 +45,33 @@ def resolve_horse_csv_for_date(
     return default.resolve()
 
 
-def finalize_day(date: str, skip_agg_horse: bool = False, topk_per_race: int = 18, verbose: bool = True):
+def _decide_mode(mode: str, date: str) -> str:
+    """
+    mode:
+      - "realtime": result.html 直読み
+      - "bin": bin(html/race/*.bin) から更新
+      - "auto": 基本 realtime。もし date が今日より前なら bin。
+    """
+    mode = str(mode).lower().strip()
+    if mode in ["realtime", "bin"]:
+        return mode
+
+    if mode != "auto":
+        raise ValueError(f"invalid mode: {mode} (use realtime/bin/auto)")
+
+    # auto判定：date が今日より前なら「後日更新」とみなして bin
+    d = dt.datetime.strptime(date, "%Y-%m-%d").date()
+    today = dt.date.today()
+    return "bin" if d < today else "realtime"
+
+
+def finalize_day(
+    date: str,
+    mode: str = "auto",
+    skip_agg_horse: bool = False,
+    topk_per_race: int = 18,
+    verbose: bool = True,
+):
     pop_path = resolve_population_csv_for_date(
         target_date=date,
         population_dir=RAW_DATA_DIR / "prediction_population",
@@ -52,25 +84,36 @@ def finalize_day(date: str, skip_agg_horse: bool = False, topk_per_race: int = 1
         prefer_daily=True,
     )
 
-    update_results_flat_for_date(date, population_csv=pop_path)
-    update_payouts_flat_for_date(date, population_csv=pop_path)
+    mode2 = _decide_mode(mode, date)
+    if verbose:
+        print(f"[finalize_day] mode={mode2}")
 
+    # =========================
+    # 更新フェーズ（切り替え）
+    # =========================
+    if mode2 == "realtime":
+        # 当日：CSVに無い分だけ result.html に取りに行く
+        live_update_two_stage(
+            target_date=date,
+            population_csv=pop_path,
+            verbose=verbose,
+        )
+    else:
+        # 後日：binから確定データを更新（あなたの既存フロー）
+        update_results_flat_for_date(date, population_csv=pop_path, verbose=verbose)
+        update_payouts_flat_for_date(date, population_csv=pop_path, verbose=verbose)
+
+    # =========================
+    # HTML生成
+    # =========================
     out_path = build_html_report(
         date,
         read_file_name_csv=str(pop_path),
-        read_horse_name_csv=str(horse_path),  # ★これが必要
+        read_horse_name_csv=str(horse_path),
         topk_per_race=topk_per_race,
-        skip_agg_horse=skip_agg_horse
+        skip_agg_horse=skip_agg_horse,
     )
 
     if verbose:
         print(f"[finalize_day] done: {out_path}")
     return out_path
-
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 2:
-        print("Usage: python finalize_day.py YYYY-MM-DD")
-        raise SystemExit(1)
-    finalize_day(sys.argv[1])

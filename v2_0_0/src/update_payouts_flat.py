@@ -1,3 +1,4 @@
+# v2_0_0/src/update_payouts_flat.py
 from __future__ import annotations
 
 from pathlib import Path
@@ -7,12 +8,19 @@ from bs4 import BeautifulSoup
 
 from feature_engineering import RAW_DATA_DIR, DATA_DIR
 
+# ★結果(top3)補完に使う
+from update_results_flat import _parse_results_from_race_html_bytes
+
+
+# =========================================================
+# Paths
+# =========================================================
 def _mmdd_from_date(target_date: str) -> str:
-    # "2026-01-18" -> "0118"
     m = re.search(r"(\d{4})-(\d{2})-(\d{2})", str(target_date))
     if not m:
         raise ValueError(f"invalid target_date: {target_date}")
     return f"{m.group(2)}{m.group(3)}"
+
 
 def resolve_population_csv_for_date(
     target_date: str,
@@ -20,18 +28,12 @@ def resolve_population_csv_for_date(
     population_dir: Path | None = None,
     prefer_daily: bool = True,
 ) -> Path:
-    """
-    優先順位:
-      1) 引数 population_csv が指定されていればそれ
-      2) prefer_daily=True なら population_MMDD.csv があればそれ
-      3) なければ population.csv
-    """
     if population_csv is not None:
         return Path(population_csv).resolve()
 
     population_dir = (population_dir or (RAW_DATA_DIR / "prediction_population")).resolve()
-
     mmdd = _mmdd_from_date(target_date)
+
     daily = population_dir / f"population_{mmdd}.csv"
     default = population_dir / "population.csv"
 
@@ -40,9 +42,9 @@ def resolve_population_csv_for_date(
     return default.resolve()
 
 
-
 def _this_file_dir() -> Path:
     return Path(__file__).resolve().parent
+
 
 def _find_upwards(start: Path, rel: Path, max_up: int = 6) -> Path | None:
     cur = start
@@ -55,18 +57,18 @@ def _find_upwards(start: Path, rel: Path, max_up: int = 6) -> Path | None:
         cur = cur.parent
     return None
 
+
 def resolve_default_paths() -> dict[str, Path]:
     population_csv = (RAW_DATA_DIR / "prediction_population" / "population.csv").resolve()
     payouts_flat_path = (DATA_DIR / "results_cache" / "payouts_flat.csv").resolve()
 
     start = _this_file_dir()
-    html_race_dir = _find_upwards(start, Path("..") / ".." / "common" / "data" / "html" / "race")
-    if html_race_dir is None:
-        html_race_dir = _find_upwards(start, Path("..") / "common" / "data" / "html" / "race")
-    if html_race_dir is None:
-        html_race_dir = _find_upwards(start, Path("common") / "data" / "html" / "race")
-    if html_race_dir is None:
-        html_race_dir = (start / ".." / ".." / "common" / "data" / "html" / "race").resolve()
+    html_race_dir = (
+        _find_upwards(start, Path("..") / ".." / "common" / "data" / "html" / "race")
+        or _find_upwards(start, Path("..") / "common" / "data" / "html" / "race")
+        or _find_upwards(start, Path("common") / "data" / "html" / "race")
+        or (start / ".." / ".." / "common" / "data" / "html" / "race").resolve()
+    )
 
     return {
         "population_csv": population_csv,
@@ -78,10 +80,45 @@ def resolve_default_paths() -> dict[str, Path]:
 def _ensure_parent(p: Path):
     p.parent.mkdir(parents=True, exist_ok=True)
 
+
 def _read_bin_html(path: Path) -> bytes:
     b = path.read_bytes()
     b = b.replace(b"<diary_snap_cut>", b"").replace(b"</diary_snap_cut>", b"")
     return b
+
+
+# =========================================================
+# Parsing helpers
+# =========================================================
+
+# 券種名 → bet_type
+BET_MAP = {
+    "単勝": "tansho",
+    "複勝": "fukusho",
+    "枠連": "wakuren",
+    "馬連": "umaren",
+    "馬単": "umatan",
+    "ワイド": "wide",
+    "3連複": "sanrenpuku",
+    "三連複": "sanrenpuku",
+    "3連単": "sanrentan",
+    "三連単": "sanrentan",
+}
+
+# tr.class -> 日本語券種（thが使えないケースの保険）
+TRCLASS_TO_KEY = {
+    "Tansho": "単勝",
+    "Fukusho": "複勝",
+    "Wakuren": "枠連",
+    "Umaren": "馬連",
+    "Wide": "ワイド",
+    "Umatan": "馬単",
+    "Sanrenpuku": "3連複",
+    "Sanrentan": "3連単",
+    # ワイドtable側に出るやつ
+    "Tan3": "3連単",
+    "Fuku3": "3連複",
+}
 
 def _unique_keep_order(xs: list[str]) -> list[str]:
     seen = set()
@@ -92,73 +129,8 @@ def _unique_keep_order(xs: list[str]) -> list[str]:
             out.append(x)
     return out
 
-def _extract_combos_from_td_text(bet_type: str, td_text: str) -> list[str]:
-    t = re.sub(r"\s+", " ", str(td_text))
-
-    if bet_type in ["tansho", "fukusho"]:
-        # 馬番だけ（重複は後で除去）
-        nums = re.findall(r"\d+", t)
-        combos = [str(int(n)) for n in nums]
-        return _unique_keep_order(combos)
-
-    if bet_type in ["umaren", "wide"]:
-        pairs = re.findall(r"\d+\s*-\s*\d+", t)
-        combos = [_norm_combo(bet_type, p) for p in pairs]
-        combos = [c for c in combos if c]
-        return _unique_keep_order(combos)
-
-    if bet_type in ["umatan"]:
-        # → があれば優先、なければ 2頭の順序付きっぽいもの
-        seq = re.findall(r"\d+\s*[→\-]\s*\d+", t)
-        combos = [_norm_combo(bet_type, s) for s in seq]
-        combos = [c for c in combos if c]
-        return _unique_keep_order(combos)
-
-    if bet_type in ["sanrenpuku"]:
-        tri = re.findall(r"\d+\s*-\s*\d+\s*-\s*\d+", t)
-        combos = [_norm_combo(bet_type, s) for s in tri]
-        combos = [c for c in combos if c]
-        return _unique_keep_order(combos)
-
-    if bet_type in ["sanrentan"]:
-        tri = re.findall(r"\d+\s*[→\-]\s*\d+\s*[→\-]\s*\d+", t)
-        combos = [_norm_combo(bet_type, s) for s in tri]
-        combos = [c for c in combos if c]
-        return _unique_keep_order(combos)
-
-    # fallback
-    c = _norm_combo(bet_type, t)
-    return [c] if c else []
-
-
-
-# 券種名 → bet_type
-BET_MAP = {
-    "単勝": "tansho",
-    "複勝": "fukusho",
-    "馬連": "umaren",
-    "馬単": "umatan",
-    "ワイド": "wide",
-    "3連複": "sanrenpuku",
-    "三連複": "sanrenpuku",
-    "3連単": "sanrentan",
-    "三連単": "sanrentan",
-}
-
-def _clean_num(s: str) -> str:
-    return re.sub(r"[^\d\-]", "", str(s))
-
-def _clean_pay(s: str) -> int | None:
-    t = re.sub(r"[^\d]", "", str(s))
-    if not t:
-        return None
-    try:
-        return int(t)
-    except Exception:
-        return None
 
 def _norm_combo(bet_type: str, combo: str) -> str:
-    # comboは "3-7" "3 7" "3→7" などが来うるので数字だけ拾う
     nums = re.findall(r"\d+", str(combo))
     if not nums:
         return ""
@@ -170,117 +142,287 @@ def _norm_combo(bet_type: str, combo: str) -> str:
     # umatan / sanrentan は順序
     return "-".join(map(str, [int(x) for x in nums]))
 
-def _extract_combo_candidates(bet_type: str, combo_text: str) -> list[str]:
-    t = re.sub(r"\s+", " ", str(combo_text)).strip()
-
-    # 単勝/複勝：馬番1つずつにする
-    if bet_type in ["tansho", "fukusho"]:
-        nums = re.findall(r"\d+", t)
-        return nums  # 1頭ずつ
-
-    # 馬単/三連単：順序あり（→ or - を含む形を優先）
-    if bet_type in ["umatan", "sanrentan"]:
-        c = re.findall(r"\d+\s*[→\-]\s*\d+(?:\s*[→\-]\s*\d+)?", t)
-        if c:
-            return c
-
-    # 馬連/ワイド：2頭（ハイフン結合を優先）
-    if bet_type in ["umaren", "wide"]:
-        c = re.findall(r"\d+\s*-\s*\d+", t)
-        if c:
-            return c
-
-    # 三連複：3頭（ハイフン結合）
-    if bet_type in ["sanrenpuku"]:
-        c = re.findall(r"\d+\s*-\s*\d+\s*-\s*\d+", t)
-        if c:
-            return c
-
-    # 最後の手段：数字全部を1候補
-    nums = re.findall(r"\d+", t)
-    return [" ".join(nums)] if nums else []
-
 
 def _extract_pay_candidates(pay_text: str) -> list[int]:
-    pays = re.findall(r"\d[\d,]*", str(pay_text))
-    out = []
-    for p in pays:
-        p2 = p.replace(",", "")
-        if p2.isdigit():
-            out.append(int(p2))
+    s = str(pay_text)
+
+    # 1) まず「円」付き（従来）
+    nums = re.findall(r"(\d[\d,]*)\s*円", s)
+    out: list[int] = []
+    for n in nums:
+        n2 = n.replace(",", "")
+        if n2.isdigit():
+            out.append(int(n2))
+    if out:
+        return out
+
+    # 2) ★db対策：円が無い場合は「数字だけ」を拾う
+    # payセルには払戻しか入ってない前提なので、単純に数字抽出でOK
+    nums2 = re.findall(r"\d[\d,]*", s)
+    for n in nums2:
+        n2 = n.replace(",", "")
+        if n2.isdigit():
+            out.append(int(n2))
     return out
 
 
-def _cell_lines(td) -> list[str]:
-    # <br> を行として扱えるようにする
-    txt = td.get_text("\n", strip=True)
-    return [x.strip() for x in txt.split("\n") if x.strip()]
 
-def _parse_pay_int(s: str) -> int | None:
-    s2 = re.sub(r"[^\d]", "", str(s))
-    return int(s2) if s2.isdigit() else None
+def _extract_combos_from_td_text(bet_type: str, td_text: str) -> list[str]:
+    """
+    netkeiba の Result 表示は
+      - "2-4" 形式
+      - "2 4 4 9 2 9" みたいなスペース区切り
+    両方が来る
+    """
+    t = re.sub(r"\s+", " ", str(td_text)).strip()
 
-def _extract_payout_rows_from_pay_table(pay_table) -> list[dict]:
+    # 単勝/複勝は数字を全部拾えばOK（複勝は3つ並ぶ）
+    if bet_type in ["tansho", "fukusho"]:
+        nums = re.findall(r"\d+", t)
+        return _unique_keep_order([str(int(n)) for n in nums])
+
+    # --- 記号なしペア列: "2 4 4 9 2 9" ---
+    if bet_type in ["umaren", "wide"]:
+        nums = re.findall(r"\d+", t)
+        if len(nums) >= 2 and len(nums) % 2 == 0 and "-" not in t and "→" not in t:
+            pairs = []
+            for i in range(0, len(nums), 2):
+                pairs.append(f"{nums[i]}-{nums[i+1]}")
+            combos = [_norm_combo(bet_type, p) for p in pairs]
+            combos = [c for c in combos if c]
+            return _unique_keep_order(combos)
+
+        # 通常ハイフン
+        pairs = re.findall(r"\d+\s*-\s*\d+", t)
+        combos = [_norm_combo(bet_type, p) for p in pairs]
+        combos = [c for c in combos if c]
+        return _unique_keep_order(combos)
+
+    # 馬単: "4→2" or "4 2"
+    if bet_type == "umatan":
+        seq = re.findall(r"\d+\s*[→\-]\s*\d+", t)
+        if seq:
+            combos = [_norm_combo(bet_type, s) for s in seq]
+            combos = [c for c in combos if c]
+            return _unique_keep_order(combos)
+
+        nums = re.findall(r"\d+", t)
+        if len(nums) == 2:
+            return [f"{int(nums[0])}-{int(nums[1])}"]
+        return []
+
+    # 三連複: "2-4-9" or "2 4 9"
+    if bet_type == "sanrenpuku":
+        tri = re.findall(r"\d+\s*-\s*\d+\s*-\s*\d+", t)
+        if tri:
+            combos = [_norm_combo(bet_type, s) for s in tri]
+            combos = [c for c in combos if c]
+            return _unique_keep_order(combos)
+
+        nums = re.findall(r"\d+", t)
+        if len(nums) == 3:
+            return ["-".join(map(str, sorted([int(x) for x in nums])))]
+        return []
+
+    # 三連単: "4→2→9" or "4 2 9"
+    if bet_type == "sanrentan":
+        tri = re.findall(r"\d+\s*[→\-]\s*\d+\s*[→\-]\s*\d+", t)
+        if tri:
+            combos = [_norm_combo(bet_type, s) for s in tri]
+            combos = [c for c in combos if c]
+            return _unique_keep_order(combos)
+
+        nums = re.findall(r"\d+", t)
+        if len(nums) == 3:
+            return ["-".join(map(str, [int(x) for x in nums]))]
+        return []
+
+    return []
+
+
+def _top3_from_results_html(race_id: str, html: bytes) -> list[int] | None:
+    """
+    result.html から着順1-3着の馬番を返す [w1, w2, w3]
+    """
+    try:
+        df = _parse_results_from_race_html_bytes(race_id, html)
+        if df is None or len(df) == 0:
+            return None
+        df = df.sort_values("rank")
+        top3 = df["umaban"].astype(int).head(3).tolist()
+        if len(top3) >= 3:
+            return top3[:3]
+        return None
+    except Exception:
+        return None
+
+
+def _combo_from_top3(bet_type: str, top3: list[int]) -> str | None:
+    w1, w2, w3 = top3
+    if bet_type == "umatan":
+        return f"{w1}-{w2}"
+    if bet_type == "sanrenpuku":
+        return "-".join(map(str, sorted([w1, w2, w3])))
+    if bet_type == "sanrentan":
+        return f"{w1}-{w2}-{w3}"
+    return None
+
+
+def _detect_bet_key_from_tr(tr) -> str:
+    """tr から券種キー（単勝/複勝/…）を頑丈に取り出す"""
+    th = tr.find("th")
+    if th:
+        # 1) th に文字で入っているケース
+        key = th.get_text(strip=True)
+        key = key.replace("三連複", "3連複").replace("三連単", "3連単").strip()
+        if key in BET_MAP:
+            return key
+
+        # 1b) ★dbで多い: thの中に img で券種が入るケース
+        img = th.find("img")
+        if img:
+            for cand in [(img.get("alt") or ""), (img.get("title") or "")]:
+                cand = cand.strip().replace("三連複", "3連複").replace("三連単", "3連単")
+                if cand in BET_MAP:
+                    return cand
+
+    # 2) tr class から拾う
+    cls = tr.get("class") or []
+    cls = cls[0] if cls else ""
+    key = TRCLASS_TO_KEY.get(cls, "")
+    if key in BET_MAP:
+        return key
+
+    # 3) 行テキストに券種語が混ざっている場合（最後の保険）
+    t = tr.get_text(" ", strip=True)
+    t = t.replace("三連複", "3連複").replace("三連単", "3連単")
+    for k in BET_MAP.keys():
+        if k in t:
+            return k
+
+    return ""
+
+
+def _extract_rows_from_one_table(pay_table) -> list[dict]:
     rows = []
+
     for tr in pay_table.find_all("tr"):
         th = tr.find("th")
         tds = tr.find_all("td")
-        if th is None or len(tds) < 2:
+        if not tds:
             continue
 
-        key = th.get_text(strip=True)
-        if key not in BET_MAP:
-            continue
-        bet_type = BET_MAP[key]
+        key = _detect_bet_key_from_tr(tr)
+        bet_type = BET_MAP.get(key, "")
 
-        # ★ ここを “行分割” じゃなく “全文 regex 抽出” にする
+        # 3列形式で td[0] が券種になるケースも吸収
+        if not bet_type:
+            td0 = tds[0].get_text(strip=True).replace("三連複", "3連複").replace("三連単", "3連単")
+            if td0 in BET_MAP:
+                bet_type = BET_MAP[td0]
+                tds = tds[1:]  # 以降が [組番, 払戻...] になる想定
+
+        if not bet_type:
+            continue
+
+        # dbの基本: tds[0]=組番, tds[1:]=払戻(複数あり)
         combo_text = tds[0].get_text(" ", strip=True)
-        pay_text   = tds[1].get_text(" ", strip=True)
+        pay_texts = [td.get_text(" ", strip=True) for td in tds[1:]]
 
         combos = _extract_combos_from_td_text(bet_type, combo_text)
 
-        # pay は数字を全部拾う（カンマ除去済）
-        pays = _extract_pay_candidates(pay_text)
+        pays: list[int] = []
+        for pt in pay_texts:
+            pays.extend(_extract_pay_candidates(pt))
 
-        # ペアリング（数がズレても安全に min）
         n = min(len(combos), len(pays))
         for i in range(n):
-            if combos[i] and pays[i]:
-                rows.append({"bet_type": bet_type, "combo": combos[i], "pay100": int(pays[i])})
+            c, p = combos[i], pays[i]
+            if c and p:
+                rows.append({"bet_type": bet_type, "combo": c, "pay100": int(p)})
 
     return rows
 
 
+def _extract_payonly_from_wide_table(pay_tables) -> dict[str, int]:
+    """
+    ワイド側 summary table にある:
+      Umatan / Fuku3 / Tan3 の pay100 を拾う（comboは空なので後で補完する）
+    """
+    out: dict[str, int] = {}
+    for t in pay_tables:
+        summ = (t.get("summary") or "")
+        if "ワイド" not in summ:
+            continue
+        for tr in t.find_all("tr"):
+            cls = tr.get("class") or []
+            cls = cls[0] if cls else ""
+            cls_to_bt = {
+                "Umatan": "umatan",
+                "Fuku3": "sanrenpuku",
+                "Tan3": "sanrentan",
+            }
+            bt = cls_to_bt.get(cls)
+            if not bt:
+                continue
+            tds = tr.find_all("td")
+            if len(tds) < 2:
+                continue
+            pay_text = tds[1].get_text(" ", strip=True)
+            pays = _extract_pay_candidates(pay_text)
+            if pays:
+                out[bt] = int(pays[0])
+    return out
 
+
+# =========================================================
+# Public API
+# =========================================================
 def _parse_payouts_from_race_html_bytes(race_id: str, html: bytes) -> pd.DataFrame:
     soup = BeautifulSoup(html, "lxml")
 
-    # よくある払戻テーブル class
-    pay_tables = soup.find_all("table", class_=re.compile(r"pay_table|Pay_Table|pay_table_01", re.I))
+    pay_tables = soup.find_all(
+        "table",
+        class_=re.compile(r"(pay_table|Pay_Table|pay_table_01|Payout_Detail_Table)", re.I),
+    )
+
     if not pay_tables:
-        # クラスが見つからない場合は、"払戻" を含む table を探す
         all_tables = soup.find_all("table")
         for t in all_tables:
-            if "払戻" in t.get_text():
+            summ = (t.get("summary") or "")
+            if ("払戻" in summ) or ("払い戻し" in summ) or ("払戻" in t.get_text()) or ("払い戻し" in t.get_text()):
                 pay_tables.append(t)
 
-    rows = []
+    # 1) まず table単体で完結するものを抽出
+    rows: list[dict] = []
     for t in pay_tables:
-        rows.extend(_extract_payout_rows_from_pay_table(t))
+        rows.extend(_extract_rows_from_one_table(t))
+
+    # 2) 足りない券種（馬単/3連複/3連単）を top3 から補完
+    top3 = _top3_from_results_html(race_id, html)
+    payonly = _extract_payonly_from_wide_table(pay_tables)
+
+    exist_types = set([r["bet_type"] for r in rows])
+    if top3:
+        for bt in ["umatan", "sanrenpuku", "sanrentan"]:
+            if bt in exist_types:
+                continue
+            if bt not in payonly:
+                continue
+            combo = _combo_from_top3(bt, top3)
+            if combo:
+                rows.append({"bet_type": bt, "combo": combo, "pay100": int(payonly[bt])})
 
     if not rows:
-        # 払戻がまだ出てない（未来レース等）
         return pd.DataFrame(columns=["race_id", "bet_type", "combo", "pay100"])
 
     df = pd.DataFrame(rows)
-    if len(df):
-        # 同一 combo が複数出たら最大 pay を採用（保険）
-        df["pay100"] = pd.to_numeric(df["pay100"], errors="coerce")
-        df = (
-            df.dropna(subset=["pay100"])
-            .groupby(["bet_type", "combo"], as_index=False)["pay100"]
-            .max()
-        )
+    df["pay100"] = pd.to_numeric(df["pay100"], errors="coerce")
+    df = (
+        df.dropna(subset=["pay100"])
+        .groupby(["bet_type", "combo"], as_index=False)["pay100"]
+        .max()
+    )
 
     df.insert(0, "race_id", str(race_id))
     df["pay100"] = pd.to_numeric(df["pay100"], errors="coerce").fillna(0).astype(int)
@@ -299,11 +441,9 @@ def update_payouts_flat_for_date(
     population_csv = resolve_population_csv_for_date(
         target_date=target_date,
         population_csv=population_csv,
-        population_dir=None,   # ← 渡さない
+        population_dir=None,
         prefer_daily=True,
     )
-    html_race_dir = (html_race_dir or defaults["html_race_dir"]).resolve()
-    payouts_flat_path = (payouts_flat_path or defaults["payouts_flat_path"]).resolve()
 
     html_race_dir = (html_race_dir or defaults["html_race_dir"]).resolve()
     payouts_flat_path = (payouts_flat_path or defaults["payouts_flat_path"]).resolve()
@@ -321,6 +461,7 @@ def update_payouts_flat_for_date(
 
     rows = []
     failed = []
+
     for rid in race_ids:
         bin_path = html_race_dir / f"{rid}.bin"
         if not bin_path.exists():
@@ -335,16 +476,20 @@ def update_payouts_flat_for_date(
         except Exception as e:
             failed.append((rid, repr(e)))
 
-    new_df = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(columns=["date","race_id","bet_type","combo","pay100"])
+    new_df = (
+        pd.concat(rows, ignore_index=True)
+        if rows
+        else pd.DataFrame(columns=["date", "race_id", "bet_type", "combo", "pay100"])
+    )
 
     _ensure_parent(payouts_flat_path)
     if payouts_flat_path.exists() and payouts_flat_path.stat().st_size > 0:
         try:
             old = pd.read_csv(payouts_flat_path, dtype={"race_id": str, "bet_type": str, "combo": str})
         except pd.errors.EmptyDataError:
-            old = pd.DataFrame(columns=["date","race_id","bet_type","combo","pay100"])
+            old = pd.DataFrame(columns=["date", "race_id", "bet_type", "combo", "pay100"])
     else:
-        old = pd.DataFrame(columns=["date","race_id","bet_type","combo","pay100"])
+        old = pd.DataFrame(columns=["date", "race_id", "bet_type", "combo", "pay100"])
 
     merged = pd.concat([old, new_df], ignore_index=True)
     merged["date"] = merged["date"].astype(str)
@@ -352,11 +497,9 @@ def update_payouts_flat_for_date(
     merged["bet_type"] = merged["bet_type"].astype(str)
     merged["combo"] = merged["combo"].astype(str)
     merged["pay100"] = pd.to_numeric(merged["pay100"], errors="coerce").fillna(0).astype(int)
-    # まず並べ替えて「新しい方」が後ろに来るようにする（念のため）
-    merged = merged.sort_values(["date","race_id","bet_type","combo","pay100"])
 
-    # 同一(date,race_id,bet_type,combo)は最後勝ち
-    merged = merged.drop_duplicates(subset=["date","race_id","bet_type","combo"], keep="last")
+    merged = merged.sort_values(["date", "race_id", "bet_type", "combo", "pay100"])
+    merged = merged.drop_duplicates(subset=["date", "race_id", "bet_type", "combo"], keep="last")
 
     merged.to_csv(payouts_flat_path, index=False, encoding="utf-8")
 
@@ -365,8 +508,9 @@ def update_payouts_flat_for_date(
         print(" population_csv:", population_csv)
         print(" html_race_dir :", html_race_dir)
         print(" payouts_flat  :", payouts_flat_path)
+        print(" new rows      :", len(new_df))
         if failed:
             print("[WARN] failed races (first 10)")
-            print(pd.DataFrame(failed, columns=["race_id","reason"]).head(10).to_string(index=False))
+            print(pd.DataFrame(failed, columns=["race_id", "reason"]).head(10).to_string(index=False))
 
     return new_df, payouts_flat_path

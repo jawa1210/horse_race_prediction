@@ -671,6 +671,10 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=31272&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31272 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=31271&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31271 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=31071&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31071 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=30974&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 30974 );"/></a>
@@ -686,10 +690,6 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=26854&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 26854 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=26853&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 26853 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=26852&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 26852 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023106219&no=26796&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 26796 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->

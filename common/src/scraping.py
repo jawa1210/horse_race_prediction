@@ -103,11 +103,9 @@ def load_existing_race_ids(bin_dir: Path) -> set[str]:
 def scrape_race_id_list(
     kaisai_date_list: list[str],
     bin_dir: str | Path = HTML_RACE_DIR,
+    skip_existing: bool = True,   # ★追加
 ) -> list[str]:
-    """
-    既に bin が存在する race_id はスキップする
-    """
-    bin_dir = HTML_RACE_DIR
+    bin_dir = Path(bin_dir)       # ★上書きしない
     existing_ids = load_existing_race_ids(bin_dir)
 
     print(f"[INFO] existing race_id: {len(existing_ids)}")
@@ -120,7 +118,6 @@ def scrape_race_id_list(
     service = Service(chromedriver_path)
 
     race_id_list = []
-
     with webdriver.Chrome(service=service, options=options) as driver:
         for kaisai_date in tqdm(kaisai_date_list):
             url = f"https://race.netkeiba.com/top/race_list.html?kaisai_date={kaisai_date}"
@@ -134,11 +131,9 @@ def scrape_race_id_list(
                     m = re.findall(r"race_id=(\d{12})", href)
                     if not m:
                         continue
-
                     race_id = m[0]
 
-                    # ★ ここが本体
-                    if race_id in existing_ids:
+                    if skip_existing and race_id in existing_ids:
                         continue
 
                     race_id_list.append(race_id)
@@ -152,6 +147,7 @@ def scrape_race_id_list(
                 continue
 
     return race_id_list
+
 
 
 def scrape_html_race(race_id_list: list[str], save_dir: Path = HTML_RACE_DIR) -> list[Path]:

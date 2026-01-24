@@ -972,6 +972,14 @@ def build_html_report(
     has_results = len(results_map) > 0
     conf_calib = _load_conf_calib()
 
+    payouts_df_all = None
+    if PAYBACK_FLAT.exists() and PAYBACK_FLAT.stat().st_size > 0:
+        try:
+            payouts_df_all = pd.read_csv(PAYBACK_FLAT, dtype={"race_id": str, "bet_type": str, "combo": str})
+        except pd.errors.EmptyDataError:
+            payouts_df_all = None
+
+
     # 暫定（結果が1頭でも入ってるレースだけ）
     race_ids_done = sorted(set([rid for (rid, _um) in results_map.keys()]) & set(race_ids_all))
 
@@ -1407,17 +1415,17 @@ function toggleHitDetail(id){
 
 
             hit_badge = ""
-            if has_results and PAYBACK_FLAT.exists() and PAYBACK_FLAT.stat().st_size > 0:
-                payouts_df = pd.read_csv(PAYBACK_FLAT, dtype={"race_id": str, "bet_type": str, "combo": str})
+            if has_results and payouts_df_all is not None:
                 hit_badge = _hit_badge_html_for_race(
                     target_date=str(target_date),
                     rid=str(rid),
                     pred_order=pred_order,
                     odds_map=odds_map,
                     results_map=results_map,
-                    payouts_df=payouts_df,
+                    payouts_df=payouts_df_all,
                     stake_per_ticket=stake_per_ticket,
                 )
+
             is_hit = (hit_badge != "")
 
 

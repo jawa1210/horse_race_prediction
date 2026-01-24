@@ -669,6 +669,10 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023102050&no=31592&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31592 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023102050&no=31591&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 31591 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023102050&no=30731&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 30731 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023102050&no=30730&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 30730 );"/></a>
