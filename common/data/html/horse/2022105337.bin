@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -444,7 +444,7 @@ timeout : 10000, /* 10000 ms */
 <a href="https://en.netkeiba.com/db/horse/2022105337/" style="color:#FFF;">Casa Vicens</a>
 </p>
 
-<p class="txt_01">¡¡ÌÆ4ºÐ¡¡·ªÌÓ </p>
+<p class="txt_01">¸½Ìò¡¡ÌÆ4ºÐ¡¡·ªÌÓ </p>
 </div><!-- /.horse_title" -->
 <div class="HorseRegist_BtnBox fc">
 <div class="ShereBtn"><a href=""><img src="https://cdn.netkeiba.com/img.db/style/netkeiba.ja/image/db_head_btn_bg_01_shere.png" alt="" />¶¦Í­</a></div>
@@ -824,7 +824,7 @@ get_horse_detail_note('2022105337', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>Ä´¶µ»Õ</th>
-<td><a href="/trainer/05544/" title="²ÃÆ£¹¬ÊÝ">²ÃÆ£¹¬ÊÝ</a> (³Þ¾¾)</td>
+<td><a href="/trainer/01116/" title="¿·³«¹¬°ì">¿·³«¹¬°ì</a> (Èþ±º)</td>
 </tr>
 <tr>
 <th>ÇÏ¼ç</th>

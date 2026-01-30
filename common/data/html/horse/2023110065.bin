@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -664,7 +664,7 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023110065&no=20329&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023110065&no=8740&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
@@ -1271,50 +1271,45 @@ target_type: 'mix'
 <!--
 function tab_select( active_tab, passive_tab )
 {
-    document.getElementById( passive_tab ).className = "";
-    document.getElementById( active_tab ).className = "active";
-    document.getElementById( passive_tab + "_box" ).style.display = "none";
-    document.getElementById( active_tab + "_box" ).style.display = "block";
+document.getElementById( passive_tab ).className = "";
+document.getElementById( active_tab ).className = "active";
+document.getElementById( passive_tab + "_box" ).style.display = "none";
+document.getElementById( active_tab + "_box" ).style.display = "block";
 }
 //-->
 </script>
-
 <div class="cate_bar_s">
-  <h2>ユウファラオ関連ニュース</h2>
+<h2>ユウファラオ関連ニュース</h2>
 </div>
-
 <ul id="horse_news" class="relation_menu fc">
-  <li>
-    <a id="NetkeibaNews" href="javascript:void(0);" onClick="javascript:tab_select( 'NetkeibaNews','SocialNews' );" class="active">netkeibaニュース</a>
-  </li>
-  <li>
-    <a id="SocialNews" href="javascript:void(0);" onClick="javascript:tab_select( 'SocialNews','NetkeibaNews' );">タレコミニュース</a>
-  </li>
+<li>
+<a id="NetkeibaNews" href="javascript:void(0);" onClick="javascript:tab_select( 'NetkeibaNews','SocialNews' );" class="active">netkeibaニュース</a>
+</li>
+<li>
+<a id="SocialNews" href="javascript:void(0);" onClick="javascript:tab_select( 'SocialNews','NetkeibaNews' );">タレコミニュース</a>
+</li>
 </ul>
-
 <!-- NetkeibaNews -->
 <div id="NetkeibaNews_box">
-  <div id="HorseNews" class="Loader"></div>
-  <script type="text/javascript">
-  $( document ).ready( function() {
-       showNetkeibaNewsSearch( "HorseNews", "ユウファラオ", 5, 1, "", "", "", "", "m" );
-  });
-  </script>
+<div id="HorseNews" class="Loader"></div>
+<script type="text/javascript">
+$( document ).ready( function() {
+showNetkeibaNewsSearch( "HorseNews", "ユウファラオ", 5, 1, "", "", "", "", "m" );
+});
+</script>
 </div>
-
 <!-- SocialNews -->
 <div id="SocialNews_box" style="display:none;">
-  <div id="HorseSocialNews" class="Loader"></div>
-  <script type="text/javascript">
-  <!--
-  $( document ).ready( function() {
-      //setTimeout( "showNetkeibaUserNewsSearch( 'HorseSocialNews', 'ユウファラオ', 5, 1, '', '', 'm' )" , 1100);
-      showNetkeibaUserNewsSearch( "HorseSocialNews", "ユウファラオ", 5, 1, "", "", "m" );
-  } );
-  // -->
-  </script>
+<div id="HorseSocialNews" class="Loader"></div>
+<script type="text/javascript">
+<!--
+$( document ).ready( function() {
+//setTimeout( "showNetkeibaUserNewsSearch( 'HorseSocialNews', 'ユウファラオ', 5, 1, '', '', 'm' )" , 1100);
+showNetkeibaUserNewsSearch( "HorseSocialNews", "ユウファラオ", 5, 1, "", "", "m" );
+} );
+// -->
+</script>
 </div>
-
 </div><!-- /.db_h_news_box -->
 </div><!-- /.relation_box -->
 <div class="relation_box fc">
@@ -1324,53 +1319,48 @@ function tab_select( active_tab, passive_tab )
 <!--
 function tab_select( active_tab, passive_tab )
 {
-    document.getElementById( passive_tab ).className = "";
-    document.getElementById( active_tab ).className = "active";
-    document.getElementById( passive_tab + "_box" ).style.display = "none";
-    document.getElementById( active_tab + "_box" ).style.display = "block";
+document.getElementById( passive_tab ).className = "";
+document.getElementById( active_tab ).className = "active";
+document.getElementById( passive_tab + "_box" ).style.display = "none";
+document.getElementById( active_tab + "_box" ).style.display = "block";
 }
 //-->
 </script>
-
 <div class="cate_bar_s">
-  <h2>ユウファラオ関連コラム</h2>
+<h2>ユウファラオ関連コラム</h2>
 </div>
-
 <ul id="horse_news" class="relation_menu fc">
-  <li>
-    <a id="NetkeibaColumn" href="javascript:void(0);" onClick="javascript:tab_select( 'NetkeibaColumn','SocialColumn' );" class="active">netkeibaコラム</a>
-  </li>
-  <li>
-    <a id="SocialColumn" href="javascript:void(0);" onClick="javascript:tab_select( 'SocialColumn','NetkeibaColumn' );">タレコミコラム</a>
-  </li>
+<li>
+<a id="NetkeibaColumn" href="javascript:void(0);" onClick="javascript:tab_select( 'NetkeibaColumn','SocialColumn' );" class="active">netkeibaコラム</a>
+</li>
+<li>
+<a id="SocialColumn" href="javascript:void(0);" onClick="javascript:tab_select( 'SocialColumn','NetkeibaColumn' );">タレコミコラム</a>
+</li>
 </ul>
-
 <!-- NetkeibaColumn -->
 <div id="NetkeibaColumn_box">
-  <div id="HorseColumn" class="Loader"></div>
-  <script type="text/javascript">
-  <!--
-  $( document ).ready( function() {
-      //setTimeout( "showNetkeibaColumnSearch( 'HorseColumn', 'ユウファラオ', 5, 1, '', '', '', 'm' )" , 1200);
-      showNetkeibaColumnSearch( "HorseColumn", "ユウファラオ", 5, 1, "", "", "", "m" );
-  } );
-  // -->
-  </script>
+<div id="HorseColumn" class="Loader"></div>
+<script type="text/javascript">
+<!--
+$( document ).ready( function() {
+//setTimeout( "showNetkeibaColumnSearch( 'HorseColumn', 'ユウファラオ', 5, 1, '', '', '', 'm' )" , 1200);
+showNetkeibaColumnSearch( "HorseColumn", "ユウファラオ", 5, 1, "", "", "", "m" );
+} );
+// -->
+</script>
 </div>
-
 <!-- SocialColumn -->
 <div id="SocialColumn_box" style="display:none;">
-  <div id="HorseSocialColumn" class="Loader"></div>
-  <script type="text/javascript">
-  <!--
-  $( document ).ready( function() {
-      //setTimeout( "showNetkeibaUserColumnSearch( 'HorseSocialColumn', 'ユウファラオ', 5, 1, '', '', 'm' )" , 1300);
-      showNetkeibaUserColumnSearch( "HorseSocialColumn", "ユウファラオ", 5, 1, "", "", "m" );
-  } );
-  // -->
-  </script>
+<div id="HorseSocialColumn" class="Loader"></div>
+<script type="text/javascript">
+<!--
+$( document ).ready( function() {
+//setTimeout( "showNetkeibaUserColumnSearch( 'HorseSocialColumn', 'ユウファラオ', 5, 1, '', '', 'm' )" , 1300);
+showNetkeibaUserColumnSearch( "HorseSocialColumn", "ユウファラオ", 5, 1, "", "", "m" );
+} );
+// -->
+</script>
 </div>
-
 </div><!-- /.db_h_column_box -->
 </div><!-- /.relation_box -->
 
