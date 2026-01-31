@@ -13,6 +13,8 @@ from tqdm.notebook import tqdm
 from feature_engineering import PredictionFeatureCreator, RAW_DATA_DIR, DATA_DIR
 from prediction import predict_win, predict_trifecta_topk
 import yaml
+from recommend_strategy import predict_best_strategy_for_race
+
 
 from eval_strategies import (
     eval_strategies_for_date,
@@ -74,7 +76,171 @@ def _place_from_race_id_netkeiba(rid: str) -> str:
             return ""
     return ""
 
+def _norm_race_id(rid: str | int) -> str:
+    s = str(rid)
+    s = s.replace(".0", "").strip()
+    s = re.sub(r"\D", "", s)          # 数字以外除去（念のため）
+    return s.zfill(12)
 
+
+
+import re
+import numpy as np
+
+# ===== 推奨買い目の表示/集計 設定 =====
+REC_TOPK = 3
+REC_MODEL_SCORE_TH = 0.15     # 「買う」判定の閾値（例）
+REC_TICKET_SCORE_TH = 0.0     # 次点を表示する ticket_score 閾値（初期は0でOK）
+REC_STAKE_PER_TICKET = 100    # 100円固定
+
+REC_LOG_PATH = DATA_DIR / "results_cache" / "rec_bets_log.csv"
+MODEL_DIR = Path("..", "data") / "03_train"
+
+
+
+def _catalog_dict():
+    return {name: gen for name, gen in build_strategy_catalog()}
+
+
+def _normalize_ticket(ticket):
+    if isinstance(ticket, dict):
+        return str(ticket.get("bet_type", "")), str(ticket.get("combo", "")), ticket
+    if isinstance(ticket, (tuple, list)) and len(ticket) >= 2:
+        return str(ticket[0]), str(ticket[1]), ticket
+    return "", str(ticket), ticket
+
+
+def _ticket_score_from_tri(tri_df_race: pd.DataFrame, bet_type: str, combo: str) -> float:
+    if tri_df_race is None or tri_df_race.empty:
+        return 0.0
+    bt = bet_type.replace(" ", "")
+    if ("三連単" not in bt) and ("trifecta" not in bt.lower()) and ("sanrentan" not in bt.lower()):
+        return 0.0
+
+    nums = [int(x) for x in re.findall(r"\d+", combo)]
+    if len(nums) < 3:
+        return 0.0
+    a, b, c = nums[0], nums[1], nums[2]
+
+    need = {"1着", "2着", "3着", "prob"}
+    if not need.issubset(set(tri_df_race.columns)):
+        return 0.0
+
+    m = tri_df_race[
+        (pd.to_numeric(tri_df_race["1着"], errors="coerce") == a) &
+        (pd.to_numeric(tri_df_race["2着"], errors="coerce") == b) &
+        (pd.to_numeric(tri_df_race["3着"], errors="coerce") == c)
+    ]
+    if len(m) == 0:
+        return 0.0
+    v = pd.to_numeric(m["prob"].iloc[0], errors="coerce")
+    return float(v) if pd.notna(v) else 0.0
+
+
+def _ticket_score_fallback(pred_rank_df_race: pd.DataFrame, combo: str) -> float:
+    if pred_rank_df_race is None or pred_rank_df_race.empty:
+        return 0.0
+    um2s = dict(
+        zip(
+            pd.to_numeric(pred_rank_df_race["umaban"], errors="coerce"),
+            pd.to_numeric(pred_rank_df_race["score"], errors="coerce"),
+        )
+    )
+    nums = [int(x) for x in re.findall(r"\d+", str(combo))]
+    sc = 0.0
+    for u in nums:
+        sc += float(um2s.get(u, 0.0) or 0.0)
+    return float(sc)
+
+
+def recommend_tickets_for_race(
+    rid: str,
+    pred_rank_df_race: pd.DataFrame,
+    tri_df_race: pd.DataFrame,
+    pred_order: list[int],
+    odds_map: dict[int, float],
+    topk: int = REC_TOPK,
+    ticket_score_th: float = REC_TICKET_SCORE_TH,
+):
+    """
+    返り値:
+    rec_name, model_score, n_points, rec_rows(list[dict]), one_ticket(raw), one_ticket_desc(str), tickets_all(list)
+    """
+    cat = _catalog_dict()
+    rec_name, rec_dbg = predict_best_strategy_for_race(pred_rank_df_race, tri_df_race)
+    
+    model_score = float(rec_dbg.get("pred_proba", 0.0))  # ← recommend_strategy.py 側の修正が必要
+
+    if not rec_name or rec_name not in cat:
+        return "", model_score, 0, [], None, ""
+
+    tickets = cat[rec_name](pred_order, odds_map)
+    if not tickets:
+        return "", model_score, 0, [], None, "", []
+
+    scored = []
+    for tk in tickets:
+        bt, combo, raw = _normalize_ticket(tk)
+        ts = _ticket_score_from_tri(tri_df_race, bt, combo)
+        if ts <= 0:
+            ts = _ticket_score_fallback(pred_rank_df_race, combo)
+        scored.append((float(ts), bt, combo, raw))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    rec_rows = []
+    one_ticket = None
+    one_ticket_desc = ""
+    for i, (ts, bt, combo, raw) in enumerate(scored[:topk], start=1):
+        show = (i == 1) or (ts >= ticket_score_th)
+        rec_rows.append({
+            "rank": i,
+            "bet_type": bt,
+            "combo": combo,
+            "ticket_score": ts,
+            "show": show,
+        })
+        if i == 1:
+            one_ticket = raw
+            one_ticket_desc = f"{bt} {combo}".strip()
+
+    return rec_name, model_score, len(tickets), rec_rows, one_ticket, one_ticket_desc, tickets
+
+REC_TH_YAML = MODEL_DIR / "rec_threshold.yaml"
+
+def _load_rec_threshold_yaml() -> dict | None:
+    if not REC_TH_YAML.exists():
+        return None
+    try:
+        with open(REC_TH_YAML, "r") as f:
+            return yaml.safe_load(f)
+    except Exception:
+        return None
+
+
+
+def _load_rec_log() -> pd.DataFrame:
+    if not REC_LOG_PATH.exists() or REC_LOG_PATH.stat().st_size == 0:
+        return pd.DataFrame(columns=["date","race_id","venue","strategy","model_score","n_points","stake","return","profit","roi","hit"])
+    df = pd.read_csv(REC_LOG_PATH, dtype={"date": str, "race_id": str, "strategy": str})
+    df["race_id"] = df["race_id"].map(_norm_race_id)
+    if "venue" not in df.columns:
+        df["venue"] = df["race_id"].map(_place_from_race_id_netkeiba)
+    return df
+
+
+
+def _append_rec_log_row(row: dict):
+    df = _load_rec_log()
+    row = dict(row)
+    row["race_id"] = _norm_race_id(row.get("race_id",""))
+    if "venue" not in row or not row["venue"]:
+        row["venue"] = _place_from_race_id_netkeiba(row["race_id"])
+    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+
+    df = df.sort_values(["date","race_id"]).drop_duplicates(["date","race_id"], keep="last")
+    REC_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(REC_LOG_PATH, index=False)
 
 
 def _circled_number(n: int) -> str:
@@ -416,6 +582,27 @@ def _fmt_roi_red(x) -> str:
         return f'<span style="color:#e05a5a; font-weight:900;">{txt}</span>'
     return txt
 
+def _fmt_roi_red_text(x) -> str:
+    """
+    推奨買い目サマリ用: "123.4%" を赤くする（HTML）
+    """
+    if x is None or (isinstance(x, float) and pd.isna(x)):
+        return ""
+    s = str(x).strip()
+    try:
+        v = float(s.replace("%", ""))
+    except Exception:
+        return s
+
+    txt = f"{v:.1f}%"
+
+    if v >= 200.0:
+        return f'<span style="color:#b00000; font-weight:900;">{txt}</span>'
+    if v >= 100.0:
+        return f'<span style="color:#e05a5a; font-weight:900;">{txt}</span>'
+    return txt
+
+
 
 
 def _format_summary_table(df: pd.DataFrame, mode: str) -> pd.DataFrame:
@@ -482,6 +669,173 @@ def _format_summary_table(df: pd.DataFrame, mode: str) -> pd.DataFrame:
     out = out[cols]
 
     return out
+
+def _summarize_rec_log(df: pd.DataFrame) -> pd.DataFrame:
+    if df is None or df.empty:
+        return pd.DataFrame(columns=["対象","レース数","的中(レース)","的中率","投資(円)","払戻(円)","収支(円)","回収率"])
+
+    x = df.copy()
+    x["stake"] = pd.to_numeric(x["stake"], errors="coerce").fillna(0.0)
+    x["return"] = pd.to_numeric(x["return"], errors="coerce").fillna(0.0)
+    x["hit"] = pd.to_numeric(x["hit"], errors="coerce").fillna(0).astype(int)
+
+    n = int(x["race_id"].nunique())
+    hit = int(x.drop_duplicates(["date","race_id"])["hit"].sum())  # レース単位でhit
+    invest = float(x["stake"].sum())
+    ret = float(x["return"].sum())
+    profit = ret - invest
+    roi = (ret / invest * 100.0) if invest > 0 else 0.0
+    hit_rate = (hit / n * 100.0) if n > 0 else 0.0
+
+    return pd.DataFrame([{
+        "対象": "合計",
+        "レース数": n,
+        "的中(レース)": hit,
+        "的中率": f"{hit_rate:.1f}%",
+        "投資(円)": f"{int(invest):,}",
+        "払戻(円)": f"{int(ret):,}",
+        "収支(円)": f"{int(profit):,}",
+        "回収率": f"{roi:.1f}%",
+    }])
+
+def _summarize_rec_by_group(df: pd.DataFrame, group_col: str, title_col: str) -> pd.DataFrame:
+    if df is None or df.empty or group_col not in df.columns:
+        return pd.DataFrame(columns=[title_col,"レース数","的中(レース)","的中率","投資(円)","払戻(円)","収支(円)","回収率"])
+
+    x = df.copy()
+    x["stake"] = pd.to_numeric(x["stake"], errors="coerce").fillna(0.0)
+    x["return"] = pd.to_numeric(x["return"], errors="coerce").fillna(0.0)
+    x["hit"] = pd.to_numeric(x["hit"], errors="coerce").fillna(0).astype(int)
+
+    rows = []
+    for key, g in x.groupby(group_col):
+        n = int(g["race_id"].nunique())
+        hit = int(g.drop_duplicates(["date","race_id"])["hit"].sum())
+        invest = float(g["stake"].sum())
+        ret = float(g["return"].sum())
+        profit = ret - invest
+        roi = (ret / invest * 100.0) if invest > 0 else 0.0
+        hit_rate = (hit / n * 100.0) if n > 0 else 0.0
+
+        rows.append({
+            title_col: str(key),
+            "レース数": n,
+            "的中(レース)": hit,
+            "的中率": f"{hit_rate:.1f}%",
+            "投資(円)": f"{int(invest):,}",
+            "払戻(円)": f"{int(ret):,}",
+            "収支(円)": f"{int(profit):,}",
+            "回収率": f"{roi:.1f}%",
+        })
+
+    out = pd.DataFrame(rows)
+    # 回収率で降順
+    def _roi_val(s): 
+        try: return float(str(s).replace("%",""))
+        except: return -1
+    out = out.sort_values(by="回収率", key=lambda c: c.map(_roi_val), ascending=False)
+    return out
+
+
+# report_html.py のどこか（下の方でOK）
+
+def build_prediction_cache_for_date(
+    target_date: str,
+    read_file_name_csv: str,
+    read_horse_name_csv: str,
+    topk_per_race: int = 18,
+    skip_agg_horse: bool = True,
+):
+    """
+    学習・推薦用：予測の中間生成物を返す（HTMLは作らない）
+    returns:
+      pred_rank_all, tri_all, pred_order_by_race, odds_map_by_race, race_ids
+    """
+    population_csv = Path(read_file_name_csv).resolve()
+    horse_csv = Path(read_horse_name_csv).resolve()
+
+    pop = pd.read_csv(population_csv, sep="\t", dtype={"race_id": str})
+    pop["date"] = pop["date"].astype(str).str.strip()
+    race_ids = sorted(pop.loc[pop["date"] == target_date, "race_id"].astype(str).unique())
+
+    pfc = PredictionFeatureCreator(population_file_name=population_csv,
+                                   horse_results_prediction_feile_name=horse_csv)
+    pfc.agg_horse_n_races()
+
+    pred_order_by_race = {}
+    odds_map_by_race = {}
+    pred_rank_rows = []
+    tri_rows = []
+
+    for rid in race_ids:
+        feats = pfc.create_features(race_id=rid, predict=True, skip_agg_horse=skip_agg_horse)
+
+        pred_win = predict_win(
+            feats,
+            model_filepath=MODEL_DIR / "model.pkl",
+            config_filepath="config.yaml",
+            category_map_path=MODEL_DIR / "category_map.pkl",
+        )
+
+        odds_map = {}
+        if "tansyo_odds" in pred_win.columns and "umaban" in pred_win.columns:
+            tmp = pred_win[["umaban", "tansyo_odds"]].copy()
+            tmp["umaban"] = pd.to_numeric(tmp["umaban"], errors="coerce")
+            tmp["tansyo_odds"] = pd.to_numeric(tmp["tansyo_odds"], errors="coerce")
+            tmp = tmp.dropna()
+            for r in tmp.itertuples(index=False):
+                odds_map[int(r.umaban)] = float(r.tansyo_odds)
+        odds_map_by_race[str(rid)] = odds_map
+
+        pred_rank_df, tri_df = predict_trifecta_topk(
+            feats,
+            model_filepath=MODEL_DIR / "model_tri.pkl",
+            config_filepath="config_tri.yaml",
+            category_map_path=MODEL_DIR / "category_map_tri.pkl",
+            cand_n=8,
+            topk=30,
+            temperature=1.0,
+        )
+        # --- 推奨戦略（学習済みがあれば） ---
+        rec_name = ""
+        rec_dbg = {}
+        try:
+            g_rank = pred_rank_df[pred_rank_df["race_id"].astype(str) == str(rid)].copy()
+            g_tri  = tri_df[tri_df["race_id"].astype(str) == str(rid)].copy() if "race_id" in tri_df.columns else pd.DataFrame()
+            rec_name, rec_dbg = predict_best_strategy_for_race(g_rank, g_tri)
+
+        except Exception:
+            rec_name, rec_dbg = "", {}
+
+        rec_badge = ""
+        if rec_name:
+            # 上位3候補も出せる（top3）
+            top3 = rec_dbg.get("top3")
+            if top3:
+                ttxt = " / ".join([f"{_strategy_label_ja(n)}({p*100:.0f}%)" for n,p in top3 if n])
+                rec_badge = f'<span class="racecond">推奨：{_strategy_label_ja(rec_name)}｜次点 {ttxt}</span>'
+            else:
+                rec_badge = f'<span class="racecond">推奨：{_strategy_label_ja(rec_name)}</span>'
+
+
+        # pred_order
+        g = pred_rank_df.sort_values(["race_id", "pred_rank"]).copy()
+        po = []
+        for x in g[g["race_id"].astype(str) == str(rid)]["umaban"].tolist():
+            try:
+                po.append(int(x))
+            except Exception:
+                pass
+        pred_order_by_race[str(rid)] = po
+
+        pred_rank_rows.append(pred_rank_df)
+        tri_rows.append(tri_df)
+
+    pred_rank_all = pd.concat(pred_rank_rows, ignore_index=True) if pred_rank_rows else pd.DataFrame()
+    tri_all = pd.concat(tri_rows, ignore_index=True) if tri_rows else pd.DataFrame()
+
+    return pred_rank_all, tri_all, pred_order_by_race, odds_map_by_race, race_ids
+
 
 
 
@@ -917,6 +1271,12 @@ def _legend_html() -> str:
             results_flat（実着順）に基づいて馬番横に実順位を表示。
           </div>
         </div>
+        <div class="legend-item">
+        <div class="legend-title">目次の赤いレース（大的中）</div>
+        <div class="legend-body">
+            推奨買い目が <strong>BUY 判定</strong>で、かつ<strong>的中</strong>したレースは、レース一覧（目次）で赤く表示します。
+        </div>
+        </div>
       </div>
     </div>
     """
@@ -986,6 +1346,12 @@ def build_html_report(
     # ★戦略評価用に溜める
     pred_order_by_race: dict[str, list[int]] = {}
     odds_map_by_race: dict[str, dict[int, float]] = {}
+
+    # build_html_report() の中、最初の方で
+    rec_th = _load_rec_threshold_yaml()
+    if rec_th and "rec_model_score_th" in rec_th:
+        REC_MODEL_SCORE_TH = float(rec_th["rec_model_score_th"])
+
 
     parts: list[str] = []
     parts.append(f"""<!doctype html>
@@ -1143,6 +1509,42 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
 
 .agari.b{{ background:#ffd1b0; }}
 
+/* 推奨買い目の「大的中」バッジ */
+.bigHit {{
+  display:inline-block;
+  margin-left:10px;
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:12px;
+  background:#ffe0e0;
+  color:#c40000;
+  border:1px solid rgba(196,0,0,0.25);
+  box-shadow:0 2px 10px rgba(196,0,0,0.15);
+}}
+.bigHit small{{
+  font-weight:800;
+  opacity:0.85;
+  margin-left:6px;
+}}
+
+.race.big-hit-card {{
+  border: 2px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 14px rgba(196,0,0,0.10);
+}}
+
+
+/* 目次：大的中レース */
+.toc a.big-hit {{
+  background: #ffe0e0;
+  color: #c40000;
+  font-weight: 900;
+  border: 1px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 10px rgba(196,0,0,0.15);
+}}
+
+
+
 /* 的中したレースのタイトルを赤く */
 .race-title.hit {{
   color: #d60000;
@@ -1174,7 +1576,35 @@ tr.third-strong td:first-child {{ border-left: 6px solid #00a3d8; }}
 <div class="meta">暫定の確定済みレース: {len(race_ids_done)} / {len(race_ids_all)}（結果が入ってるレースのみ集計可能）</div>
 """)
 
+    if rec_th:
+        parts.append(
+        f"<div class='meta'>推奨BUY閾値(model_score): {REC_MODEL_SCORE_TH:.2f} "
+        f"(calib {rec_th['calib_period']['start']}〜{rec_th['calib_period']['end']}, "
+        f"rule={rec_th.get('select_rule','')}, min_races={rec_th.get('min_races','')})</div>"
+        )
+    else:
+        parts.append(f"<div class='meta'>推奨BUY閾値(model_score): {REC_MODEL_SCORE_TH:.2f}（暫定）</div>")
+
     parts.append(_legend_html())
+    parts.append('<div id="rec-summary-placeholder"></div>')
+
+
+    # --- 推奨ログの読込（1回だけ） ---
+    rec_log_all = _load_rec_log()
+
+    # --- 当日の「大的中」race_idセット（1回だけ） ---
+    rec_today = rec_log_all[rec_log_all["date"].astype(str) == str(target_date)].copy()
+
+    hit_rids_today = set(
+        rec_today.loc[pd.to_numeric(rec_today["hit"], errors="coerce").fillna(0).astype(int) == 1, "race_id"]
+        .map(_norm_race_id)
+        .tolist()
+    )
+
+
+    parts.append('<div id="toc-placeholder"></div>')
+
+
 
     # ---- まずサマリ枠（あとで中身を差し込む） ----
     parts.append("""
@@ -1217,18 +1647,20 @@ function toggleHitDetail(id){
 </script>
 """)
 
-    # 目次
-    parts.append('<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>')
-    for rid in race_ids_all:
-        label = _toc_label_from_race_id(rid)
-        parts.append(f'<a href="#r{rid}">{label}</a>')
-    parts.append("</div>")
 
     errors = []
+    # ★この実行で当たったrace_idを溜める（レース枠の色用）
+    hit_rids_runtime: set[str] = set()
+
 
     for rid in tqdm(race_ids_all, desc=f"Build HTML {target_date}"):
         try:
             feats = pfc.create_features(race_id=rid, predict=True, skip_agg_horse=skip_agg_horse)
+            # --- 大的中バッジ初期化（必ず毎レース空で始める） ---
+            big_hit_badge = ""
+            tickets_all = []
+
+
 
             # --- 単勝
             pred_win = predict_win(
@@ -1315,6 +1747,24 @@ function toggleHitDetail(id){
             chaos_tag = _chaos_label(chaos_h)  # "小荒"/"中荒"/"大荒"/""
             marg = _marginals_from_tri_df(tri_df)
             win_um, third_um = _pick_win_and_third_by_marginals(marg)
+            # --- 推奨戦略（学習済みがあれば） ---
+            rec_badge = ""
+            try:
+                g_rank = pred_rank_df[pred_rank_df["race_id"].astype(str) == str(rid)].copy()
+                g_tri  = tri_df[tri_df["race_id"].astype(str) == str(rid)].copy() if "race_id" in tri_df.columns else pd.DataFrame()
+
+                rec_name, rec_dbg = predict_best_strategy_for_race(g_rank, g_tri)
+
+                if rec_name:
+                    top3 = rec_dbg.get("top3")
+                    if top3:
+                        ttxt = " / ".join([f"{_strategy_label_ja(n)}({p*100:.0f}%)" for n, p in top3 if n])
+                        rec_badge = f'<span class="racecond">推奨：{_strategy_label_ja(rec_name)}｜次点 {ttxt}</span>'
+                    else:
+                        rec_badge = f'<span class="racecond">推奨：{_strategy_label_ja(rec_name)}</span>'
+            except Exception:
+                rec_badge = ""
+
 
             row_class_map: dict[int, str] = {}
             if win_um is not None:
@@ -1395,6 +1845,59 @@ function toggleHitDetail(id){
                         pass
             pred_order_by_race[str(rid)] = pred_order
 
+            # ===== 推奨買い目（詳細） =====
+            rec_detail_html = ""
+            rec_name2 = ""
+            model_score = 0.0
+            n_points = 0
+            one_ticket = None
+
+            try:
+                # g_rank / g_tri はここで作る（pred_rank_df / tri_df から）
+                g_rank = pred_rank_df[pred_rank_df["race_id"].astype(str) == str(rid)].copy()
+                g_tri  = tri_df[tri_df["race_id"].astype(str) == str(rid)].copy() if "race_id" in tri_df.columns else pd.DataFrame()
+
+                rec_name2, model_score, n_points, rec_rows, one_ticket, one_ticket_desc, tickets_all = recommend_tickets_for_race(
+                    rid=str(rid),
+                    pred_rank_df_race=g_rank,
+                    tri_df_race=g_tri,
+                    pred_order=pred_order,
+                    odds_map=odds_map,
+                    topk=REC_TOPK,
+                    ticket_score_th=REC_TICKET_SCORE_TH,
+                )
+
+                if rec_name2:
+                    buy = (model_score >= REC_MODEL_SCORE_TH)
+                    if buy and not has_results:
+                        buy_txt = "⏳ BUY（未確定）"
+                    elif buy:
+                        buy_txt = "✅ BUY"
+                    else:
+                        buy_txt = "🫥 見送り"
+
+                    stake_yen = int(n_points * REC_STAKE_PER_TICKET)
+
+                    lines = []
+                    for r in rec_rows:
+                        if not r.get("show", False):
+                            continue
+                        ts = float(r.get("ticket_score", 0.0))
+                        lines.append(f'#{r["rank"]} {r["bet_type"]} {r["combo"]} <b>score={ts:.4f}</b>')
+
+                    rec_detail_html = (
+                        f'<div class="note">'
+                        f'<b>推奨買い目</b>: {_strategy_label_ja(rec_name2)} '
+                        f'(model_score={model_score:.3f}, 点数={n_points}, 投資目安={stake_yen:,}円) '
+                        f'<span class="racecond">{buy_txt}（閾値 {REC_MODEL_SCORE_TH:.2f}）</span>'
+                        f'<br>' + "<br>".join(lines) +
+                        f'</div>'
+                    )
+
+            except Exception as e:
+                rec_detail_html = f'<div class="note">推奨買い目生成エラー: {repr(e)}</div>'
+
+
             tri = tri_df.copy()
             if "race_id" in tri.columns:
                 tri = tri[tri["race_id"].astype(str) == str(rid)].copy()
@@ -1405,7 +1908,8 @@ function toggleHitDetail(id){
             else:
                 tri = pd.DataFrame([{"1着": "", "2着": "", "3着": "", "確率(近似)": "（候補不足）"}])
 
-            race_div_class = "race"
+            rid_norm = _norm_race_id(rid)
+            race_div_class = "race big-hit-card" if rid_norm in hit_rids_today else "race"
             # badge_text = f'自信度 {conf}/5' + (f'（hit@K {exp_hit}）' if exp_hit else '')
             hit_txt = f"Hit{exp_hit}" if exp_hit else ""
             chaos_txt = chaos_tag  # 空なら何も出さない
@@ -1427,6 +1931,52 @@ function toggleHitDetail(id){
                 )
 
             is_hit = (hit_badge != "")
+
+            # --- 推奨買い目の結果を記録（確定済み & BUY のときだけ） ---
+            if has_results and payouts_df_all is not None and rec_name2 and tickets_all:
+                buy = (model_score >= REC_MODEL_SCORE_TH)
+                if buy:
+                    outcomes = actual_outcomes_from_results_map(results_map, str(rid))
+                    pay_map = payout_map_for_race(payouts_df_all, str(target_date), str(rid))
+                    if outcomes and pay_map:
+                        stake_total = float(n_points * REC_STAKE_PER_TICKET)
+
+                        # ★全点で評価（ここが本体）
+                        ev_all = eval_one_race_tickets(
+                            rid=str(rid),
+                            tickets=tickets_all,
+                            outcomes=outcomes,
+                            pay_map=pay_map,
+                            stake_per_ticket=REC_STAKE_PER_TICKET,
+                        )
+                        ret_all = float(ev_all.get("return", 0.0))
+                        hit_any = 1 if ret_all > 0 else 0
+                        roi_all = (ret_all / stake_total * 100.0) if stake_total > 0 else 0.0
+
+                        # ログに保存（return は全点のreturnにする）
+                        _append_rec_log_row({
+                            "date": str(target_date),
+                            "race_id": str(rid),
+                            "venue": _place_from_race_id_netkeiba(str(rid)),   # ★追加（競馬場別集計用）
+                            "strategy": str(rec_name2),
+                            "model_score": float(model_score),
+                            "n_points": int(n_points),
+                            "stake": float(stake_total),
+                            "return": float(ret_all),
+                            "profit": float(ret_all - stake_total),
+                            "roi": float(roi_all),
+                            "hit": int(hit_any),
+                        })
+
+                        # ★大的中バッジも「全点ヒット」で付ける
+                        if hit_any == 1:
+                            big_hit_badge = f'<span class="bigHit">大的中🔥<small>{_strategy_label_ja(rec_name2)}</small></span>'
+                        if hit_any == 1:
+                            hit_rids_runtime.add(_norm_race_id(rid))
+
+
+
+
 
 
             cond = _race_condition_text(feats)
@@ -1460,12 +2010,28 @@ function toggleHitDetail(id){
             title_main = " ".join([x for x in [place, rnum, race_name] if x])
             title_sub  = cond_tail
             title_cls = "race-title hit" if is_hit else "race-title"
+            rid_norm = _norm_race_id(rid)
+
+            # ループ中のレース枠色は「当日ログ（過去に当たってる）」or「今回実行で当たった」だけを見る
+            race_div_class = "race big-hit-card" if (rid_norm in hit_rids_today or rid_norm in hit_rids_runtime) else "race"
+
+
+            rid_norm = _norm_race_id(rid)
             parts.append(
-                f'<div class="{race_div_class}" id="r{rid}">'
-                f'<h2><span class="{title_cls}">{title_main}</span> <span class="racecond">{title_sub}</span>{badge}{hit_badge}</h2>'
-            )
+                f'<div class="{race_div_class}" id="r{rid_norm}">'
+                f'<h2>'
+                f'<span class="{title_cls}">{title_main}</span> '
+                f'<span class="racecond">{title_sub}</span>'
+                f'{badge}{rec_badge}{hit_badge}{big_hit_badge}'
+                f'</h2>'
+                )
+
+
 
             parts.append(f'<div class="note">荒れ指数(Entropy, top8 score): {chaos_h:.3f}</div>')
+
+            parts.append(rec_detail_html)
+
 
 
             parts.append('<div class="grid">')
@@ -1511,6 +2077,64 @@ function toggleHitDetail(id){
             errors.append((rid, repr(e)))
 
         time.sleep(0.2)
+
+    rec_log2 = _load_rec_log()
+
+    # --- 最新ログでTOCの色を確定 ---
+    rec_today2 = rec_log2[rec_log2["date"].astype(str) == str(target_date)].copy()
+
+    hit_rids_today2 = set(
+        rec_today2.loc[pd.to_numeric(rec_today2["hit"], errors="coerce").fillna(0).astype(int) == 1, "race_id"]
+        .map(_norm_race_id)
+        .tolist()
+    )
+
+    toc_parts = ['<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>']
+    for rid in race_ids_all:
+        label = _toc_label_from_race_id(rid)
+        rid_norm = _norm_race_id(rid)
+        cls = "big-hit" if rid_norm in hit_rids_today2 or rid_norm in hit_rids_runtime else ""
+        rid_norm = _norm_race_id(rid)
+        toc_parts.append(f'<a href="#r{rid_norm}" class="{cls}">{label}</a>')
+    toc_parts.append("</div>")
+    toc_html = "\n".join(toc_parts)
+
+
+     # 累計
+    rec_today2 = rec_log2[rec_log2["date"].astype(str) == str(target_date)].copy()
+    rec_alltime2 = rec_log2.copy()
+    today_total     = _summarize_rec_log(rec_today2)
+    today_venue     = _summarize_rec_by_group(rec_today2, "venue", "競馬場")
+    all_total       = _summarize_rec_log(rec_alltime2)
+    all_by_strategy = _summarize_rec_by_group(rec_alltime2, "strategy", "買い目")
+
+    if "買い目" in all_by_strategy.columns:
+        all_by_strategy["買い目"] = all_by_strategy["買い目"].map(_strategy_label_ja)
+
+    # --- 推奨買い目サマリの回収率を赤く（100%超で赤）---
+    for df_ in [today_total, today_venue, all_total, all_by_strategy]:
+        if df_ is not None and len(df_) and "回収率" in df_.columns:
+            df_["回収率"] = df_["回収率"].map(_fmt_roi_red_text)
+
+    if "買い目" in all_by_strategy.columns:
+        all_by_strategy["買い目"] = all_by_strategy["買い目"].map(_strategy_label_ja)
+
+    rec_summary_html2 = (
+        "<div class='summary'>"
+        "<h2>推奨買い目（当日）</h2>"
+        + today_total.to_html(index=False, escape=False)
+        + "<h3>当日：競馬場別</h3>"
+        + today_venue.to_html(index=False, escape=False)
+        + "</div>"
+        "<div class='summary'>"
+        "<h2>推奨買い目（全期間累計）</h2>"
+        + all_total.to_html(index=False, escape=False)
+        + "<h3>累計：買い目別</h3>"
+        + all_by_strategy.to_html(index=False, escape=False)
+        + "</div>"
+    )
+
+
 
     # ---- サマリ生成（暫定/最終 切替） ----
     def _summary_block(title: str, df: pd.DataFrame | None) -> str:
@@ -1591,6 +2215,13 @@ function toggleHitDetail(id){
     # 累計は常時表示でよいので、暫定ボックスの下に置く（modebox active）
     html_all = html_all.replace('<div id="box-cumulative" class="modebox active"></div>',
                                 f'<div id="box-cumulative" class="modebox active">{cumulative_html}</div>')
+    html_all = html_all.replace(
+            '<div id="rec-summary-placeholder"></div>',
+            rec_summary_html2
+        )
+    html_all = html_all.replace('<div id="toc-placeholder"></div>', toc_html)
+
+
 
     # エラー表
     if errors:

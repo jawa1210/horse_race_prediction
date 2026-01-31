@@ -153,6 +153,42 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
 
 .agari.b{ background:#ffd1b0; }
 
+/* 推奨買い目の「大的中」バッジ */
+.bigHit {
+  display:inline-block;
+  margin-left:10px;
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:12px;
+  background:#ffe0e0;
+  color:#c40000;
+  border:1px solid rgba(196,0,0,0.25);
+  box-shadow:0 2px 10px rgba(196,0,0,0.15);
+}
+.bigHit small{
+  font-weight:800;
+  opacity:0.85;
+  margin-left:6px;
+}
+
+.race.big-hit-card {
+  border: 2px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 14px rgba(196,0,0,0.10);
+}
+
+
+/* 目次：大的中レース */
+.toc a.big-hit {
+  background: #ffe0e0;
+  color: #c40000;
+  font-weight: 900;
+  border: 1px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 10px rgba(196,0,0,0.15);
+}
+
+
+
 /* 的中したレースのタイトルを赤く */
 .race-title.hit {
   color: #d60000;
@@ -179,10 +215,11 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
 </style>
 </head><body>
 <h1>予想表（2026-01-25）</h1>
-<div class="meta">生成: 2026-01-25 18:10 | 上位 18 頭 / レース</div>
+<div class="meta">生成: 2026-02-01 04:18 | 上位 18 頭 / レース</div>
 <div class="meta">対象population: /home/jawa/horse_ai/horse_race_prediction/common/data/prediction_population/population_0125.csv / 結果反映: あり（results_flat.csv）</div>
 <div class="meta">暫定の確定済みレース: 36 / 36（結果が入ってるレースのみ集計可能）</div>
 
+<div class='meta'>推奨BUY閾値(model_score): 0.00 (calib 2024-01-01〜2024-12-31, rule=profit_max, min_races=300)</div>
 
     <div class="legend">
       <h2 style="margin:0 0 8px 0;">凡例（表示項目の説明）</h2>
@@ -220,9 +257,244 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
             results_flat（実着順）に基づいて馬番横に実順位を表示。
           </div>
         </div>
+        <div class="legend-item">
+        <div class="legend-title">目次の赤いレース（大的中）</div>
+        <div class="legend-body">
+            推奨買い目が <strong>BUY 判定</strong>で、かつ<strong>的中</strong>したレースは、レース一覧（目次）で赤く表示します。
+        </div>
+        </div>
       </div>
     </div>
     
+<div class='summary'><h2>推奨買い目（当日）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>対象</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>合計</td>
+      <td>36</td>
+      <td>6</td>
+      <td>16.7%</td>
+      <td>31,400</td>
+      <td>9,900</td>
+      <td>-21,500</td>
+      <td>31.5%</td>
+    </tr>
+  </tbody>
+</table><h3>当日：競馬場別</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>競馬場</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>京都</td>
+      <td>12</td>
+      <td>4</td>
+      <td>33.3%</td>
+      <td>9,200</td>
+      <td>7,630</td>
+      <td>-1,570</td>
+      <td>82.9%</td>
+    </tr>
+    <tr>
+      <td>中山</td>
+      <td>12</td>
+      <td>1</td>
+      <td>8.3%</td>
+      <td>12,400</td>
+      <td>1,460</td>
+      <td>-10,940</td>
+      <td>11.8%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>12</td>
+      <td>1</td>
+      <td>8.3%</td>
+      <td>9,800</td>
+      <td>810</td>
+      <td>-8,990</td>
+      <td>8.3%</td>
+    </tr>
+  </tbody>
+</table></div><div class='summary'><h2>推奨買い目（全期間累計）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>対象</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>合計</td>
+      <td>132</td>
+      <td>49</td>
+      <td>37.1%</td>
+      <td>119,700</td>
+      <td>57,560</td>
+      <td>-62,140</td>
+      <td>48.1%</td>
+    </tr>
+  </tbody>
+</table><h3>累計：買い目別</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>買い目</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ワイドBOX5</td>
+      <td>28</td>
+      <td>15</td>
+      <td>53.6%</td>
+      <td>28,000</td>
+      <td>21,140</td>
+      <td>-6,860</td>
+      <td>75.5%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX5</td>
+      <td>43</td>
+      <td>18</td>
+      <td>41.9%</td>
+      <td>43,000</td>
+      <td>25,370</td>
+      <td>-17,630</td>
+      <td>59.0%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>14</td>
+      <td>10</td>
+      <td>71.4%</td>
+      <td>7,000</td>
+      <td>3,150</td>
+      <td>-3,850</td>
+      <td>45.0%</td>
+    </tr>
+    <tr>
+      <td>馬連流5</td>
+      <td>27</td>
+      <td>3</td>
+      <td>11.1%</td>
+      <td>10,800</td>
+      <td>3,860</td>
+      <td>-6,940</td>
+      <td>35.7%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX4</td>
+      <td>14</td>
+      <td>2</td>
+      <td>14.3%</td>
+      <td>16,800</td>
+      <td>3,250</td>
+      <td>-13,550</td>
+      <td>19.3%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX5</td>
+      <td>4</td>
+      <td>1</td>
+      <td>25.0%</td>
+      <td>8,000</td>
+      <td>790</td>
+      <td>-7,210</td>
+      <td>9.9%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX5</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>6,000</td>
+      <td>0</td>
+      <td>-6,000</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>単勝①</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>100</td>
+      <td>0</td>
+      <td>-100</td>
+      <td>0.0%</td>
+    </tr>
+  </tbody>
+</table></div>
+<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>
+<a href="#r202606010901" class="big-hit">中山 1R</a>
+<a href="#r202606010902" class="">中山 2R</a>
+<a href="#r202606010903" class="">中山 3R</a>
+<a href="#r202606010904" class="">中山 4R</a>
+<a href="#r202606010905" class="">中山 5R</a>
+<a href="#r202606010906" class="">中山 6R</a>
+<a href="#r202606010907" class="">中山 7R</a>
+<a href="#r202606010908" class="">中山 8R</a>
+<a href="#r202606010909" class="">中山 9R</a>
+<a href="#r202606010910" class="">中山 10R</a>
+<a href="#r202606010911" class="">中山 11R</a>
+<a href="#r202606010912" class="">中山 12R</a>
+<a href="#r202608010901" class="">京都 1R</a>
+<a href="#r202608010902" class="big-hit">京都 2R</a>
+<a href="#r202608010903" class="">京都 3R</a>
+<a href="#r202608010904" class="">京都 4R</a>
+<a href="#r202608010905" class="">京都 5R</a>
+<a href="#r202608010906" class="">京都 6R</a>
+<a href="#r202608010907" class="">京都 7R</a>
+<a href="#r202608010908" class="big-hit">京都 8R</a>
+<a href="#r202608010909" class="big-hit">京都 9R</a>
+<a href="#r202608010910" class="big-hit">京都 10R</a>
+<a href="#r202608010911" class="">京都 11R</a>
+<a href="#r202608010912" class="">京都 12R</a>
+<a href="#r202610010201" class="">小倉 1R</a>
+<a href="#r202610010202" class="">小倉 2R</a>
+<a href="#r202610010203" class="">小倉 3R</a>
+<a href="#r202610010204" class="">小倉 4R</a>
+<a href="#r202610010205" class="big-hit">小倉 5R</a>
+<a href="#r202610010206" class="">小倉 6R</a>
+<a href="#r202610010207" class="">小倉 7R</a>
+<a href="#r202610010208" class="">小倉 8R</a>
+<a href="#r202610010209" class="">小倉 9R</a>
+<a href="#r202610010210" class="">小倉 10R</a>
+<a href="#r202610010211" class="">小倉 11R</a>
+<a href="#r202610010212" class="">小倉 12R</a>
+</div>
 
 <div class="modebar">
   <span style="font-weight:800;">サマリ表示:</span>
@@ -316,23 +588,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>単勝minoddstop3</td>
       <td>全体</td>
       <td>36</td>
-      <td>36</td>
-      <td>22.2%</td>
-      <td>22.22%</td>
-      <td>3,600</td>
-      <td>4,140</td>
-      <td><span style="color:#e05a5a; font-weight:900;">115.0%</span></td>
+      <td>108</td>
+      <td>25.0%</td>
+      <td>8.33%</td>
+      <td>10,800</td>
+      <td>4,920</td>
+      <td>45.6%</td>
     </tr>
     <tr>
       <td>単勝minoddstop5</td>
       <td>全体</td>
       <td>36</td>
-      <td>36</td>
-      <td>16.7%</td>
-      <td>16.67%</td>
-      <td>3,600</td>
-      <td>1,380</td>
-      <td>38.3%</td>
+      <td>180</td>
+      <td>41.7%</td>
+      <td>8.33%</td>
+      <td>18,000</td>
+      <td>12,900</td>
+      <td>71.7%</td>
     </tr>
     <tr>
       <td>単勝①</td>
@@ -563,23 +835,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>中山</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
+      <td>36</td>
       <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
+      <td>5.56%</td>
+      <td>3,600</td>
       <td>300</td>
-      <td>25.0%</td>
+      <td>8.3%</td>
     </tr>
     <tr>
       <td>中山</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
-      <td>300</td>
-      <td>25.0%</td>
+      <td>60</td>
+      <td>41.7%</td>
+      <td>8.33%</td>
+      <td>6,000</td>
+      <td>6,740</td>
+      <td><span style="color:#e05a5a; font-weight:900;">112.3%</span></td>
     </tr>
     <tr>
       <td>中山</td>
@@ -794,23 +1066,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>京都</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
-      <td>33.3%</td>
-      <td>33.33%</td>
-      <td>1,200</td>
-      <td>3,110</td>
-      <td><span style="color:#b00000; font-weight:900;">259.2%</span></td>
+      <td>36</td>
+      <td>41.7%</td>
+      <td>13.89%</td>
+      <td>3,600</td>
+      <td>3,890</td>
+      <td><span style="color:#e05a5a; font-weight:900;">108.1%</span></td>
     </tr>
     <tr>
       <td>京都</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>25.0%</td>
-      <td>25.00%</td>
-      <td>1,200</td>
-      <td>920</td>
-      <td>76.7%</td>
+      <td>60</td>
+      <td>58.3%</td>
+      <td>11.67%</td>
+      <td>6,000</td>
+      <td>4,730</td>
+      <td>78.8%</td>
     </tr>
     <tr>
       <td>京都</td>
@@ -1025,23 +1297,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>小倉</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
+      <td>36</td>
       <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
+      <td>5.56%</td>
+      <td>3,600</td>
       <td>730</td>
-      <td>60.8%</td>
+      <td>20.3%</td>
     </tr>
     <tr>
       <td>小倉</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>8.3%</td>
-      <td>8.33%</td>
-      <td>1,200</td>
-      <td>160</td>
-      <td>13.3%</td>
+      <td>60</td>
+      <td>25.0%</td>
+      <td>5.00%</td>
+      <td>6,000</td>
+      <td>1,430</td>
+      <td>23.8%</td>
     </tr>
     <tr>
       <td>小倉</td>
@@ -1273,23 +1545,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>単勝minoddstop3</td>
       <td>全体</td>
       <td>36</td>
-      <td>36</td>
-      <td>22.2%</td>
-      <td>22.22%</td>
-      <td>3,600</td>
-      <td>4,140</td>
-      <td><span style="color:#e05a5a; font-weight:900;">115.0%</span></td>
+      <td>108</td>
+      <td>25.0%</td>
+      <td>8.33%</td>
+      <td>10,800</td>
+      <td>4,920</td>
+      <td>45.6%</td>
     </tr>
     <tr>
       <td>単勝minoddstop5</td>
       <td>全体</td>
       <td>36</td>
-      <td>36</td>
-      <td>16.7%</td>
-      <td>16.67%</td>
-      <td>3,600</td>
-      <td>1,380</td>
-      <td>38.3%</td>
+      <td>180</td>
+      <td>41.7%</td>
+      <td>8.33%</td>
+      <td>18,000</td>
+      <td>12,900</td>
+      <td>71.7%</td>
     </tr>
     <tr>
       <td>単勝①</td>
@@ -1520,23 +1792,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>中山</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
+      <td>36</td>
       <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
+      <td>5.56%</td>
+      <td>3,600</td>
       <td>300</td>
-      <td>25.0%</td>
+      <td>8.3%</td>
     </tr>
     <tr>
       <td>中山</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
-      <td>300</td>
-      <td>25.0%</td>
+      <td>60</td>
+      <td>41.7%</td>
+      <td>8.33%</td>
+      <td>6,000</td>
+      <td>6,740</td>
+      <td><span style="color:#e05a5a; font-weight:900;">112.3%</span></td>
     </tr>
     <tr>
       <td>中山</td>
@@ -1751,23 +2023,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>京都</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
-      <td>33.3%</td>
-      <td>33.33%</td>
-      <td>1,200</td>
-      <td>3,110</td>
-      <td><span style="color:#b00000; font-weight:900;">259.2%</span></td>
+      <td>36</td>
+      <td>41.7%</td>
+      <td>13.89%</td>
+      <td>3,600</td>
+      <td>3,890</td>
+      <td><span style="color:#e05a5a; font-weight:900;">108.1%</span></td>
     </tr>
     <tr>
       <td>京都</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>25.0%</td>
-      <td>25.00%</td>
-      <td>1,200</td>
-      <td>920</td>
-      <td>76.7%</td>
+      <td>60</td>
+      <td>58.3%</td>
+      <td>11.67%</td>
+      <td>6,000</td>
+      <td>4,730</td>
+      <td>78.8%</td>
     </tr>
     <tr>
       <td>京都</td>
@@ -1982,23 +2254,23 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
       <td>小倉</td>
       <td>単勝minoddstop3</td>
       <td>12</td>
-      <td>12</td>
+      <td>36</td>
       <td>16.7%</td>
-      <td>16.67%</td>
-      <td>1,200</td>
+      <td>5.56%</td>
+      <td>3,600</td>
       <td>730</td>
-      <td>60.8%</td>
+      <td>20.3%</td>
     </tr>
     <tr>
       <td>小倉</td>
       <td>単勝minoddstop5</td>
       <td>12</td>
-      <td>12</td>
-      <td>8.3%</td>
-      <td>8.33%</td>
-      <td>1,200</td>
-      <td>160</td>
-      <td>13.3%</td>
+      <td>60</td>
+      <td>25.0%</td>
+      <td>5.00%</td>
+      <td>6,000</td>
+      <td>1,430</td>
+      <td>23.8%</td>
     </tr>
     <tr>
       <td>小倉</td>
@@ -2161,213 +2433,213 @@ tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
   <tbody>
     <tr>
       <td>三連複BOX4</td>
-      <td>120</td>
-      <td>480</td>
-      <td>7.5%</td>
-      <td>1.88%</td>
-      <td>48,000</td>
-      <td>202,310</td>
-      <td><span style="color:#b00000; font-weight:900;">421.5%</span></td>
+      <td>156</td>
+      <td>624</td>
+      <td>9.0%</td>
+      <td>2.24%</td>
+      <td>62,400</td>
+      <td>207,260</td>
+      <td><span style="color:#b00000; font-weight:900;">332.1%</span></td>
     </tr>
     <tr>
       <td>三連単BOX4</td>
-      <td>120</td>
-      <td>2880</td>
-      <td>7.5%</td>
-      <td>0.31%</td>
-      <td>288,000</td>
-      <td>1,074,790</td>
-      <td><span style="color:#b00000; font-weight:900;">373.2%</span></td>
+      <td>156</td>
+      <td>3744</td>
+      <td>9.0%</td>
+      <td>0.37%</td>
+      <td>374,400</td>
+      <td>1,119,790</td>
+      <td><span style="color:#b00000; font-weight:900;">299.1%</span></td>
     </tr>
     <tr>
       <td>三連複BOX5</td>
-      <td>120</td>
-      <td>1200</td>
-      <td>11.7%</td>
-      <td>1.17%</td>
-      <td>120,000</td>
-      <td>231,050</td>
-      <td><span style="color:#e05a5a; font-weight:900;">192.5%</span></td>
+      <td>156</td>
+      <td>1560</td>
+      <td>15.4%</td>
+      <td>1.54%</td>
+      <td>156,000</td>
+      <td>244,520</td>
+      <td><span style="color:#e05a5a; font-weight:900;">156.7%</span></td>
     </tr>
     <tr>
       <td>三連単BOX5</td>
-      <td>120</td>
-      <td>7200</td>
-      <td>11.7%</td>
-      <td>0.19%</td>
-      <td>720,000</td>
-      <td>1,208,420</td>
-      <td><span style="color:#e05a5a; font-weight:900;">167.8%</span></td>
+      <td>156</td>
+      <td>9360</td>
+      <td>15.4%</td>
+      <td>0.26%</td>
+      <td>936,000</td>
+      <td>1,285,940</td>
+      <td><span style="color:#e05a5a; font-weight:900;">137.4%</span></td>
     </tr>
     <tr>
       <td>三連単①-②③-②③④⑤</td>
-      <td>120</td>
-      <td>720</td>
-      <td>4.2%</td>
-      <td>0.69%</td>
-      <td>72,000</td>
-      <td>103,840</td>
-      <td><span style="color:#e05a5a; font-weight:900;">144.2%</span></td>
-    </tr>
-    <tr>
-      <td>三連単①-②③④-②③④</td>
-      <td>120</td>
-      <td>720</td>
-      <td>3.3%</td>
-      <td>0.56%</td>
-      <td>72,000</td>
-      <td>72,720</td>
-      <td><span style="color:#e05a5a; font-weight:900;">101.0%</span></td>
-    </tr>
-    <tr>
-      <td>ワイド流4</td>
-      <td>120</td>
-      <td>360</td>
-      <td>24.2%</td>
-      <td>10.28%</td>
-      <td>36,000</td>
-      <td>36,300</td>
-      <td><span style="color:#e05a5a; font-weight:900;">100.8%</span></td>
+      <td>156</td>
+      <td>936</td>
+      <td>4.5%</td>
+      <td>0.75%</td>
+      <td>93,600</td>
+      <td>109,630</td>
+      <td><span style="color:#e05a5a; font-weight:900;">117.1%</span></td>
     </tr>
     <tr>
       <td>ワイド流5</td>
-      <td>120</td>
-      <td>480</td>
-      <td>29.2%</td>
-      <td>9.58%</td>
-      <td>48,000</td>
-      <td>47,420</td>
-      <td>98.8%</td>
+      <td>156</td>
+      <td>624</td>
+      <td>34.0%</td>
+      <td>11.54%</td>
+      <td>62,400</td>
+      <td>62,010</td>
+      <td>99.4%</td>
     </tr>
     <tr>
-      <td>馬単流4</td>
-      <td>120</td>
-      <td>360</td>
-      <td>7.5%</td>
-      <td>2.50%</td>
-      <td>36,000</td>
-      <td>31,620</td>
-      <td>87.8%</td>
+      <td>ワイド流4</td>
+      <td>156</td>
+      <td>468</td>
+      <td>28.2%</td>
+      <td>11.97%</td>
+      <td>46,800</td>
+      <td>44,670</td>
+      <td>95.4%</td>
     </tr>
     <tr>
       <td>馬連BOX4</td>
-      <td>120</td>
-      <td>720</td>
-      <td>18.3%</td>
-      <td>3.06%</td>
-      <td>72,000</td>
-      <td>61,350</td>
-      <td>85.2%</td>
-    </tr>
-    <tr>
-      <td>馬単流5</td>
-      <td>120</td>
-      <td>480</td>
-      <td>9.2%</td>
-      <td>2.29%</td>
-      <td>48,000</td>
-      <td>40,760</td>
-      <td>84.9%</td>
-    </tr>
-    <tr>
-      <td>ワイドBOX4</td>
-      <td>120</td>
-      <td>720</td>
-      <td>36.7%</td>
-      <td>8.61%</td>
-      <td>72,000</td>
-      <td>60,410</td>
-      <td>83.9%</td>
+      <td>156</td>
+      <td>936</td>
+      <td>23.7%</td>
+      <td>3.95%</td>
+      <td>93,600</td>
+      <td>81,710</td>
+      <td>87.3%</td>
     </tr>
     <tr>
       <td>馬単BOX4</td>
-      <td>120</td>
-      <td>1440</td>
-      <td>18.3%</td>
-      <td>1.53%</td>
-      <td>144,000</td>
-      <td>116,290</td>
-      <td>80.8%</td>
+      <td>156</td>
+      <td>1872</td>
+      <td>23.7%</td>
+      <td>1.98%</td>
+      <td>187,200</td>
+      <td>160,980</td>
+      <td>86.0%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX4</td>
+      <td>156</td>
+      <td>936</td>
+      <td>42.3%</td>
+      <td>10.04%</td>
+      <td>93,600</td>
+      <td>77,310</td>
+      <td>82.6%</td>
     </tr>
     <tr>
       <td>ワイドBOX5</td>
-      <td>120</td>
-      <td>1200</td>
-      <td>50.8%</td>
-      <td>7.42%</td>
-      <td>120,000</td>
-      <td>94,750</td>
-      <td>79.0%</td>
+      <td>156</td>
+      <td>1560</td>
+      <td>55.8%</td>
+      <td>8.65%</td>
+      <td>156,000</td>
+      <td>125,380</td>
+      <td>80.4%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③④-②③④</td>
+      <td>156</td>
+      <td>936</td>
+      <td>2.6%</td>
+      <td>0.43%</td>
+      <td>93,600</td>
+      <td>72,720</td>
+      <td>77.7%</td>
     </tr>
     <tr>
       <td>単勝minoddstop3</td>
-      <td>120</td>
-      <td>120</td>
-      <td>25.0%</td>
-      <td>25.00%</td>
-      <td>12,000</td>
-      <td>9,440</td>
-      <td>78.7%</td>
+      <td>156</td>
+      <td>420</td>
+      <td>39.7%</td>
+      <td>14.76%</td>
+      <td>42,000</td>
+      <td>31,370</td>
+      <td>74.7%</td>
     </tr>
     <tr>
-      <td>単勝minoddstop5</td>
-      <td>120</td>
-      <td>120</td>
-      <td>30.0%</td>
-      <td>30.00%</td>
-      <td>12,000</td>
-      <td>8,970</td>
-      <td>74.8%</td>
+      <td>馬単流5</td>
+      <td>156</td>
+      <td>624</td>
+      <td>10.3%</td>
+      <td>2.56%</td>
+      <td>62,400</td>
+      <td>46,250</td>
+      <td>74.1%</td>
     </tr>
     <tr>
-      <td>単勝①</td>
-      <td>120</td>
-      <td>120</td>
-      <td>17.5%</td>
-      <td>17.50%</td>
-      <td>12,000</td>
-      <td>8,920</td>
-      <td>74.3%</td>
+      <td>馬単流4</td>
+      <td>156</td>
+      <td>468</td>
+      <td>7.7%</td>
+      <td>2.56%</td>
+      <td>46,800</td>
+      <td>34,490</td>
+      <td>73.7%</td>
     </tr>
     <tr>
       <td>馬連BOX5</td>
-      <td>120</td>
-      <td>1200</td>
-      <td>25.0%</td>
-      <td>2.50%</td>
-      <td>120,000</td>
-      <td>76,570</td>
-      <td>63.8%</td>
+      <td>156</td>
+      <td>1560</td>
+      <td>30.8%</td>
+      <td>3.08%</td>
+      <td>156,000</td>
+      <td>114,930</td>
+      <td>73.7%</td>
     </tr>
     <tr>
-      <td>馬連流4</td>
-      <td>120</td>
-      <td>360</td>
-      <td>11.7%</td>
-      <td>3.89%</td>
-      <td>36,000</td>
-      <td>21,490</td>
-      <td>59.7%</td>
+      <td>単勝①</td>
+      <td>156</td>
+      <td>156</td>
+      <td>17.9%</td>
+      <td>17.95%</td>
+      <td>15,600</td>
+      <td>11,060</td>
+      <td>70.9%</td>
     </tr>
     <tr>
       <td>馬単BOX5</td>
-      <td>120</td>
-      <td>2400</td>
-      <td>25.0%</td>
-      <td>1.25%</td>
-      <td>240,000</td>
-      <td>138,810</td>
-      <td>57.8%</td>
+      <td>156</td>
+      <td>3120</td>
+      <td>30.8%</td>
+      <td>1.54%</td>
+      <td>312,000</td>
+      <td>213,000</td>
+      <td>68.3%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>156</td>
+      <td>684</td>
+      <td>51.3%</td>
+      <td>11.70%</td>
+      <td>68,400</td>
+      <td>44,540</td>
+      <td>65.1%</td>
+    </tr>
+    <tr>
+      <td>馬連流4</td>
+      <td>156</td>
+      <td>468</td>
+      <td>14.1%</td>
+      <td>4.70%</td>
+      <td>46,800</td>
+      <td>28,370</td>
+      <td>60.6%</td>
     </tr>
     <tr>
       <td>馬連流5</td>
-      <td>120</td>
-      <td>480</td>
-      <td>13.3%</td>
-      <td>3.33%</td>
-      <td>48,000</td>
-      <td>26,670</td>
-      <td>55.6%</td>
+      <td>156</td>
+      <td>624</td>
+      <td>16.7%</td>
+      <td>4.17%</td>
+      <td>62,400</td>
+      <td>35,360</td>
+      <td>56.7%</td>
     </tr>
   </tbody>
 </table></div></div>
@@ -2399,46 +2671,9 @@ function toggleHitDetail(id){
 }
 </script>
 
-<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>
-<a href="#r202606010901">中山 1R</a>
-<a href="#r202606010902">中山 2R</a>
-<a href="#r202606010903">中山 3R</a>
-<a href="#r202606010904">中山 4R</a>
-<a href="#r202606010905">中山 5R</a>
-<a href="#r202606010906">中山 6R</a>
-<a href="#r202606010907">中山 7R</a>
-<a href="#r202606010908">中山 8R</a>
-<a href="#r202606010909">中山 9R</a>
-<a href="#r202606010910">中山 10R</a>
-<a href="#r202606010911">中山 11R</a>
-<a href="#r202606010912">中山 12R</a>
-<a href="#r202608010901">京都 1R</a>
-<a href="#r202608010902">京都 2R</a>
-<a href="#r202608010903">京都 3R</a>
-<a href="#r202608010904">京都 4R</a>
-<a href="#r202608010905">京都 5R</a>
-<a href="#r202608010906">京都 6R</a>
-<a href="#r202608010907">京都 7R</a>
-<a href="#r202608010908">京都 8R</a>
-<a href="#r202608010909">京都 9R</a>
-<a href="#r202608010910">京都 10R</a>
-<a href="#r202608010911">京都 11R</a>
-<a href="#r202608010912">京都 12R</a>
-<a href="#r202610010201">小倉 1R</a>
-<a href="#r202610010202">小倉 2R</a>
-<a href="#r202610010203">小倉 3R</a>
-<a href="#r202610010204">小倉 4R</a>
-<a href="#r202610010205">小倉 5R</a>
-<a href="#r202610010206">小倉 6R</a>
-<a href="#r202610010207">小倉 7R</a>
-<a href="#r202610010208">小倉 8R</a>
-<a href="#r202610010209">小倉 9R</a>
-<a href="#r202610010210">小倉 10R</a>
-<a href="#r202610010211">小倉 11R</a>
-<a href="#r202610010212">小倉 12R</a>
-</div>
-<div class="race" id="r202606010901"><h2><span class="race-title hit">中山 1R 3歳未勝利</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010901')">的中🎯(馬単BOX4｜<span class="mult m0">+1.2倍</span> / 馬連BOX4｜<span class="mult m0">+1.2倍</span> / 馬単BOX5｜<span class="mult m0">+0.7倍</span> / 他+3)</span><div id="hitdetail-202606010901" class="hitdetail"><b>的中内訳</b><ul><li><b>馬単BOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202606010901"><h2><span class="race-title hit">中山 1R 3歳未勝利</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(13%) / 馬連BOX5(10%) / 単勝①(9%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010901')">的中🎯(馬単BOX4｜<span class="mult m0">+1.2倍</span> / 馬連BOX4｜<span class="mult m0">+1.2倍</span> / 単勝minoddstop5｜<span class="mult m0">+0.8倍</span> / 他+4)</span><div id="hitdetail-202606010901" class="hitdetail"><b>的中内訳</b><ul><li><b>馬単BOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.8倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬単BOX4</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.078</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.126, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (12, 11) <b>score=6.1861</b><br>#2 umatan (11, 12) <b>score=6.1861</b><br>#3 umatan (12, 5) <b>score=6.1709</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -2742,8 +2977,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010902"><h2><span class="race-title">中山 2R 3歳未勝利</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010902"><h2><span class="race-title">中山 2R 3歳未勝利</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(11%) / ワイドBOX5(9%) / 馬連BOX4(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.071</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.113, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (8, 14) <b>score=6.2576</b><br>#2 umaren (13, 14) <b>score=6.0928</b><br>#3 umaren (7, 14) <b>score=6.0708</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -3043,8 +3279,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010903"><h2><span class="race-title hit">中山 3R 3歳未勝利</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010903')">的中🎯(単勝①｜<span class="mult m0">+1.2倍</span> / 単勝minoddstop3｜<span class="mult m0">+1.2倍</span> / 単勝minoddstop5｜<span class="mult m0">+1.2倍</span>)</span><div id="hitdetail-202606010903" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m0">+1.2倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.2倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.2倍</span></li></ul></div></h2>
+<div class="race" id="r202606010903"><h2><span class="race-title hit">中山 3R 3歳未勝利</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(16%) / ワイドBOX5(9%) / 単勝minoddstop5(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010903')">的中🎯(単勝①｜<span class="mult m0">+1.2倍</span> / 単勝minoddstop3｜<span class="mult m0">+0.4倍</span> / 単勝minoddstop5｜<span class="mult m0">+0.2倍</span>)</span><div id="hitdetail-202606010903" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m0">+1.2倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.4倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.2倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.076</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.159, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (12, 16) <b>score=6.1720</b><br>#2 umaren (5, 12) <b>score=6.1584</b><br>#3 umaren (5, 16) <b>score=6.1568</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -3348,8 +3585,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010904"><h2><span class="race-title">中山 4R 3歳新馬</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010904"><h2><span class="race-title hit">中山 4R 3歳新馬</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(27%) / ワイドBOX5(17%) / 単勝minoddstop5(10%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010904')">的中🎯(単勝minoddstop5｜<span class="mult m2">+8.4倍</span>)</span><div id="hitdetail-202606010904" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop5</b>｜<span class="mult m2">+8.4倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.079</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.268, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (15, 16) <b>score=6.4395</b><br>#2 umaren (12, 15) <b>score=6.3818</b><br>#3 umaren (4, 15) <b>score=6.3791</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -3653,8 +3891,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010905"><h2><span class="race-title">中山 5R 3歳新馬</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010905"><h2><span class="race-title">中山 5R 3歳新馬</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(16%) / 馬連流5(13%) / 単勝minoddstop5(10%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.075</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.159, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (16, 18) <b>score=5.7575</b><br>#2 wide (10, 18) <b>score=5.7149</b><br>#3 wide (3, 18) <b>score=5.7024</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -3962,44 +4201,45 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010906"><h2><span class="race-title hit">中山 6R 4歳以上1勝クラス</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010906')">的中🎯(ワイド流5｜<span class="mult m1">+3.1倍</span> / ワイドBOX5｜<span class="mult m0">+1.2倍</span>)</span><div id="hitdetail-202606010906" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流5</b>｜<span class="mult m1">+3.1倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+1.2倍</span></li></ul></div></h2>
+<div class="race" id="r202606010906"><h2><span class="race-title hit">中山 6R 4歳以上1勝クラス</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(11%) / 単勝①(9%) / ワイド流5(9%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010906')">的中🎯(単勝minoddstop5｜<span class="mult m1">+3.7倍</span> / ワイド流5｜<span class="mult m1">+3.1倍</span> / ワイドBOX5｜<span class="mult m0">+1.2倍</span>)</span><div id="hitdetail-202606010906" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop5</b>｜<span class="mult m1">+3.7倍</span></li><li><b>ワイド流5</b>｜<span class="mult m1">+3.1倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+1.2倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.048</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.107, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (10, 7) <b>score=6.7719</b><br>#2 umatan (7, 10) <b>score=6.7719</b><br>#3 umatan (10, 2) <b>score=6.7138</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
-<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td></td><td><span class="umabadge w2">2</span></td><td>サカイシューター</td><td>牡4</td><td>木幡育</td><td>57.0</td><td>401.0</td><td>14</td><td></td><td>0.15080361522116312</td><td>60.47224970368641</td></tr>
-<tr><td></td><td><span class="umabadge w4">7</span></td><td>カガバベル</td><td>牡4</td><td>江田照</td><td>57.0</td><td>265.9</td><td>13</td><td></td><td>0.15080361522116312</td><td>40.09868128730727</td></tr>
-<tr><td></td><td><span class="umabadge w1">1</span></td><td>ブレゲアン</td><td>牡4</td><td>三浦</td><td>57.0</td><td>7.1</td><td>3</td><td></td><td>0.14552830218130902</td><td>1.033250945487294</td></tr>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td>10</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑩</span></td><td>サカイシューター</td><td>牡4</td><td>木幡育</td><td>57.0</td><td>401.0</td><td>14</td><td></td><td>0.15080361522116312</td><td>60.47224970368641</td></tr>
+<tr><td>13</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑬</span></td><td>カガバベル</td><td>牡4</td><td>江田照</td><td>57.0</td><td>265.9</td><td>13</td><td></td><td>0.15080361522116312</td><td>40.09868128730727</td></tr>
+<tr><td>14</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑭</span></td><td>ブレゲアン</td><td>牡4</td><td>三浦</td><td>57.0</td><td>7.1</td><td>3</td><td></td><td>0.14552830218130902</td><td>1.033250945487294</td></tr>
 <tr class="hit-5"><td>4</td><td><span class="umabadge w3">5</span> <span class="rankicon">④</span></td><td>ドゥマーヴェリック</td><td>牡4</td><td>ルメール</td><td>57.0</td><td>1.9</td><td>1</td><td></td><td>0.14552830218130902</td><td>0.2765037741444871</td></tr>
-<tr><td></td><td><span class="umabadge w2">3</span></td><td>パルヴェニュー</td><td>牡4</td><td>▲佐藤</td><td>54.0</td><td>622.3</td><td>15</td><td></td><td>0.1134725722287331</td><td>70.6139816979406</td></tr>
+<tr><td>12</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑫</span></td><td>パルヴェニュー</td><td>牡4</td><td>▲佐藤</td><td>54.0</td><td>622.3</td><td>15</td><td></td><td>0.1134725722287331</td><td>70.6139816979406</td></tr>
 <tr><td></td><td><span class="umabadge w4">6</span></td><td>リーゼントジェイド</td><td>セン5</td><td>松岡</td><td>58.0</td><td>184.4</td><td>12</td><td></td><td>0.09592828929515189</td><td>17.689176546026008</td></tr>
 <tr class="hit-1"><td>1</td><td><span class="umabadge w5">9</span> <span class="rankicon">🥇</span></td><td>コーリンカルベラ</td><td>牡5</td><td>吉田豊</td><td>58.0</td><td>18.6</td><td>6</td><td></td><td>0.09592828929515189</td><td>1.7842661808898252</td></tr>
 <tr class="hit-3"><td>3</td><td><span class="umabadge w6">10</span> <span class="rankicon">🥉</span></td><td>マリンバンカー</td><td>牡5</td><td>▲上里</td><td>55.0</td><td>8.2</td><td>4</td><td></td><td>0.09592828929515189</td><td>0.7866119722202454</td></tr>
 <tr class="hit-5"><td>5</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑤</span></td><td>ジャクソン</td><td>牡6</td><td>丸田</td><td>58.0</td><td>95.8</td><td>10</td><td></td><td>0.09592828929515189</td><td>9.189930114475551</td></tr>
-<tr><td></td><td><span class="umabadge w7">12</span></td><td>ブレードサクセス</td><td>牡5</td><td>横山武</td><td>58.0</td><td>4.1</td><td>2</td><td></td><td>0.09592828929515189</td><td>0.3933059861101227</td></tr>
-<tr><td></td><td><span class="umabadge w8">14</span></td><td>プルメリアクヒオ</td><td>牡5</td><td>△長浜</td><td>56.0</td><td>34.5</td><td>7</td><td></td><td>0.09592828929515189</td><td>3.30952598068274</td></tr>
-<tr><td></td><td><span class="umabadge w8">15</span></td><td>メトロポリターナ</td><td>牝5</td><td>原</td><td>56.0</td><td>174.8</td><td>11</td><td></td><td>0.09592828929515189</td><td>16.76826496879255</td></tr>
-<tr><td></td><td><span class="umabadge w3">4</span></td><td>コスモフレディ</td><td>牡5</td><td>柴田大</td><td>58.0</td><td>89.2</td><td>9</td><td></td><td>0.08483185354080319</td><td>7.567001335839645</td></tr>
+<tr><td>8</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑧</span></td><td>ブレードサクセス</td><td>牡5</td><td>横山武</td><td>58.0</td><td>4.1</td><td>2</td><td></td><td>0.09592828929515189</td><td>0.3933059861101227</td></tr>
+<tr><td>9</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑨</span></td><td>プルメリアクヒオ</td><td>牡5</td><td>△長浜</td><td>56.0</td><td>34.5</td><td>7</td><td></td><td>0.09592828929515189</td><td>3.30952598068274</td></tr>
+<tr><td>6</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑥</span></td><td>メトロポリターナ</td><td>牝5</td><td>原</td><td>56.0</td><td>174.8</td><td>11</td><td></td><td>0.09592828929515189</td><td>16.76826496879255</td></tr>
+<tr><td>7</td><td><span class="umabadge w3">4</span> <span class="rankicon">⑦</span></td><td>コスモフレディ</td><td>牡5</td><td>柴田大</td><td>58.0</td><td>89.2</td><td>9</td><td></td><td>0.08483185354080319</td><td>7.567001335839645</td></tr>
 <tr class="hit-3"><td>2</td><td><span class="umabadge w7">13</span> <span class="rankicon">🥈</span></td><td>ファルコンミノル</td><td>牡6</td><td>木幡巧</td><td>58.0</td><td>10.7</td><td>5</td><td></td><td>0.07385371586935802</td><td>0.7902347598021308</td></tr>
-<tr><td></td><td><span class="umabadge w5">8</span></td><td>ティアップドライブ</td><td>牡4</td><td>▲遠藤</td><td>54.0</td><td>62.2</td><td>8</td><td></td><td>0.0720706996922909</td><td>4.482797520860494</td></tr></tbody></table>
+<tr><td>11</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑪</span></td><td>ティアップドライブ</td><td>牡4</td><td>▲遠藤</td><td>54.0</td><td>62.2</td><td>8</td><td></td><td>0.0720706996922909</td><td>4.482797520860494</td></tr></tbody></table>
 <div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
 </div>
 <div>
 <h3>3連系モデル（ランキング）</h3>
 <table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-3 win-strong"><td>3</td><td>1</td><td><span class="umabadge w6">10</span> <span class="rankicon">🥉</span><span class="predtag win">勝ち濃厚</span></td><td>マリンバンカー</td><td>牡5</td><td>▲上里</td><td>55</td><td><span class="odds1">8.2</span></td><td>4</td><td></td><td>3.651</td></tr>
-<tr><td></td><td>2</td><td><span class="umabadge w4">7</span></td><td>カガバベル</td><td>牡4</td><td>江田照</td><td>57</td><td><span class="odds3">265.9</span></td><td><span class="pop10">13</span></td><td></td><td>3.121</td></tr>
-<tr><td></td><td>3</td><td><span class="umabadge w2">2</span></td><td>サカイシューター</td><td>牡4</td><td>木幡育</td><td>57</td><td><span class="odds3">401.0</span></td><td><span class="pop10">14</span></td><td></td><td>3.063</td></tr>
-<tr><td></td><td>4</td><td><span class="umabadge w8">15</span></td><td>メトロポリターナ</td><td>牝5</td><td>原</td><td>56</td><td><span class="odds3">174.8</span></td><td><span class="pop10">11</span></td><td></td><td>3.029</td></tr>
+<tr><td>13</td><td>2</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑬</span></td><td>カガバベル</td><td>牡4</td><td>江田照</td><td>57</td><td><span class="odds3">265.9</span></td><td><span class="pop10">13</span></td><td></td><td>3.121</td></tr>
+<tr><td>10</td><td>3</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑩</span></td><td>サカイシューター</td><td>牡4</td><td>木幡育</td><td>57</td><td><span class="odds3">401.0</span></td><td><span class="pop10">14</span></td><td></td><td>3.063</td></tr>
+<tr><td>6</td><td>4</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑥</span></td><td>メトロポリターナ</td><td>牝5</td><td>原</td><td>56</td><td><span class="odds3">174.8</span></td><td><span class="pop10">11</span></td><td></td><td>3.029</td></tr>
 <tr class="hit-1"><td>1</td><td>5</td><td><span class="umabadge w5">9</span> <span class="rankicon">🥇</span></td><td>コーリンカルベラ</td><td>牡5</td><td>吉田豊</td><td>58</td><td>18.6</td><td>6</td><td></td><td>2.967</td></tr>
-<tr><td></td><td>6</td><td><span class="umabadge w7">12</span></td><td>ブレードサクセス</td><td>牡5</td><td>横山武</td><td>58</td><td><span class="odds1">4.1</span></td><td><span class="pop1">2</span></td><td></td><td>2.963</td></tr>
-<tr><td></td><td>7</td><td><span class="umabadge w3">4</span></td><td>コスモフレディ</td><td>牡5</td><td>柴田大</td><td>58</td><td>89.2</td><td>9</td><td></td><td>2.962</td></tr>
+<tr><td>8</td><td>6</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑧</span></td><td>ブレードサクセス</td><td>牡5</td><td>横山武</td><td>58</td><td><span class="odds1">4.1</span></td><td><span class="pop1">2</span></td><td></td><td>2.963</td></tr>
+<tr><td>7</td><td>7</td><td><span class="umabadge w3">4</span> <span class="rankicon">⑦</span></td><td>コスモフレディ</td><td>牡5</td><td>柴田大</td><td>58</td><td>89.2</td><td>9</td><td></td><td>2.962</td></tr>
 <tr><td></td><td>8</td><td><span class="umabadge w4">6</span></td><td>リーゼントジェイド</td><td>セン5</td><td>松岡</td><td>58</td><td><span class="odds3">184.4</span></td><td><span class="pop10">12</span></td><td></td><td>2.962</td></tr>
 <tr class="hit-5"><td>5</td><td>9</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑤</span></td><td>ジャクソン</td><td>牡6</td><td>丸田</td><td>58</td><td>95.8</td><td><span class="pop10">10</span></td><td></td><td>2.933</td></tr>
-<tr><td></td><td>10</td><td><span class="umabadge w1">1</span></td><td>ブレゲアン</td><td>牡4</td><td>三浦</td><td>57</td><td><span class="odds1">7.1</span></td><td><span class="pop1">3</span></td><td></td><td>2.912</td></tr>
-<tr><td></td><td>11</td><td><span class="umabadge w8">14</span></td><td>プルメリアクヒオ</td><td>牡5</td><td>△長浜</td><td>56</td><td>34.5</td><td>7</td><td></td><td>2.912</td></tr>
+<tr><td>14</td><td>10</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑭</span></td><td>ブレゲアン</td><td>牡4</td><td>三浦</td><td>57</td><td><span class="odds1">7.1</span></td><td><span class="pop1">3</span></td><td></td><td>2.912</td></tr>
+<tr><td>9</td><td>11</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑨</span></td><td>プルメリアクヒオ</td><td>牡5</td><td>△長浜</td><td>56</td><td>34.5</td><td>7</td><td></td><td>2.912</td></tr>
 <tr class="hit-5"><td>4</td><td>12</td><td><span class="umabadge w3">5</span> <span class="rankicon">④</span></td><td>ドゥマーヴェリック</td><td>牡4</td><td>ルメール</td><td>57</td><td><span class="odds1">1.9</span></td><td><span class="pop1">1</span></td><td></td><td>2.740</td></tr>
-<tr><td></td><td>13</td><td><span class="umabadge w5">8</span></td><td>ティアップドライブ</td><td>牡4</td><td>▲遠藤</td><td>54</td><td>62.2</td><td>8</td><td></td><td>2.655</td></tr>
-<tr><td></td><td>14</td><td><span class="umabadge w2">3</span></td><td>パルヴェニュー</td><td>牡4</td><td>▲佐藤</td><td>54</td><td><span class="odds3">622.3</span></td><td><span class="pop10">15</span></td><td></td><td>2.536</td></tr>
+<tr><td>11</td><td>13</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑪</span></td><td>ティアップドライブ</td><td>牡4</td><td>▲遠藤</td><td>54</td><td>62.2</td><td>8</td><td></td><td>2.655</td></tr>
+<tr><td>12</td><td>14</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑫</span></td><td>パルヴェニュー</td><td>牡4</td><td>▲佐藤</td><td>54</td><td><span class="odds3">622.3</span></td><td><span class="pop10">15</span></td><td></td><td>2.536</td></tr>
 <tr class="hit-3"><td>2</td><td>15</td><td><span class="umabadge w7">13</span> <span class="rankicon">🥈</span></td><td>ファルコンミノル</td><td>牡6</td><td>木幡巧</td><td>58</td><td>10.7</td><td>5</td><td></td><td>2.242</td></tr></tbody></table>
 </div>
 </div>
@@ -4265,8 +4505,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010907"><h2><span class="race-title hit">中山 7R 4歳以上2勝クラス</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★★★☆☆｜Hit18.9%｜小荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010907')">的中🎯(単勝①｜<span class="mult m0">+1.8倍</span> / 単勝minoddstop3｜<span class="mult m0">+1.8倍</span> / 単勝minoddstop5｜<span class="mult m0">+1.8倍</span> / 他+2)</span><div id="hitdetail-202606010907" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m0">+1.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.8倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.8倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.1倍</span></li></ul></div></h2>
+<div class="race" id="r202606010907"><h2><span class="race-title hit">中山 7R 4歳以上2勝クラス</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★★★☆☆｜Hit18.9%｜小荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(17%) / 馬連流5(9%) / 単勝①(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010907')">的中🎯(単勝①｜<span class="mult m0">+1.8倍</span> / 単勝minoddstop3｜<span class="mult m0">+0.6倍</span> / 単勝minoddstop5｜<span class="mult m0">+0.4倍</span> / 他+2)</span><div id="hitdetail-202606010907" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m0">+1.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.6倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.4倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.1倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 1.882</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.171, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 7) <b>score=7.2960</b><br>#2 umaren (3, 10) <b>score=7.1647</b><br>#3 umaren (3, 8) <b>score=6.9857</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -4558,8 +4799,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010908"><h2><span class="race-title">中山 8R 4歳以上2勝クラス</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010908"><h2><span class="race-title">中山 8R 4歳以上2勝クラス</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(17%) / 馬連流5(14%) / 単勝minoddstop5(9%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.074</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.165, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (1, 7) <b>score=6.5101</b><br>#2 wide (1, 6) <b>score=6.5019</b><br>#3 wide (6, 7) <b>score=6.4651</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -4861,8 +5103,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010909"><h2><span class="race-title">中山 9R 若竹賞</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010909"><h2><span class="race-title">中山 9R 若竹賞</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(12%) / ワイドBOX5(12%) / 馬単BOX4(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.069</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.120, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (9, 11) <b>score=5.6998</b><br>#2 umaren (5, 11) <b>score=5.6899</b><br>#3 umaren (6, 11) <b>score=5.6899</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -5158,8 +5401,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010910"><h2><span class="race-title">中山 10R 江戸川S</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010910"><h2><span class="race-title">中山 10R 江戸川S</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(10%) / ワイドBOX5(10%) / 単勝①(9%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.029</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.102, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (16, 5) <b>score=7.5736</b><br>#2 umatan (5, 16) <b>score=7.5736</b><br>#3 umatan (16, 12) <b>score=7.5019</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -5463,8 +5707,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010911"><h2><span class="race-title">中山 11R AJCC</span> <span class="racecond">芝2200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202606010911"><h2><span class="race-title">中山 11R AJCC</span> <span class="racecond">芝2200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(10%) / 馬連BOX5(10%) / ワイドBOX5(9%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.026</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.103, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (11, 8) <b>score=6.7013</b><br>#2 umatan (8, 11) <b>score=6.7013</b><br>#3 umatan (11, 3) <b>score=6.5880</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -5768,8 +6013,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202606010912"><h2><span class="race-title hit">中山 12R 3歳未勝利</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010912')">的中🎯(ワイド流5｜<span class="mult m0">+0.4倍</span> / ワイドBOX5｜<span class="mult m0">+0.2倍</span>)</span><div id="hitdetail-202606010912" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流5</b>｜<span class="mult m0">+0.4倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.2倍</span></li></ul></div></h2>
+<div class="race" id="r202606010912"><h2><span class="race-title hit">中山 12R 3歳未勝利</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(9%) / 単勝minoddstop5(9%) / ワイドBOX5(9%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202606010912')">的中🎯(ワイド流5｜<span class="mult m0">+0.4倍</span> / ワイドBOX5｜<span class="mult m0">+0.2倍</span>)</span><div id="hitdetail-202606010912" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流5</b>｜<span class="mult m0">+0.4倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.2倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.068</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.091, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (14, 16) <b>score=5.3804</b><br>#2 umatan (16, 14) <b>score=5.3804</b><br>#3 umatan (14, 10) <b>score=5.3585</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -6073,8 +6319,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010901"><h2><span class="race-title hit">京都 1R 3歳未勝利</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010901')">的中🎯(ワイド流4｜<span class="mult m0">+1.2倍</span> / ワイド流5｜<span class="mult m0">+0.9倍</span> / ワイドBOX4｜<span class="mult m0">+0.6倍</span> / 他+1)</span><div id="hitdetail-202608010901" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.4倍</span></li></ul></div></h2>
+<div class="race" id="r202608010901"><h2><span class="race-title hit">京都 1R 3歳未勝利</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(24%) / 単勝minoddstop5(17%) / ワイドBOX5(11%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010901')">的中🎯(ワイド流4｜<span class="mult m0">+1.2倍</span> / ワイド流5｜<span class="mult m0">+0.9倍</span> / ワイドBOX4｜<span class="mult m0">+0.6倍</span> / 他+1)</span><div id="hitdetail-202608010901" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.4倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.075</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.242, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (6, 9) <b>score=6.2440</b><br>#2 umaren (1, 6) <b>score=6.2391</b><br>#3 umaren (3, 6) <b>score=6.2288</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -6368,8 +6615,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010902"><h2><span class="race-title hit">京都 2R 3歳未勝利</span> <span class="racecond">ダ1900m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010902')">的中🎯(三連単①-②③-②③④⑤｜<span class="mult m4">+51.9倍</span> / 馬単流4｜<span class="mult m3">+13.9倍</span> / 馬単流5｜<span class="mult m3">+10.4倍</span> / 他+15)</span><div id="hitdetail-202608010902" class="hitdetail"><b>的中内訳</b><ul><li><b>三連単①-②③-②③④⑤</b>｜<span class="mult m4">+51.9倍</span></li><li><b>馬単流4</b>｜<span class="mult m3">+13.9倍</span></li><li><b>馬単流5</b>｜<span class="mult m3">+10.4倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m2">+7.0倍</span></li><li><b>馬連流4</b>｜<span class="mult m2">+6.6倍</span></li><li><b>単勝①</b>｜<span class="mult m2">+5.2倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m2">+5.2倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m2">+5.2倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m2">+5.2倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+4.9倍</span></li><li><b>ワイド流5</b>｜<span class="mult m1">+3.9倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+3.5倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m1">+3.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m1">+3.0倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m1">+2.1倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+2.0倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202608010902"><h2><span class="race-title hit">京都 2R 3歳未勝利</span> <span class="racecond">ダ1900m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(25%) / ワイドBOX5(16%) / 単勝minoddstop5(7%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010902')">的中🎯(三連単①-②③-②③④⑤｜<span class="mult m4">+51.9倍</span> / 馬単流4｜<span class="mult m3">+13.9倍</span> / 馬単流5｜<span class="mult m3">+10.4倍</span> / 他+15)</span><div id="hitdetail-202608010902" class="hitdetail"><b>的中内訳</b><ul><li><b>三連単①-②③-②③④⑤</b>｜<span class="mult m4">+51.9倍</span></li><li><b>馬単流4</b>｜<span class="mult m3">+13.9倍</span></li><li><b>馬単流5</b>｜<span class="mult m3">+10.4倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m2">+7.0倍</span></li><li><b>馬連流4</b>｜<span class="mult m2">+6.6倍</span></li><li><b>単勝①</b>｜<span class="mult m2">+5.2倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m2">+5.2倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+4.9倍</span></li><li><b>ワイド流5</b>｜<span class="mult m1">+3.9倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+3.5倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m1">+3.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m1">+3.0倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m1">+2.1倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+2.0倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.0倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬連流5</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.079</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.252, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (11, 16) <b>score=6.2561</b><br>#2 umaren (13, 16) <b>score=6.2561</b><br>#3 umaren (14, 16) <b>score=6.2561</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -6673,8 +6921,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010903"><h2><span class="race-title">京都 3R 3歳未勝利</span> <span class="racecond">ダ1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202608010903"><h2><span class="race-title">京都 3R 3歳未勝利</span> <span class="racecond">ダ1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(20%) / 単勝minoddstop5(17%) / ワイドBOX5(11%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.057</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.195, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (9, 12) <b>score=6.2107</b><br>#2 umaren (6, 12) <b>score=6.2008</b><br>#3 umaren (11, 12) <b>score=6.0360</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -6970,8 +7219,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010904"><h2><span class="race-title">京都 4R 3歳未勝利</span> <span class="racecond">ダ1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202608010904"><h2><span class="race-title">京都 4R 3歳未勝利</span> <span class="racecond">ダ1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(16%) / ワイドBOX5(15%) / 馬連流5(10%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.054</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.159, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (6,) <b>score=3.0868</b><br>#2 tansho (3,) <b>score=3.0580</b><br>#3 tansho (2,) <b>score=3.0456</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -7263,8 +7513,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010905"><h2><span class="race-title hit">京都 5R 3歳新馬</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010905')">的中🎯(単勝minoddstop3｜<span class="mult m1">+2.3倍</span> / 単勝minoddstop5｜<span class="mult m1">+2.3倍</span>)</span><div id="hitdetail-202608010905" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop3</b>｜<span class="mult m1">+2.3倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m1">+2.3倍</span></li></ul></div></h2>
+<div class="race" id="r202608010905"><h2><span class="race-title hit">京都 5R 3歳新馬</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(21%) / 馬連流5(14%) / 単勝minoddstop5(7%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010905')">的中🎯(単勝minoddstop3｜<span class="mult m0">+0.8倍</span> / 単勝minoddstop5｜<span class="mult m0">+0.5倍</span>)</span><div id="hitdetail-202608010905" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.8倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.5倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.077</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.212, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (12, 13) <b>score=5.6547</b><br>#2 wide (12, 14) <b>score=5.6547</b><br>#3 wide (13, 14) <b>score=5.6547</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -7572,8 +7823,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010906"><h2><span class="race-title">京都 6R 4歳以上1勝クラス</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span></h2>
+<div class="race" id="r202608010906"><h2><span class="race-title">京都 6R 4歳以上1勝クラス</span> <span class="racecond">ダ1200m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(18%) / ワイドBOX5(18%) / 単勝minoddstop5(7%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.055</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.178, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (9, 16) <b>score=6.6962</b><br>#2 umaren (9, 15) <b>score=6.6929</b><br>#3 umaren (4, 9) <b>score=6.5986</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -7877,8 +8129,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010907"><h2><span class="race-title hit">京都 7R 4歳以上2勝クラス</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010907')">的中🎯(ワイド流4｜<span class="mult m1">+2.5倍</span> / ワイド流5｜<span class="mult m0">+1.9倍</span> / 単勝①｜<span class="mult m0">+1.7倍</span> / 他+4)</span><div id="hitdetail-202608010907" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流4</b>｜<span class="mult m1">+2.5倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.9倍</span></li><li><b>単勝①</b>｜<span class="mult m0">+1.7倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.7倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.7倍</span></li></ul></div></h2>
+<div class="race" id="r202608010907"><h2><span class="race-title hit">京都 7R 4歳以上2勝クラス</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(10%) / ワイドBOX5(9%) / 単勝①(9%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010907')">的中🎯(ワイド流4｜<span class="mult m1">+2.5倍</span> / ワイド流5｜<span class="mult m0">+1.9倍</span> / 単勝①｜<span class="mult m0">+1.7倍</span> / 他+4)</span><div id="hitdetail-202608010907" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイド流4</b>｜<span class="mult m1">+2.5倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.9倍</span></li><li><b>単勝①</b>｜<span class="mult m0">+1.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.6倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.052</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.105, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (5, 8) <b>score=6.0346</b><br>#2 umatan (8, 5) <b>score=6.0346</b><br>#3 umatan (5, 4) <b>score=5.9824</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -8170,8 +8423,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010908"><h2><span class="race-title hit">京都 8R 4歳以上2勝クラス</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010908')">的中🎯(馬単流4｜<span class="mult m2">+8.2倍</span> / 単勝①｜<span class="mult m2">+7.8倍</span> / 馬単流5｜<span class="mult m2">+6.1倍</span> / 他+10)</span><div id="hitdetail-202608010908" class="hitdetail"><b>的中内訳</b><ul><li><b>馬単流4</b>｜<span class="mult m2">+8.2倍</span></li><li><b>単勝①</b>｜<span class="mult m2">+7.8倍</span></li><li><b>馬単流5</b>｜<span class="mult m2">+6.1倍</span></li><li><b>馬連流4</b>｜<span class="mult m1">+3.8倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+2.9倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+2.0倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.9倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202608010908"><h2><span class="race-title hit">京都 8R 4歳以上2勝クラス</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(11%) / ワイドBOX5(9%) / 単勝minoddstop5(9%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010908')">的中🎯(馬単流4｜<span class="mult m2">+8.2倍</span> / 単勝①｜<span class="mult m2">+7.8倍</span> / 馬単流5｜<span class="mult m2">+6.1倍</span> / 他+12)</span><div id="hitdetail-202608010908" class="hitdetail"><b>的中内訳</b><ul><li><b>馬単流4</b>｜<span class="mult m2">+8.2倍</span></li><li><b>単勝①</b>｜<span class="mult m2">+7.8倍</span></li><li><b>馬単流5</b>｜<span class="mult m2">+6.1倍</span></li><li><b>馬連流4</b>｜<span class="mult m1">+3.8倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+2.9倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m1">+2.6倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+2.0倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.9倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.6倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬連BOX5</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.076</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.113, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (7, 9) <b>score=6.2392</b><br>#2 umaren (3, 9) <b>score=6.2240</b><br>#3 umaren (4, 9) <b>score=6.2240</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -8463,8 +8717,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010909"><h2><span class="race-title hit">京都 9R 河津桜賞</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010909')">的中🎯(三連複BOX4｜<span class="mult m0">+1.5倍</span> / 三連単BOX4｜<span class="mult m0">+1.5倍</span> / ワイド流4｜<span class="mult m0">+1.4倍</span> / 他+9)</span><div id="hitdetail-202608010909" class="hitdetail"><b>的中内訳</b><ul><li><b>三連複BOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>三連単BOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.4倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.0倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+0.6倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202608010909"><h2><span class="race-title hit">京都 9R 河津桜賞</span> <span class="racecond">芝1600m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(10%) / 単勝①(8%) / ワイドBOX5(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010909')">的中🎯(三連複BOX4｜<span class="mult m0">+1.5倍</span> / 三連単BOX4｜<span class="mult m0">+1.5倍</span> / ワイド流4｜<span class="mult m0">+1.4倍</span> / 他+10)</span><div id="hitdetail-202608010909" class="hitdetail"><b>的中内訳</b><ul><li><b>三連複BOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>三連単BOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.4倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.0倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+0.6倍</span></li></ul></div><span class="bigHit">大的中🔥<small>単勝minoddstop5</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.060</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.100, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (3,) <b>score=2.8300</b><br>#2 tansho (8,) <b>score=2.6788</b><br>#3 tansho (2,) <b>score=2.6042</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -8754,8 +9009,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010910"><h2><span class="race-title hit">京都 10R 山城S</span> <span class="racecond">芝1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010910')">的中🎯(単勝minoddstop3｜<span class="mult m4">+21.9倍</span> / ワイドBOX5｜<span class="mult m1">+4.2倍</span>)</span><div id="hitdetail-202608010910" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop3</b>｜<span class="mult m4">+21.9倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m1">+4.2倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202608010910"><h2><span class="race-title hit">京都 10R 山城S</span> <span class="racecond">芝1400m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(20%) / 単勝minoddstop5(11%) / 単勝①(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010910')">的中🎯(単勝minoddstop3｜<span class="mult m2">+7.3倍</span> / 単勝minoddstop5｜<span class="mult m1">+4.4倍</span> / ワイドBOX5｜<span class="mult m1">+4.2倍</span>)</span><div id="hitdetail-202608010910" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop3</b>｜<span class="mult m2">+7.3倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m1">+4.4倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m1">+4.2倍</span></li></ul></div><span class="bigHit">大的中🔥<small>ワイドBOX5</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.039</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.204, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (12, 15) <b>score=7.2754</b><br>#2 wide (15, 17) <b>score=7.1450</b><br>#3 wide (7, 15) <b>score=7.1066</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -9063,8 +9319,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010911"><h2><span class="race-title">京都 11R プロキオンS</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202608010911"><h2><span class="race-title">京都 11R プロキオンS</span> <span class="racecond">ダ1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(12%) / 単勝minoddstop5(9%) / 単勝①(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.021</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.117, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (11, 16) <b>score=7.6772</b><br>#2 umatan (16, 11) <b>score=7.6772</b><br>#3 umatan (11, 4) <b>score=7.6645</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -9368,8 +9625,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202608010912"><h2><span class="race-title hit">京都 12R 4歳以上1勝クラス</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010912')">的中🎯(馬連BOX5｜<span class="mult m1">+3.2倍</span> / 三連単BOX5｜<span class="mult m1">+3.2倍</span> / 三連複BOX5｜<span class="mult m1">+3.0倍</span> / 他+5)</span><div id="hitdetail-202608010912" class="hitdetail"><b>的中内訳</b><ul><li><b>馬連BOX5</b>｜<span class="mult m1">+3.2倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m1">+3.2倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m1">+3.0倍</span></li><li><b>ワイド流5</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m1">+2.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+1.9倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.9倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.9倍</span></li></ul></div></h2>
+<div class="race" id="r202608010912"><h2><span class="race-title hit">京都 12R 4歳以上1勝クラス</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬単BOX4｜次点 馬単BOX4(17%) / 馬連BOX5(8%) / 単勝①(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202608010912')">的中🎯(馬連BOX5｜<span class="mult m1">+3.2倍</span> / 三連単BOX5｜<span class="mult m1">+3.2倍</span> / 三連複BOX5｜<span class="mult m1">+3.0倍</span> / 他+6)</span><div id="hitdetail-202608010912" class="hitdetail"><b>的中内訳</b><ul><li><b>馬連BOX5</b>｜<span class="mult m1">+3.2倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m1">+3.2倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m1">+3.0倍</span></li><li><b>ワイド流5</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m1">+2.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+1.9倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.9倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.0倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.9倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.073</div>
+<div class="note"><b>推奨買い目</b>: 馬単BOX4 (model_score=0.172, 点数=12, 投資目安=1,200円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umatan (9, 8) <b>score=5.7805</b><br>#2 umatan (8, 9) <b>score=5.7805</b><br>#3 umatan (9, 5) <b>score=5.7391</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -9659,8 +9917,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010201"><h2><span class="race-title">小倉 1R 3歳未勝利</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010201"><h2><span class="race-title">小倉 1R 3歳未勝利</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(10%) / 馬連BOX5(10%) / 単勝①(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.060</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.104, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (1, 5) <b>score=6.1976</b><br>#2 wide (3, 5) <b>score=5.9880</b><br>#3 wide (5, 11) <b>score=5.9647</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -9964,8 +10223,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010202"><h2><span class="race-title hit">小倉 2R 3歳未勝利</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010202')">的中🎯(単勝①｜<span class="mult m2">+5.7倍</span> / 単勝minoddstop3｜<span class="mult m2">+5.7倍</span> / ワイド流4｜<span class="mult m1">+2.0倍</span> / 他+3)</span><div id="hitdetail-202610010202" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m2">+5.7倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m2">+5.7倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.0倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.5倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.0倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.6倍</span></li></ul></div></h2>
+<div class="race" id="r202610010202"><h2><span class="race-title hit">小倉 2R 3歳未勝利</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(14%) / ワイドBOX5(10%) / 単勝①(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010202')">的中🎯(単勝①｜<span class="mult m2">+5.7倍</span> / ワイド流4｜<span class="mult m1">+2.0倍</span> / 単勝minoddstop3｜<span class="mult m0">+1.9倍</span> / 他+4)</span><div id="hitdetail-202610010202" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝①</b>｜<span class="mult m2">+5.7倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.0倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.9倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.5倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.0倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.6倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.070</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.135, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (4, 17) <b>score=5.1712</b><br>#2 umaren (4, 8) <b>score=5.1706</b><br>#3 umaren (8, 17) <b>score=5.1388</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -10273,8 +10533,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010203"><h2><span class="race-title">小倉 3R 4歳以上1勝クラス</span> <span class="racecond">ダ1000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010203"><h2><span class="race-title">小倉 3R 4歳以上1勝クラス</span> <span class="racecond">ダ1000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(18%) / ワイドBOX5(15%) / 単勝minoddstop5(13%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.068</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.180, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (4, 10) <b>score=6.4822</b><br>#2 umaren (4, 8) <b>score=6.4705</b><br>#3 umaren (4, 14) <b>score=6.3512</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -10574,8 +10835,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010204"><h2><span class="race-title">小倉 4R 4歳以上障害未勝利</span> <span class="racecond">障2860m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010204"><h2><span class="race-title">小倉 4R 4歳以上障害未勝利</span> <span class="racecond">障2860m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(15%) / 単勝minoddstop5(10%) / 単勝①(7%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.069</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.151, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (2, 12) <b>score=5.6941</b><br>#2 wide (1, 2) <b>score=5.6212</b><br>#3 wide (2, 9) <b>score=5.6178</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -10871,8 +11133,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010205"><h2><span class="race-title hit">小倉 5R 3歳新馬</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010205')">的中🎯(馬連BOX4｜<span class="mult m1">+3.0倍</span> / 馬単BOX4｜<span class="mult m0">+1.8倍</span> / 馬連BOX5｜<span class="mult m0">+1.8倍</span> / 他+5)</span><div id="hitdetail-202610010205" class="hitdetail"><b>的中内訳</b><ul><li><b>馬連BOX4</b>｜<span class="mult m1">+3.0倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+1.8倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.6倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.6倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.8倍</span></li></ul></div></h2>
+<div class="race big-hit-card" id="r202610010205"><h2><span class="race-title hit">小倉 5R 3歳新馬</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(19%) / 馬連流5(13%) / 単勝minoddstop5(11%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010205')">的中🎯(馬連BOX4｜<span class="mult m1">+3.0倍</span> / 馬単BOX4｜<span class="mult m0">+1.8倍</span> / 馬連BOX5｜<span class="mult m0">+1.8倍</span> / 他+5)</span><div id="hitdetail-202610010205" class="hitdetail"><b>的中内訳</b><ul><li><b>馬連BOX4</b>｜<span class="mult m1">+3.0倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+1.8倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.8倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.5倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div><span class="bigHit">大的中🔥<small>ワイドBOX5</small></span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.062</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.187, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (1, 14) <b>score=5.5320</b><br>#2 wide (13, 14) <b>score=5.3422</b><br>#3 wide (1, 13) <b>score=5.3288</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -11180,8 +11443,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010206"><h2><span class="race-title">小倉 6R 3歳未勝利</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010206"><h2><span class="race-title">小倉 6R 3歳未勝利</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(16%) / ワイドBOX5(9%) / 馬連BOX4(9%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.077</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.162, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (1, 6) <b>score=6.2391</b><br>#2 umaren (5, 6) <b>score=6.2341</b><br>#3 umaren (6, 7) <b>score=6.2304</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -11475,8 +11739,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010207"><h2><span class="race-title">小倉 7R 3歳未勝利</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010207"><h2><span class="race-title">小倉 7R 3歳未勝利</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(17%) / 馬連BOX5(13%) / 単勝①(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.071</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.165, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (11,) <b>score=2.8176</b><br>#2 tansho (2,) <b>score=2.8119</b><br>#3 tansho (3,) <b>score=2.7952</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -11784,8 +12049,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010208"><h2><span class="race-title">小倉 8R 4歳以上1勝クラス</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010208"><h2><span class="race-title">小倉 8R 4歳以上1勝クラス</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(18%) / 馬単BOX4(8%) / 馬連BOX4(8%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.066</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.179, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (10, 13) <b>score=5.7915</b><br>#2 umaren (12, 13) <b>score=5.6581</b><br>#3 umaren (10, 12) <b>score=5.6077</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -12089,8 +12355,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010209"><h2><span class="race-title">小倉 9R 八幡特別</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010209"><h2><span class="race-title">小倉 9R 八幡特別</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(12%) / ワイドBOX5(11%) / 馬連BOX5(11%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.051</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.122, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (10,) <b>score=3.2496</b><br>#2 tansho (16,) <b>score=3.2025</b><br>#3 tansho (12,) <b>score=3.0257</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -12394,8 +12661,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010210"><h2><span class="race-title">小倉 10R 響灘特別</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span></h2>
+<div class="race" id="r202610010210"><h2><span class="race-title">小倉 10R 響灘特別</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%｜中荒</span><span class="racecond">推奨：馬連流5｜次点 馬連流5(19%) / ワイドBOX5(18%) / 単勝①(7%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.076</div>
+<div class="note"><b>推奨買い目</b>: 馬連流5 (model_score=0.190, 点数=4, 投資目安=400円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (9, 13) <b>score=6.3631</b><br>#2 umaren (8, 13) <b>score=6.3578</b><br>#3 umaren (7, 13) <b>score=6.3442</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -12699,8 +12967,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010211"><h2><span class="race-title">小倉 11R 壇之浦S</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span></h2>
+<div class="race" id="r202610010211"><h2><span class="race-title">小倉 11R 壇之浦S</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(16%) / 馬単BOX4(10%) / 単勝minoddstop5(7%)</span></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 1.960</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.162, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 7) <b>score=7.3748</b><br>#2 umaren (7, 11) <b>score=7.0646</b><br>#3 umaren (3, 11) <b>score=6.9116</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>
@@ -12996,8 +13265,9 @@ function toggleHitDetail(id){
   </tbody>
 </table>
 </div>
-<div class="race" id="r202610010212"><h2><span class="race-title hit">小倉 12R 4歳以上1勝クラス</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010212')">的中🎯(ワイドBOX5｜<span class="mult m1">+3.6倍</span>)</span><div id="hitdetail-202610010212" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイドBOX5</b>｜<span class="mult m1">+3.6倍</span></li></ul></div></h2>
+<div class="race" id="r202610010212"><h2><span class="race-title hit">小倉 12R 4歳以上1勝クラス</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(19%) / ワイドBOX5(12%) / 馬連BOX4(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010212')">的中🎯(ワイドBOX5｜<span class="mult m1">+3.6倍</span> / 単勝minoddstop5｜<span class="mult m0">+1.4倍</span>)</span><div id="hitdetail-202610010212" class="hitdetail"><b>的中内訳</b><ul><li><b>ワイドBOX5</b>｜<span class="mult m1">+3.6倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.4倍</span></li></ul></div></h2>
 <div class="note">荒れ指数(Entropy, top8 score): 2.068</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.192, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 5) <b>score=6.0234</b><br>#2 umaren (4, 5) <b>score=5.9103</b><br>#3 umaren (5, 7) <b>score=5.8471</b></div>
 <div class="grid">
 <div>
 <h3>単勝モデル（分類）</h3>

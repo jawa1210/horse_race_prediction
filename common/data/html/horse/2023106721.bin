@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -851,7 +851,7 @@ get_horse_detail_note('2023106721', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse//" title=""></a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2025102235/" title="マダムヴァシュモンの2025">マダムヴァシュモンの2025</a><a href="/horse//" title=""></a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

@@ -138,6 +138,37 @@ def gen_sanrentan_form_1_23_2345(pred_order: list[int]) -> list[Ticket]:
     return out
 
 
+def gen_tansho_multi(pred_order: list[int], odds_map: Dict[int, float], mode: str) -> list[Ticket]:
+    """
+    mode:
+      - "minodds_top3": 予測Top3の中から全頭（最大3点）単勝
+      - "minodds_top5": 予測Top5の中から全頭（最大5点）単勝
+    """
+    pred_order = _uniq_ints(pred_order)
+    if not pred_order:
+        return []
+
+    if mode == "minodds_top3":
+        cand = pred_order[:3]
+    elif mode == "minodds_top5":
+        cand = pred_order[:5]
+    else:
+        raise ValueError(mode)
+
+    # cand 内で、odds_map に存在する馬だけ（オッズ無しは買えない）
+    cand2 = []
+    for u in cand:
+        if u in odds_map and odds_map[u] is not None:
+            try:
+                oo = float(odds_map[u])
+                if oo > 0:
+                    cand2.append(u)
+            except Exception:
+                pass
+
+    # 3点/5点買い：全員分の単勝チケットを返す
+    return [("tansho", (u,)) for u in cand2]
+
 # ---------------------------
 # まとめ：あなたが欲しい戦略セットを一括生成
 # ---------------------------
@@ -150,8 +181,8 @@ def build_strategy_catalog() -> list[tuple[str, callable]]:
 
     # 単勝（3種）
     catalog.append(("tansho_p1", lambda pred, odds: gen_tansho(pred, odds, "p1")))
-    catalog.append(("tansho_minodds_top3", lambda pred, odds: gen_tansho(pred, odds, "minodds_top3")))
-    catalog.append(("tansho_minodds_top5", lambda pred, odds: gen_tansho(pred, odds, "minodds_top5")))
+    catalog.append(("tansho_minodds_top3", lambda pred, odds: gen_tansho_multi(pred, odds, "minodds_top3")))
+    catalog.append(("tansho_minodds_top5", lambda pred, odds: gen_tansho_multi(pred, odds, "minodds_top5")))
 
     # 馬連
     catalog.append(("umaren_box4", lambda pred, odds: gen_umaren_box(pred, 4)))
