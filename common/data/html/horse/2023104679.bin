@@ -336,21 +336,19 @@ $('.login_show').remove();
 }
 </script>
 
-
 <div class="genre_menu fc">
-    <ul>
-        <li ><a href="https://db.netkeiba.com/" title="競馬データTOP">競馬データTOP</a></li>
-        <li class='active'><a href="https://db.netkeiba.com/horse/top.html" title="競走馬">競走馬</a></li>
-        <li ><a href="https://db.netkeiba.com/jockey/top.html" title="騎手">騎手</a></li>
-        <li ><a href="https://db.netkeiba.com/trainer/top.html" title="調教師">調教師</a></li>
-        <li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
-        <li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
-        <li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
-	<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
-	<li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
-    </ul>
+<ul>
+<li ><a href="https://db.netkeiba.com/" title="競馬データTOP">競馬データTOP</a></li>
+<li class='active'><a href="https://db.netkeiba.com/horse/top.html" title="競走馬">競走馬</a></li>
+<li ><a href="https://db.netkeiba.com/jockey/top.html" title="騎手">騎手</a></li>
+<li ><a href="https://db.netkeiba.com/trainer/top.html" title="調教師">調教師</a></li>
+<li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
+<li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
+<li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
+<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
+<li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
+</ul>
 </div><!-- /.genre_menu -->
-
 <div id="contents" class="fc">
 
 <style>
@@ -666,11 +664,17 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=11479&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=2955&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=33110&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 33110 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=33109&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 33109 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=33108&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 33108 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=25082&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 25082 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2023104679&no=11635&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 11635 );"/></a>
@@ -855,7 +859,7 @@ get_horse_detail_note('2023104679', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>3戦0勝 [<a href="/horse/result/2023104679/" title="全競走成績">0-0-0-3</a>]</td>
+<td>4戦0勝 [<a href="/horse/result/2023104679/" title="全競走成績">0-0-0-4</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>

@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -345,7 +345,7 @@ $('.login_show').remove();
 <li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
 <li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
 <li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
-<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
+<li ><a href="https://db.netkeiba.com/classic/" title="クラシック">クラシック</a></li>
 <li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
 </ul>
 </div><!-- /.genre_menu -->
@@ -833,7 +833,7 @@ get_horse_detail_note('2023105279', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-939万円
+1,089万円
 </td>
 </tr>
 <tr>
@@ -845,7 +845,7 @@ get_horse_detail_note('2023105279', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>6戦0勝 [<a href="/horse/result/2023105279/" title="全競走成績">0-3-1-2</a>]</td>
+<td>7戦0勝 [<a href="/horse/result/2023105279/" title="全競走成績">0-3-2-2</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>

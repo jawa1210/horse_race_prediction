@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -664,7 +664,7 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023107264&no=25006&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2023107264&no=29736&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
@@ -824,7 +824,7 @@ get_horse_detail_note('2023107264', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>ÇÏ¼ç</th>
-<td><img src="https://cdn.netkeiba.com/img//db/colours/151803.gif" alt="£Ô£Ï£Ò£Á£Ã£É£Î£Ç" class="OwnerColours"><a href="/owner/151803/" title="£Ô£Ï£Ò£Á£Ã£É£Î£Ç">£Ô£Ï£Ò£Á£Ã£É£Î£Ç</a></td>
+<td><img src="https://cdn.netkeiba.com/img//db/colours/512034.gif" alt="»³²¼ÍµÆó" class="OwnerColours"><a href="/owner/512034/" title="»³²¼ÍµÆó">»³²¼ÍµÆó</a></td>
 </tr>
 
 <tr>
@@ -865,7 +865,7 @@ get_horse_detail_note('2023107264', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>¶á¿ÆÇÏ</th>
-<td><a href="/horse/2024106640/" title="¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2024">¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2024</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2024106640/" title="¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2024">¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2024</a>¡¢<a href="/horse/2025107330/" title="¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2025">¥ß¥Ë¡¼¥¢¥¤¥ë¤Î2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">
