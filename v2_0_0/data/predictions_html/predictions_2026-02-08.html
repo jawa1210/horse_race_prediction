@@ -1,0 +1,4850 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>予想表 2026-02-08</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+         margin: 24px; background: #fafafa; color: #111; }
+  h1 { margin: 0 0 8px 0; font-size: 24px; }
+  .meta { color: #444; margin-bottom: 10px; }
+
+  .toc { background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 18px; }
+  .toc a { text-decoration: none; margin-right: 10px; white-space: nowrap; display: inline-block; padding: 6px 10px; border-radius: 999px; background: #f1f3f5; color: #111; }
+
+  .race { background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0; }
+  .race h2 { margin: 0 0 8px 0; font-size: 18px; }
+
+
+  h3 { margin: 14px 0 8px 0; font-size: 16px; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 6px; }
+  th, td { border-bottom: 1px solid #eee; padding: 8px 8px; text-align: left; font-size: 14px; }
+  th { background: #fbfbfb; position: sticky; top: 0; z-index: 1; }
+
+  .note { color:#555; font-size: 13px; margin-top: 8px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .odds1 { color:#d60000; font-weight:600; }
+  .odds3 { color:#0057d8; font-weight:600; }
+
+  tr.hit-1 { background:#d9f7e6; font-weight:700; }
+  tr.hit-3 { background:#e7f0ff; }
+tr.hit-5 { background:#ededed; }
+
+
+
+  .pop1 { color:#d60000; font-weight:600; }
+  .pop10{ color:#0057d8; font-weight:600; }
+
+  .rankicon { margin-left:6px; }
+
+  .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px; vertical-align:middle; margin-left:8px; }
+  .badge.c1 { background:#f1f3f5; color:#444; }
+  .badge.c2 { background:#e7f0ff; color:#1f4dd8; }
+  .badge.c3 { background:#e8fff2; color:#0a7a3a; }
+  .badge.c4 { background:#fff1db; color:#a85a00; }
+  .badge.c5 { background:#ffe0e0; color:#c40000; }
+
+  .legend { background:#fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0 18px 0; }
+  .legend-grid { display:grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 980px) { .legend-grid { grid-template-columns: 1fr 1fr; } }
+  .legend-item { border:1px solid #f0f0f0; border-radius: 12px; padding: 10px 12px; background:#fcfcfc; }
+  .legend-title { font-weight: 800; margin-bottom: 6px; }
+  .legend-body { font-size: 13px; color:#333; line-height: 1.6; }
+
+  .summary { background:#fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin: 14px 0; }
+  .summary h2 { margin: 0 0 8px 0; font-size: 18px; }
+
+  /* 暫定/最終切替UI */
+  .modebar { background:#fff; border-radius:12px; padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); margin: 14px 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .modebtn { border:1px solid #e5e5e5; background:#f7f7f7; padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:700; font-size:13px; }
+  .modebtn.active { background:#111; color:#fff; border-color:#111; }
+  .modebox { display:none; }
+  .modebox.active { display:block; }
+
+/* 予想強調は「左端セルのボーダー＋ラベル」にする（結果背景と混ざらない） */
+tr.win-strong td:first-child { border-left: 6px solid #e0b800; }
+tr.third-strong td:first-child { border-left: 6px solid #00a3d8; }
+
+/* 予想ラベル */
+.predtag{
+  display:inline-block;
+  padding:2px 10px;          /* ← 少し横に余裕 */
+  border-radius:999px;       /* ← 丸バッジ */
+  font-size:12px;
+  font-weight:800;
+  margin-left:14px;          /* ← 8→14 にして離す */
+  border:1px solid transparent;
+  line-height:1.2;
+  vertical-align:middle;
+}
+
+.predtag.win{
+  background:#fff2a8;        /* 少し濃いめ */
+  color:#4a3a00;
+  border-color:#d9be3a;
+  box-shadow:0 1px 0 rgba(0,0,0,0.06);
+}
+.predtag.third{
+  background:#dff4ff;
+  color:#003b52;
+  border-color:#67c4e6;
+  box-shadow:0 1px 0 rgba(0,0,0,0.06);
+}
+
+
+/* 的中詳細（折りたたみ） */
+.hitdetail {
+  display:none;
+  margin-top:8px;
+  padding:10px 12px;
+  background:#fff7f7;
+  border:1px solid #f2caca;
+  border-radius:10px;
+  font-size:13px;
+}
+.hitdetail ul {
+  margin:6px 0 0 18px;
+}
+.hitdetail li {
+  margin:4px 0;
+}
+.hitbadge {
+  cursor:pointer;
+  user-select:none;
+}
+.racecond{
+  display:inline-block;
+  margin-left:10px;
+  padding:3px 10px;
+  border-radius:999px;
+  background:#f1f3f5;
+  border:1px solid #e5e5e5;
+  color:#333;
+  font-weight:800;
+  font-size:12px;
+  vertical-align:middle;
+}
+.umabadge{
+  display:inline-block;
+  min-width: 28px;
+  padding:2px 8px;
+  border-radius:999px;
+  font-weight:900;
+  text-align:center;
+  border:1px solid rgba(0,0,0,0.15);
+}
+.w1{ background:#ffffff; color:#111; }
+.w2{ background:#111111; color:#fff; }
+.w3{ background:#d60000; color:#fff; }
+.w4{ background:#0057d8; color:#fff; }
+.w5{ background:#ffd200; color:#111; }
+.w6{ background:#18a000; color:#fff; }
+.w7{ background:#ff8a00; color:#111; }
+.w8{ background:#ff4fc3; color:#111; }  /* ピンク */
+
+.agari{ font-weight:900; padding:1px 6px; border-radius:8px; }
+.agari.g{ background:#ffe08a; }
+.agari.s{
+  background:#0b5ed7;  /* 濃い青 */
+  color:#fff;
+}
+
+.agari.b{ background:#ffd1b0; }
+
+/* 推奨買い目の「大的中」バッジ */
+.bigHit {
+  display:inline-block;
+  margin-left:10px;
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:12px;
+  background:#ffe0e0;
+  color:#c40000;
+  border:1px solid rgba(196,0,0,0.25);
+  box-shadow:0 2px 10px rgba(196,0,0,0.15);
+}
+.bigHit small{
+  font-weight:800;
+  opacity:0.85;
+  margin-left:6px;
+}
+
+.race.big-hit-card {
+  border: 2px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 14px rgba(196,0,0,0.10);
+}
+
+
+/* 目次：大的中レース */
+.toc a.big-hit {
+  background: #ffe0e0;
+  color: #c40000;
+  font-weight: 900;
+  border: 1px solid rgba(196,0,0,0.35);
+  box-shadow: 0 2px 10px rgba(196,0,0,0.15);
+}
+
+
+
+/* 的中したレースのタイトルを赤く */
+.race-title.hit {
+  color: #d60000;
+}
+
+/* 倍率バッジ（+xx.x倍）を色分け */
+.mult {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  border: 1px solid rgba(0,0,0,0.10);
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.mult.m0 { background: #f1f3f5; color:#444; }  /* 〜+2倍程度 */
+.mult.m1 { background: #e7f0ff; color:#1f4dd8; }
+.mult.m2 { background: #e8fff2; color:#0a7a3a; }
+.mult.m3 { background: #fff1db; color:#a85a00; }
+.mult.m4 { background: #ffe0e0; color:#c40000; } /* 爆高 */
+
+
+</style>
+</head><body>
+<h1>予想表（2026-02-08）</h1>
+<div class="meta">生成: 2026-02-08 15:16 | 上位 18 頭 / レース</div>
+<div class="meta">対象population: /home/jawa/horse_ai/horse_race_prediction/common/data/prediction_population/population_0208.csv / 結果反映: あり（results_flat.csv）</div>
+<div class="meta">暫定の確定済みレース: 8 / 11（結果が入ってるレースのみ集計可能）</div>
+
+<div class='meta'>推奨BUY閾値(model_score): 0.00 (calib 2024-01-01〜2024-12-31, rule=profit_max, min_races=300)</div>
+
+    <div class="legend">
+      <h2 style="margin:0 0 8px 0;">凡例（表示項目の説明）</h2>
+      <div class="legend-grid">
+        <div class="legend-item"><div class="legend-title">的中率/回収率（戦略サマリ）</div>
+          <div class="legend-body">
+            的中率(レース): その戦略で「そのレースで何か1つでも当たった」割合。<br>
+            的中率(券): 当たった券枚数 / 買った券枚数。<br>
+            回収率(ROI): 総払戻 / 総投資 × 100。払戻は <b>100円単位</b>。
+          </div>
+        </div>
+        <div class="legend-item"><div class="legend-title">単勝Pred / EV(単勝)</div>
+          <div class="legend-body">
+            単勝Pred: 単勝モデルの1着確率推定。<br>
+            EV(単勝)=単勝Pred×単勝オッズ（目安）。
+          </div>
+        </div>
+        <div class="legend-item"><div class="legend-title">荒れ指数（Entropy）</div>
+          <div class="legend-body">
+            3連系スコア上位をsoftmaxした分布のエントロピー。大きいほど団子で荒れやすい。
+          </div>
+        </div>
+        <div class="legend-item"><div class="legend-title">自信度（1〜5）</div>
+          <div class="legend-body">
+            TopKの集中度＋勝ち馬の固さ−荒れ度から conf_score を作り、較正ファイルの分位で1〜5表示（無い場合は暫定）。
+          </div>
+        </div>
+        <div class="legend-item"><div class="legend-title">金/水色行（勝ち濃厚 / 3着濃厚）</div>
+          <div class="legend-body">
+            3連単TopKから擬似周辺確率を作り「勝ち濃厚」「3着濃厚」を強調。
+          </div>
+        </div>
+        <div class="legend-item"><div class="legend-title">🥇🥈🥉 / ④⑤⑥…</div>
+          <div class="legend-body">
+            results_flat（実着順）に基づいて馬番横に実順位を表示。
+          </div>
+        </div>
+        <div class="legend-item">
+        <div class="legend-title">目次の赤いレース（大的中）</div>
+        <div class="legend-body">
+            推奨買い目が <strong>BUY 判定</strong>で、かつ<strong>的中</strong>したレースは、レース一覧（目次）で赤く表示します。
+        </div>
+        </div>
+      </div>
+    </div>
+    
+<div class='summary'><h2>推奨買い目（当日）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>対象</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>合計</td>
+      <td>8</td>
+      <td>5</td>
+      <td>62.5%</td>
+      <td>7,500</td>
+      <td>5,050</td>
+      <td>-2,450</td>
+      <td>67.3%</td>
+    </tr>
+  </tbody>
+</table><h3>当日：競馬場別</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>競馬場</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>小倉</td>
+      <td>8</td>
+      <td>5</td>
+      <td>62.5%</td>
+      <td>7,500</td>
+      <td>5,050</td>
+      <td>-2,450</td>
+      <td>67.3%</td>
+    </tr>
+  </tbody>
+</table></div><div class='summary'><h2>推奨買い目（全期間累計）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>対象</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>合計</td>
+      <td>231</td>
+      <td>102</td>
+      <td>44.2%</td>
+      <td>204,000</td>
+      <td>126,100</td>
+      <td>-77,900</td>
+      <td>61.8%</td>
+    </tr>
+  </tbody>
+</table><h3>累計：買い目別</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>買い目</th>
+      <th>レース数</th>
+      <th>的中(レース)</th>
+      <th>的中率</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>収支(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>32</td>
+      <td>22</td>
+      <td>68.8%</td>
+      <td>16,000</td>
+      <td>13,870</td>
+      <td>-2,130</td>
+      <td>86.7%</td>
+    </tr>
+    <tr>
+      <td>馬連流5</td>
+      <td>42</td>
+      <td>10</td>
+      <td>23.8%</td>
+      <td>16,800</td>
+      <td>12,660</td>
+      <td>-4,140</td>
+      <td>75.4%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX5</td>
+      <td>45</td>
+      <td>26</td>
+      <td>57.8%</td>
+      <td>45,000</td>
+      <td>31,420</td>
+      <td>-13,580</td>
+      <td>69.8%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX5</td>
+      <td>82</td>
+      <td>38</td>
+      <td>46.3%</td>
+      <td>82,000</td>
+      <td>56,370</td>
+      <td>-25,630</td>
+      <td>68.7%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX5</td>
+      <td>7</td>
+      <td>3</td>
+      <td>42.9%</td>
+      <td>14,000</td>
+      <td>8,170</td>
+      <td>-5,830</td>
+      <td>58.4%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX4</td>
+      <td>20</td>
+      <td>3</td>
+      <td>15.0%</td>
+      <td>24,000</td>
+      <td>3,610</td>
+      <td>-20,390</td>
+      <td>15.0%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX5</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>6,000</td>
+      <td>0</td>
+      <td>-6,000</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>単勝①</td>
+      <td>2</td>
+      <td>0</td>
+      <td>0.0%</td>
+      <td>200</td>
+      <td>0</td>
+      <td>-200</td>
+      <td>0.0%</td>
+    </tr>
+  </tbody>
+</table></div>
+<div class="toc"><div style="margin-bottom:8px; font-weight:600;">レース一覧</div>
+<a href="#r202610010601" class="">小倉 1R</a>
+<a href="#r202610010602" class="big-hit">小倉 2R</a>
+<a href="#r202610010603" class="big-hit">小倉 3R</a>
+<a href="#r202610010605" class="">小倉 5R</a>
+<a href="#r202610010606" class="big-hit">小倉 6R</a>
+<a href="#r202610010607" class="big-hit">小倉 7R</a>
+<a href="#r202610010608" class="big-hit">小倉 8R</a>
+<a href="#r202610010609" class="">小倉 9R</a>
+<a href="#r202610010610" class="">小倉 10R</a>
+<a href="#r202610010611" class="">小倉 11R</a>
+<a href="#r202610010612" class="">小倉 12R</a>
+</div>
+
+<div class="modebar">
+  <span style="font-weight:800;">サマリ表示:</span>
+  <button class="modebtn active" data-mode="provisional">暫定（確定済みのみ）</button>
+  <button class="modebtn" data-mode="final">最終（当日全体）</button>
+  <span class="meta" id="modeNote"></span>
+</div>
+
+<div id="box-provisional" class="modebox active"><div class='summary'><h2>暫定（確定済み 8/11 レース）当日サマリ（戦略別）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>買い目</th>
+      <th>競馬場</th>
+      <th>レース数</th>
+      <th>券数</th>
+      <th>的中率(レース)</th>
+      <th>的中率(券)</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>三連複BOX4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>32</td>
+      <td>37.5%</td>
+      <td>9.38%</td>
+      <td>3,200</td>
+      <td>6,290</td>
+      <td><span style="color:#e05a5a; font-weight:900;">196.6%</span></td>
+    </tr>
+    <tr>
+      <td>三連複BOX5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>80</td>
+      <td>37.5%</td>
+      <td>3.75%</td>
+      <td>8,000</td>
+      <td>6,290</td>
+      <td>78.6%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③-②③④⑤</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>48</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>4,800</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③④-②③④</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>48</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>4,800</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>192</td>
+      <td>37.5%</td>
+      <td>1.56%</td>
+      <td>19,200</td>
+      <td>39,080</td>
+      <td><span style="color:#b00000; font-weight:900;">203.5%</span></td>
+    </tr>
+    <tr>
+      <td>三連単BOX5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>480</td>
+      <td>37.5%</td>
+      <td>0.62%</td>
+      <td>48,000</td>
+      <td>39,080</td>
+      <td>81.4%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop3</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>24</td>
+      <td>62.5%</td>
+      <td>20.83%</td>
+      <td>2,400</td>
+      <td>2,340</td>
+      <td>97.5%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>40</td>
+      <td>62.5%</td>
+      <td>12.50%</td>
+      <td>4,000</td>
+      <td>2,340</td>
+      <td>58.5%</td>
+    </tr>
+    <tr>
+      <td>単勝①</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>8</td>
+      <td>12.5%</td>
+      <td>12.50%</td>
+      <td>800</td>
+      <td>350</td>
+      <td>43.8%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>48</td>
+      <td>50.0%</td>
+      <td>8.33%</td>
+      <td>4,800</td>
+      <td>4,990</td>
+      <td><span style="color:#e05a5a; font-weight:900;">104.0%</span></td>
+    </tr>
+    <tr>
+      <td>馬連BOX5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>80</td>
+      <td>50.0%</td>
+      <td>5.00%</td>
+      <td>8,000</td>
+      <td>4,990</td>
+      <td>62.4%</td>
+    </tr>
+    <tr>
+      <td>馬連流4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>24</td>
+      <td>25.0%</td>
+      <td>8.33%</td>
+      <td>2,400</td>
+      <td>2,030</td>
+      <td>84.6%</td>
+    </tr>
+    <tr>
+      <td>馬連流5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>32</td>
+      <td>25.0%</td>
+      <td>6.25%</td>
+      <td>3,200</td>
+      <td>2,030</td>
+      <td>63.4%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>96</td>
+      <td>50.0%</td>
+      <td>4.17%</td>
+      <td>9,600</td>
+      <td>9,750</td>
+      <td><span style="color:#e05a5a; font-weight:900;">101.6%</span></td>
+    </tr>
+    <tr>
+      <td>馬単BOX5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>160</td>
+      <td>50.0%</td>
+      <td>2.50%</td>
+      <td>16,000</td>
+      <td>9,750</td>
+      <td>60.9%</td>
+    </tr>
+    <tr>
+      <td>馬単流4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>24</td>
+      <td>12.5%</td>
+      <td>4.17%</td>
+      <td>2,400</td>
+      <td>1,560</td>
+      <td>65.0%</td>
+    </tr>
+    <tr>
+      <td>馬単流5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>32</td>
+      <td>12.5%</td>
+      <td>3.12%</td>
+      <td>3,200</td>
+      <td>1,560</td>
+      <td>48.8%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>48</td>
+      <td>62.5%</td>
+      <td>22.92%</td>
+      <td>4,800</td>
+      <td>5,120</td>
+      <td><span style="color:#e05a5a; font-weight:900;">106.7%</span></td>
+    </tr>
+    <tr>
+      <td>ワイドBOX5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>80</td>
+      <td>62.5%</td>
+      <td>13.75%</td>
+      <td>8,000</td>
+      <td>5,120</td>
+      <td>64.0%</td>
+    </tr>
+    <tr>
+      <td>ワイド流4</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>24</td>
+      <td>37.5%</td>
+      <td>20.83%</td>
+      <td>2,400</td>
+      <td>1,670</td>
+      <td>69.6%</td>
+    </tr>
+    <tr>
+      <td>ワイド流5</td>
+      <td>全体</td>
+      <td>8</td>
+      <td>32</td>
+      <td>37.5%</td>
+      <td>15.62%</td>
+      <td>3,200</td>
+      <td>1,670</td>
+      <td>52.2%</td>
+    </tr>
+  </tbody>
+</table></div><div class='summary'><h2>暫定：開催場所別サマリ（戦略別）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>競馬場</th>
+      <th>買い目</th>
+      <th>レース数</th>
+      <th>券数</th>
+      <th>的中率(レース)</th>
+      <th>的中率(券)</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>小倉</td>
+      <td>三連複BOX4</td>
+      <td>8</td>
+      <td>32</td>
+      <td>37.5%</td>
+      <td>9.38%</td>
+      <td>3,200</td>
+      <td>6,290</td>
+      <td><span style="color:#e05a5a; font-weight:900;">196.6%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連複BOX5</td>
+      <td>8</td>
+      <td>80</td>
+      <td>37.5%</td>
+      <td>3.75%</td>
+      <td>8,000</td>
+      <td>6,290</td>
+      <td>78.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単①-②③-②③④⑤</td>
+      <td>8</td>
+      <td>48</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>4,800</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単①-②③④-②③④</td>
+      <td>8</td>
+      <td>48</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>4,800</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単BOX4</td>
+      <td>8</td>
+      <td>192</td>
+      <td>37.5%</td>
+      <td>1.56%</td>
+      <td>19,200</td>
+      <td>39,080</td>
+      <td><span style="color:#b00000; font-weight:900;">203.5%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単BOX5</td>
+      <td>8</td>
+      <td>480</td>
+      <td>37.5%</td>
+      <td>0.62%</td>
+      <td>48,000</td>
+      <td>39,080</td>
+      <td>81.4%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝minoddstop3</td>
+      <td>8</td>
+      <td>24</td>
+      <td>62.5%</td>
+      <td>20.83%</td>
+      <td>2,400</td>
+      <td>2,340</td>
+      <td>97.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝minoddstop5</td>
+      <td>8</td>
+      <td>40</td>
+      <td>62.5%</td>
+      <td>12.50%</td>
+      <td>4,000</td>
+      <td>2,340</td>
+      <td>58.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝①</td>
+      <td>8</td>
+      <td>8</td>
+      <td>12.5%</td>
+      <td>12.50%</td>
+      <td>800</td>
+      <td>350</td>
+      <td>43.8%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連BOX4</td>
+      <td>8</td>
+      <td>48</td>
+      <td>50.0%</td>
+      <td>8.33%</td>
+      <td>4,800</td>
+      <td>4,990</td>
+      <td><span style="color:#e05a5a; font-weight:900;">104.0%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連BOX5</td>
+      <td>8</td>
+      <td>80</td>
+      <td>50.0%</td>
+      <td>5.00%</td>
+      <td>8,000</td>
+      <td>4,990</td>
+      <td>62.4%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連流4</td>
+      <td>8</td>
+      <td>24</td>
+      <td>25.0%</td>
+      <td>8.33%</td>
+      <td>2,400</td>
+      <td>2,030</td>
+      <td>84.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連流5</td>
+      <td>8</td>
+      <td>32</td>
+      <td>25.0%</td>
+      <td>6.25%</td>
+      <td>3,200</td>
+      <td>2,030</td>
+      <td>63.4%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単BOX4</td>
+      <td>8</td>
+      <td>96</td>
+      <td>50.0%</td>
+      <td>4.17%</td>
+      <td>9,600</td>
+      <td>9,750</td>
+      <td><span style="color:#e05a5a; font-weight:900;">101.6%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単BOX5</td>
+      <td>8</td>
+      <td>160</td>
+      <td>50.0%</td>
+      <td>2.50%</td>
+      <td>16,000</td>
+      <td>9,750</td>
+      <td>60.9%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単流4</td>
+      <td>8</td>
+      <td>24</td>
+      <td>12.5%</td>
+      <td>4.17%</td>
+      <td>2,400</td>
+      <td>1,560</td>
+      <td>65.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単流5</td>
+      <td>8</td>
+      <td>32</td>
+      <td>12.5%</td>
+      <td>3.12%</td>
+      <td>3,200</td>
+      <td>1,560</td>
+      <td>48.8%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイドBOX4</td>
+      <td>8</td>
+      <td>48</td>
+      <td>62.5%</td>
+      <td>22.92%</td>
+      <td>4,800</td>
+      <td>5,120</td>
+      <td><span style="color:#e05a5a; font-weight:900;">106.7%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイドBOX5</td>
+      <td>8</td>
+      <td>80</td>
+      <td>62.5%</td>
+      <td>13.75%</td>
+      <td>8,000</td>
+      <td>5,120</td>
+      <td>64.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイド流4</td>
+      <td>8</td>
+      <td>24</td>
+      <td>37.5%</td>
+      <td>20.83%</td>
+      <td>2,400</td>
+      <td>1,670</td>
+      <td>69.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイド流5</td>
+      <td>8</td>
+      <td>32</td>
+      <td>37.5%</td>
+      <td>15.62%</td>
+      <td>3,200</td>
+      <td>1,670</td>
+      <td>52.2%</td>
+    </tr>
+  </tbody>
+</table></div></div>
+<div id="box-final" class="modebox"><div class='summary'><h2>最終（当日全 11 レース）当日サマリ（戦略別）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>買い目</th>
+      <th>競馬場</th>
+      <th>レース数</th>
+      <th>券数</th>
+      <th>的中率(レース)</th>
+      <th>的中率(券)</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>三連複BOX4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>44</td>
+      <td>27.3%</td>
+      <td>6.82%</td>
+      <td>4,400</td>
+      <td>6,290</td>
+      <td><span style="color:#e05a5a; font-weight:900;">143.0%</span></td>
+    </tr>
+    <tr>
+      <td>三連複BOX5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>110</td>
+      <td>27.3%</td>
+      <td>2.73%</td>
+      <td>11,000</td>
+      <td>6,290</td>
+      <td>57.2%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③-②③④⑤</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>66</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>6,600</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③④-②③④</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>66</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>6,600</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>264</td>
+      <td>27.3%</td>
+      <td>1.14%</td>
+      <td>26,400</td>
+      <td>39,080</td>
+      <td><span style="color:#e05a5a; font-weight:900;">148.0%</span></td>
+    </tr>
+    <tr>
+      <td>三連単BOX5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>660</td>
+      <td>27.3%</td>
+      <td>0.45%</td>
+      <td>66,000</td>
+      <td>39,080</td>
+      <td>59.2%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop3</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>33</td>
+      <td>45.5%</td>
+      <td>15.15%</td>
+      <td>3,300</td>
+      <td>2,340</td>
+      <td>70.9%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>55</td>
+      <td>45.5%</td>
+      <td>9.09%</td>
+      <td>5,500</td>
+      <td>2,340</td>
+      <td>42.5%</td>
+    </tr>
+    <tr>
+      <td>単勝①</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>11</td>
+      <td>9.1%</td>
+      <td>9.09%</td>
+      <td>1,100</td>
+      <td>350</td>
+      <td>31.8%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>66</td>
+      <td>36.4%</td>
+      <td>6.06%</td>
+      <td>6,600</td>
+      <td>4,990</td>
+      <td>75.6%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>110</td>
+      <td>36.4%</td>
+      <td>3.64%</td>
+      <td>11,000</td>
+      <td>4,990</td>
+      <td>45.4%</td>
+    </tr>
+    <tr>
+      <td>馬連流4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>33</td>
+      <td>18.2%</td>
+      <td>6.06%</td>
+      <td>3,300</td>
+      <td>2,030</td>
+      <td>61.5%</td>
+    </tr>
+    <tr>
+      <td>馬連流5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>44</td>
+      <td>18.2%</td>
+      <td>4.55%</td>
+      <td>4,400</td>
+      <td>2,030</td>
+      <td>46.1%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>132</td>
+      <td>36.4%</td>
+      <td>3.03%</td>
+      <td>13,200</td>
+      <td>9,750</td>
+      <td>73.9%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>220</td>
+      <td>36.4%</td>
+      <td>1.82%</td>
+      <td>22,000</td>
+      <td>9,750</td>
+      <td>44.3%</td>
+    </tr>
+    <tr>
+      <td>馬単流4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>33</td>
+      <td>9.1%</td>
+      <td>3.03%</td>
+      <td>3,300</td>
+      <td>1,560</td>
+      <td>47.3%</td>
+    </tr>
+    <tr>
+      <td>馬単流5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>44</td>
+      <td>9.1%</td>
+      <td>2.27%</td>
+      <td>4,400</td>
+      <td>1,560</td>
+      <td>35.5%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>66</td>
+      <td>45.5%</td>
+      <td>16.67%</td>
+      <td>6,600</td>
+      <td>5,120</td>
+      <td>77.6%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>110</td>
+      <td>45.5%</td>
+      <td>10.00%</td>
+      <td>11,000</td>
+      <td>5,120</td>
+      <td>46.5%</td>
+    </tr>
+    <tr>
+      <td>ワイド流4</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>33</td>
+      <td>27.3%</td>
+      <td>15.15%</td>
+      <td>3,300</td>
+      <td>1,670</td>
+      <td>50.6%</td>
+    </tr>
+    <tr>
+      <td>ワイド流5</td>
+      <td>全体</td>
+      <td>11</td>
+      <td>44</td>
+      <td>27.3%</td>
+      <td>11.36%</td>
+      <td>4,400</td>
+      <td>1,670</td>
+      <td>38.0%</td>
+    </tr>
+  </tbody>
+</table></div><div class='summary'><h2>最終：開催場所別サマリ（戦略別）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>競馬場</th>
+      <th>買い目</th>
+      <th>レース数</th>
+      <th>券数</th>
+      <th>的中率(レース)</th>
+      <th>的中率(券)</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>小倉</td>
+      <td>三連複BOX4</td>
+      <td>11</td>
+      <td>44</td>
+      <td>27.3%</td>
+      <td>6.82%</td>
+      <td>4,400</td>
+      <td>6,290</td>
+      <td><span style="color:#e05a5a; font-weight:900;">143.0%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連複BOX5</td>
+      <td>11</td>
+      <td>110</td>
+      <td>27.3%</td>
+      <td>2.73%</td>
+      <td>11,000</td>
+      <td>6,290</td>
+      <td>57.2%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単①-②③-②③④⑤</td>
+      <td>11</td>
+      <td>66</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>6,600</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単①-②③④-②③④</td>
+      <td>11</td>
+      <td>66</td>
+      <td>0.0%</td>
+      <td>0.00%</td>
+      <td>6,600</td>
+      <td>0</td>
+      <td>0.0%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単BOX4</td>
+      <td>11</td>
+      <td>264</td>
+      <td>27.3%</td>
+      <td>1.14%</td>
+      <td>26,400</td>
+      <td>39,080</td>
+      <td><span style="color:#e05a5a; font-weight:900;">148.0%</span></td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>三連単BOX5</td>
+      <td>11</td>
+      <td>660</td>
+      <td>27.3%</td>
+      <td>0.45%</td>
+      <td>66,000</td>
+      <td>39,080</td>
+      <td>59.2%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝minoddstop3</td>
+      <td>11</td>
+      <td>33</td>
+      <td>45.5%</td>
+      <td>15.15%</td>
+      <td>3,300</td>
+      <td>2,340</td>
+      <td>70.9%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝minoddstop5</td>
+      <td>11</td>
+      <td>55</td>
+      <td>45.5%</td>
+      <td>9.09%</td>
+      <td>5,500</td>
+      <td>2,340</td>
+      <td>42.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>単勝①</td>
+      <td>11</td>
+      <td>11</td>
+      <td>9.1%</td>
+      <td>9.09%</td>
+      <td>1,100</td>
+      <td>350</td>
+      <td>31.8%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連BOX4</td>
+      <td>11</td>
+      <td>66</td>
+      <td>36.4%</td>
+      <td>6.06%</td>
+      <td>6,600</td>
+      <td>4,990</td>
+      <td>75.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連BOX5</td>
+      <td>11</td>
+      <td>110</td>
+      <td>36.4%</td>
+      <td>3.64%</td>
+      <td>11,000</td>
+      <td>4,990</td>
+      <td>45.4%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連流4</td>
+      <td>11</td>
+      <td>33</td>
+      <td>18.2%</td>
+      <td>6.06%</td>
+      <td>3,300</td>
+      <td>2,030</td>
+      <td>61.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬連流5</td>
+      <td>11</td>
+      <td>44</td>
+      <td>18.2%</td>
+      <td>4.55%</td>
+      <td>4,400</td>
+      <td>2,030</td>
+      <td>46.1%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単BOX4</td>
+      <td>11</td>
+      <td>132</td>
+      <td>36.4%</td>
+      <td>3.03%</td>
+      <td>13,200</td>
+      <td>9,750</td>
+      <td>73.9%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単BOX5</td>
+      <td>11</td>
+      <td>220</td>
+      <td>36.4%</td>
+      <td>1.82%</td>
+      <td>22,000</td>
+      <td>9,750</td>
+      <td>44.3%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単流4</td>
+      <td>11</td>
+      <td>33</td>
+      <td>9.1%</td>
+      <td>3.03%</td>
+      <td>3,300</td>
+      <td>1,560</td>
+      <td>47.3%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>馬単流5</td>
+      <td>11</td>
+      <td>44</td>
+      <td>9.1%</td>
+      <td>2.27%</td>
+      <td>4,400</td>
+      <td>1,560</td>
+      <td>35.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイドBOX4</td>
+      <td>11</td>
+      <td>66</td>
+      <td>45.5%</td>
+      <td>16.67%</td>
+      <td>6,600</td>
+      <td>5,120</td>
+      <td>77.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイドBOX5</td>
+      <td>11</td>
+      <td>110</td>
+      <td>45.5%</td>
+      <td>10.00%</td>
+      <td>11,000</td>
+      <td>5,120</td>
+      <td>46.5%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイド流4</td>
+      <td>11</td>
+      <td>33</td>
+      <td>27.3%</td>
+      <td>15.15%</td>
+      <td>3,300</td>
+      <td>1,670</td>
+      <td>50.6%</td>
+    </tr>
+    <tr>
+      <td>小倉</td>
+      <td>ワイド流5</td>
+      <td>11</td>
+      <td>44</td>
+      <td>27.3%</td>
+      <td>11.36%</td>
+      <td>4,400</td>
+      <td>1,670</td>
+      <td>38.0%</td>
+    </tr>
+  </tbody>
+</table></div></div>
+<div id="box-cumulative" class="modebox active"><div class='summary'><h2>累計サマリ（戦略別）</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>買い目</th>
+      <th>レース数</th>
+      <th>券数</th>
+      <th>的中率(レース)</th>
+      <th>的中率(券)</th>
+      <th>投資(円)</th>
+      <th>払戻(円)</th>
+      <th>回収率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝minoddstop3</td>
+      <td>239</td>
+      <td>701</td>
+      <td>43.1%</td>
+      <td>14.69%</td>
+      <td>70,100</td>
+      <td>56,600</td>
+      <td>80.7%</td>
+    </tr>
+    <tr>
+      <td>単勝minoddstop5</td>
+      <td>239</td>
+      <td>1169</td>
+      <td>58.6%</td>
+      <td>11.98%</td>
+      <td>116,900</td>
+      <td>85,990</td>
+      <td>73.6%</td>
+    </tr>
+    <tr>
+      <td>馬連流4</td>
+      <td>239</td>
+      <td>702</td>
+      <td>17.6%</td>
+      <td>5.98%</td>
+      <td>70,200</td>
+      <td>50,370</td>
+      <td>71.8%</td>
+    </tr>
+    <tr>
+      <td>単勝①</td>
+      <td>239</td>
+      <td>234</td>
+      <td>17.6%</td>
+      <td>17.95%</td>
+      <td>23,400</td>
+      <td>16,340</td>
+      <td>69.8%</td>
+    </tr>
+    <tr>
+      <td>馬連流5</td>
+      <td>239</td>
+      <td>936</td>
+      <td>21.8%</td>
+      <td>5.56%</td>
+      <td>93,600</td>
+      <td>65,010</td>
+      <td>69.5%</td>
+    </tr>
+    <tr>
+      <td>ワイド流5</td>
+      <td>239</td>
+      <td>936</td>
+      <td>38.9%</td>
+      <td>14.00%</td>
+      <td>93,600</td>
+      <td>64,270</td>
+      <td>68.7%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③-②③④⑤</td>
+      <td>239</td>
+      <td>1404</td>
+      <td>3.8%</td>
+      <td>0.64%</td>
+      <td>140,400</td>
+      <td>93,960</td>
+      <td>66.9%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX5</td>
+      <td>239</td>
+      <td>2340</td>
+      <td>60.3%</td>
+      <td>10.34%</td>
+      <td>234,000</td>
+      <td>153,330</td>
+      <td>65.5%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX5</td>
+      <td>239</td>
+      <td>2340</td>
+      <td>37.2%</td>
+      <td>3.80%</td>
+      <td>234,000</td>
+      <td>152,560</td>
+      <td>65.2%</td>
+    </tr>
+    <tr>
+      <td>ワイド流4</td>
+      <td>239</td>
+      <td>702</td>
+      <td>33.5%</td>
+      <td>14.25%</td>
+      <td>70,200</td>
+      <td>45,190</td>
+      <td>64.4%</td>
+    </tr>
+    <tr>
+      <td>馬連BOX4</td>
+      <td>239</td>
+      <td>1404</td>
+      <td>28.0%</td>
+      <td>4.77%</td>
+      <td>140,400</td>
+      <td>90,210</td>
+      <td>64.3%</td>
+    </tr>
+    <tr>
+      <td>馬単流5</td>
+      <td>239</td>
+      <td>936</td>
+      <td>10.0%</td>
+      <td>2.56%</td>
+      <td>93,600</td>
+      <td>59,390</td>
+      <td>63.5%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX4</td>
+      <td>239</td>
+      <td>2808</td>
+      <td>28.0%</td>
+      <td>2.39%</td>
+      <td>280,800</td>
+      <td>177,860</td>
+      <td>63.3%</td>
+    </tr>
+    <tr>
+      <td>馬単BOX5</td>
+      <td>239</td>
+      <td>4680</td>
+      <td>37.2%</td>
+      <td>1.90%</td>
+      <td>468,000</td>
+      <td>295,540</td>
+      <td>63.1%</td>
+    </tr>
+    <tr>
+      <td>馬単流4</td>
+      <td>239</td>
+      <td>702</td>
+      <td>7.5%</td>
+      <td>2.56%</td>
+      <td>70,200</td>
+      <td>42,750</td>
+      <td>60.9%</td>
+    </tr>
+    <tr>
+      <td>ワイドBOX4</td>
+      <td>239</td>
+      <td>1404</td>
+      <td>48.1%</td>
+      <td>11.61%</td>
+      <td>140,400</td>
+      <td>82,130</td>
+      <td>58.5%</td>
+    </tr>
+    <tr>
+      <td>三連複BOX5</td>
+      <td>239</td>
+      <td>2340</td>
+      <td>20.5%</td>
+      <td>2.09%</td>
+      <td>234,000</td>
+      <td>128,410</td>
+      <td>54.9%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX5</td>
+      <td>239</td>
+      <td>14040</td>
+      <td>20.5%</td>
+      <td>0.35%</td>
+      <td>1,404,000</td>
+      <td>751,810</td>
+      <td>53.5%</td>
+    </tr>
+    <tr>
+      <td>三連複BOX4</td>
+      <td>239</td>
+      <td>936</td>
+      <td>10.0%</td>
+      <td>2.56%</td>
+      <td>93,600</td>
+      <td>50,120</td>
+      <td>53.5%</td>
+    </tr>
+    <tr>
+      <td>三連単BOX4</td>
+      <td>239</td>
+      <td>5616</td>
+      <td>10.0%</td>
+      <td>0.43%</td>
+      <td>561,600</td>
+      <td>298,480</td>
+      <td>53.1%</td>
+    </tr>
+    <tr>
+      <td>三連単①-②③④-②③④</td>
+      <td>239</td>
+      <td>1404</td>
+      <td>1.7%</td>
+      <td>0.28%</td>
+      <td>140,400</td>
+      <td>51,660</td>
+      <td>36.8%</td>
+    </tr>
+  </tbody>
+</table></div></div>
+
+<script>
+(function(){
+  const btns = document.querySelectorAll(".modebtn");
+  const boxP = document.getElementById("box-provisional");
+  const boxF = document.getElementById("box-final");
+  const note = document.getElementById("modeNote");
+
+  function setMode(mode){
+    btns.forEach(b => b.classList.toggle("active", b.dataset.mode===mode));
+    boxP.classList.toggle("active", mode==="provisional");
+    boxF.classList.toggle("active", mode==="final");
+    if(mode==="provisional") note.textContent = "（結果・払戻が揃っているレースだけで計算）";
+    if(mode==="final") note.textContent = "（当日全体。未確定があると参考値）";
+  }
+  btns.forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+  setMode("provisional");
+})();
+</script>
+                 <script>
+function toggleHitDetail(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = (el.style.display === "none" || el.style.display === "")
+    ? "block" : "none";
+}
+</script>
+
+<div class="race" id="r202610010601"><h2><span class="race-title">小倉 1R 3歳未勝利</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜小荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(10%) / 単勝minoddstop5(10%) / 馬単BOX5(6%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.888</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.104, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (5, 16) <b>score=8.7201</b><br>#2 umaren (14, 16) <b>score=8.3947</b><br>#3 umaren (5, 14) <b>score=8.3806</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td>10</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑩</span></td><td>レッツエンジョイ</td><td>牡3</td><td>▲田山</td><td>54.0</td><td>9.2</td><td>5</td><td></td><td>0.4222656732617329</td><td>3.884844194007943</td></tr>
+<tr><td>15</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑮</span></td><td>ブルーミーティア</td><td>牡3</td><td>▲小林美</td><td>54.0</td><td>4.8</td><td>1</td><td></td><td>0.4088494735833347</td><td>1.9624774732000063</td></tr>
+<tr><td>7</td><td><span class="umabadge w7">14</span> <span class="rankicon">⑦</span></td><td>デルニエジョイ</td><td>牡3</td><td>丹内</td><td>57.0</td><td>5.1</td><td>2</td><td></td><td>0.2492482229414346</td><td>1.2711659370013164</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w1">2</span> <span class="rankicon">🥉</span></td><td>ノリノドラゴン</td><td>牡3</td><td>富田</td><td>57.0</td><td>10.8</td><td>6</td><td></td><td>0.11793789282725836</td><td>1.2737292425343905</td></tr>
+<tr><td>11</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>モズジェネラル</td><td>牡3</td><td>松本</td><td>57.0</td><td>8.5</td><td>4</td><td></td><td>0.11488661296220258</td><td>0.9765362101787219</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w6">11</span> <span class="rankicon">🥇</span></td><td>イサギ</td><td>牡3</td><td>小沢</td><td>57.0</td><td>15.6</td><td>8</td><td></td><td>0.10359840225670519</td><td>1.6161350752046009</td></tr>
+<tr><td>8</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑧</span></td><td>ユイノサダハル</td><td>牡3</td><td>長岡</td><td>57.0</td><td>12.3</td><td>7</td><td></td><td>0.10162966062755302</td><td>1.2500448257189023</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑤</span></td><td>ロンバルドシチー</td><td>牡3</td><td>松若</td><td>57.0</td><td>21.4</td><td>11</td><td></td><td>0.09824361732301437</td><td>2.1024134107125074</td></tr>
+<tr><td>12</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑫</span></td><td>コパノルーカス</td><td>牡3</td><td>加藤</td><td>57.0</td><td>114.5</td><td>14</td><td></td><td>0.0838403653606039</td><td>9.599721833789145</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w4">8</span> <span class="rankicon">④</span></td><td>バケラッタ</td><td>牡3</td><td>鮫島駿</td><td>57.0</td><td>6.0</td><td>3</td><td></td><td>0.07553731435554646</td><td>0.4532238861332788</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w6">12</span> <span class="rankicon">🥈</span></td><td>マイネルゼーロス</td><td>牡3</td><td>▲石神道</td><td>54.0</td><td>17.3</td><td>9</td><td></td><td>0.07520917583510224</td><td>1.3011187419472687</td></tr>
+<tr><td>14</td><td><span class="umabadge w2">4</span> <span class="rankicon">⑭</span></td><td>シャープインサイト</td><td>牡3</td><td>角田和</td><td>57.0</td><td>42.9</td><td>12</td><td></td><td>0.07236301152937012</td><td>3.104373194609978</td></tr>
+<tr><td>9</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑨</span></td><td>オーパパ</td><td>牡3</td><td>斎藤</td><td>57.0</td><td>17.4</td><td>10</td><td></td><td>0.06692985457834262</td><td>1.1645794696631615</td></tr>
+<tr><td>16</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑯</span></td><td>ゴーゴーパワー</td><td>牡3</td><td>△鷲頭</td><td>55.0</td><td>142.3</td><td>16</td><td></td><td>0.0505188487589218</td><td>7.188832178394573</td></tr>
+<tr><td>6</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑥</span></td><td>シュトルムカイザー</td><td>セン3</td><td>国分恭</td><td>57.0</td><td>90.3</td><td>13</td><td></td><td>0.03227024564077919</td><td>2.914003181362361</td></tr>
+<tr><td>13</td><td><span class="umabadge w5">10</span> <span class="rankicon">⑬</span></td><td>ビナハイバン</td><td>牡3</td><td>▲和田陽</td><td>54.0</td><td>121.7</td><td>15</td><td></td><td>0.03227024564077919</td><td>3.9272888944828273</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr><td>15</td><td>1</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑮</span></td><td>ブルーミーティア</td><td>牡3</td><td>▲小林美</td><td>54</td><td><span class="odds1">4.8</span></td><td><span class="pop1">1</span></td><td></td><td>4.367</td></tr>
+<tr><td>10</td><td>2</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑩</span></td><td>レッツエンジョイ</td><td>牡3</td><td>▲田山</td><td>54</td><td><span class="odds1">9.2</span></td><td>5</td><td></td><td>4.353</td></tr>
+<tr><td>7</td><td>3</td><td><span class="umabadge w7">14</span> <span class="rankicon">⑦</span></td><td>デルニエジョイ</td><td>牡3</td><td>丹内</td><td>57</td><td><span class="odds1">5.1</span></td><td><span class="pop1">2</span></td><td></td><td>4.028</td></tr>
+<tr><td>11</td><td>4</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>モズジェネラル</td><td>牡3</td><td>松本</td><td>57</td><td><span class="odds1">8.5</span></td><td>4</td><td></td><td>3.452</td></tr>
+<tr class="hit-3"><td>3</td><td>5</td><td><span class="umabadge w1">2</span> <span class="rankicon">🥉</span></td><td>ノリノドラゴン</td><td>牡3</td><td>富田</td><td>57</td><td>10.8</td><td>6</td><td></td><td>2.966</td></tr>
+<tr><td>12</td><td>6</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑫</span></td><td>コパノルーカス</td><td>牡3</td><td>加藤</td><td>57</td><td><span class="odds3">114.5</span></td><td><span class="pop10">14</span></td><td></td><td>2.934</td></tr>
+<tr class="hit-1"><td>1</td><td>7</td><td><span class="umabadge w6">11</span> <span class="rankicon">🥇</span></td><td>イサギ</td><td>牡3</td><td>小沢</td><td>57</td><td>15.6</td><td>8</td><td></td><td>2.918</td></tr>
+<tr class="hit-3"><td>2</td><td>8</td><td><span class="umabadge w6">12</span> <span class="rankicon">🥈</span></td><td>マイネルゼーロス</td><td>牡3</td><td>▲石神道</td><td>54</td><td>17.3</td><td>9</td><td></td><td>2.879</td></tr>
+<tr><td>8</td><td>9</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑧</span></td><td>ユイノサダハル</td><td>牡3</td><td>長岡</td><td>57</td><td>12.3</td><td>7</td><td></td><td>2.850</td></tr>
+<tr class="hit-5"><td>5</td><td>10</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑤</span></td><td>ロンバルドシチー</td><td>牡3</td><td>松若</td><td>57</td><td>21.4</td><td><span class="pop10">11</span></td><td></td><td>2.820</td></tr>
+<tr class="hit-5"><td>4</td><td>11</td><td><span class="umabadge w4">8</span> <span class="rankicon">④</span></td><td>バケラッタ</td><td>牡3</td><td>鮫島駿</td><td>57</td><td><span class="odds1">6.0</span></td><td><span class="pop1">3</span></td><td></td><td>2.722</td></tr>
+<tr><td>9</td><td>12</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑨</span></td><td>オーパパ</td><td>牡3</td><td>斎藤</td><td>57</td><td>17.4</td><td><span class="pop10">10</span></td><td></td><td>2.705</td></tr>
+<tr><td>16</td><td>13</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑯</span></td><td>ゴーゴーパワー</td><td>牡3</td><td>△鷲頭</td><td>55</td><td><span class="odds3">142.3</span></td><td><span class="pop10">16</span></td><td></td><td>2.076</td></tr>
+<tr><td>13</td><td>14</td><td><span class="umabadge w5">10</span> <span class="rankicon">⑬</span></td><td>ビナハイバン</td><td>牡3</td><td>▲和田陽</td><td>54</td><td><span class="odds3">121.7</span></td><td><span class="pop10">15</span></td><td></td><td>1.824</td></tr>
+<tr><td>14</td><td>15</td><td><span class="umabadge w2">4</span> <span class="rankicon">⑭</span></td><td>シャープインサイト</td><td>牡3</td><td>角田和</td><td>57</td><td>42.9</td><td><span class="pop10">12</span></td><td></td><td>1.804</td></tr>
+<tr><td>6</td><td>16</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑥</span></td><td>シュトルムカイザー</td><td>セン3</td><td>国分恭</td><td>57</td><td>90.3</td><td><span class="pop10">13</span></td><td></td><td>1.654</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>14</td>
+      <td>0.0277</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>14</td>
+      <td>0.0276</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>14</td>
+      <td>5</td>
+      <td>0.0245</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>14</td>
+      <td>16</td>
+      <td>0.0242</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>16</td>
+      <td>5</td>
+      <td>0.0223</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>5</td>
+      <td>16</td>
+      <td>0.0222</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0.0156</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>1</td>
+      <td>0.0155</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>5</td>
+      <td>0.0121</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>1</td>
+      <td>16</td>
+      <td>0.0120</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>16</td>
+      <td>5</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>5</td>
+      <td>16</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>14</td>
+      <td>1</td>
+      <td>0.0099</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>14</td>
+      <td>1</td>
+      <td>0.0097</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>2</td>
+      <td>0.0096</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>2</td>
+      <td>0.0095</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>13</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>13</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>11</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>11</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>16</td>
+      <td>1</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0.0089</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>5</td>
+      <td>12</td>
+      <td>0.0088</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>14</td>
+      <td>0.0088</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>16</td>
+      <td>12</td>
+      <td>0.0088</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>1</td>
+      <td>14</td>
+      <td>0.0086</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>16</td>
+      <td>14</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>1</td>
+      <td>16</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>5</td>
+      <td>14</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>1</td>
+      <td>5</td>
+      <td>0.0071</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>11</td>
+      <td>1560</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>12</td>
+      <td>490</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>11</td>
+      <td>470</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>2</td>
+      <td>370</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>11-12</td>
+      <td>10690</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>11-12</td>
+      <td>20260</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>11-12</td>
+      <td>2450</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>2-11</td>
+      <td>2350</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>2-12</td>
+      <td>2290</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>2-11-12</td>
+      <td>29730</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>11-12-2</td>
+      <td>190540</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race big-hit-card" id="r202610010602"><h2><span class="race-title hit">小倉 2R 3歳未勝利</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(10%) / 馬単BOX4(8%) / 三連単BOX5(7%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010602')">的中🎯(単勝minoddstop3｜<span class="mult m0">+0.9倍</span> / 単勝minoddstop5｜<span class="mult m0">+0.6倍</span> / ワイドBOX4｜<span class="mult m0">+0.5倍</span> / 他+1)</span><div id="hitdetail-202610010602" class="hitdetail"><b>的中内訳</b><ul><li><b>単勝minoddstop3</b>｜<span class="mult m0">+0.9倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.5倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div><span class="bigHit">大的中🔥<small>単勝minoddstop5</small></span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.974</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.097, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (16,) <b>score=3.7883</b><br>#2 tansho (1,) <b>score=3.2522</b><br>#3 tansho (10,) <b>score=3.2007</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td>10</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑩</span></td><td>エコロアビス</td><td>牝3</td><td>▲田山</td><td>52.0</td><td>8.3</td><td>4</td><td></td><td>0.2518485435845308</td><td>2.090342911751606</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w5">10</span> <span class="rankicon">🥉</span></td><td>ゴッドアイ</td><td>牝3</td><td>鮫島駿</td><td>55.0</td><td>3.5</td><td>2</td><td></td><td>0.21071624756746796</td><td>0.7375068664861378</td></tr>
+<tr><td>7</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑦</span></td><td>バランソワール</td><td>牝3</td><td>丹内</td><td>55.0</td><td>7.3</td><td>3</td><td></td><td>0.16919718246379253</td><td>1.2351394319856854</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w1">1</span> <span class="rankicon">🥇</span></td><td>シェーロドラート</td><td>牝3</td><td>菊沢</td><td>55.0</td><td>2.8</td><td>1</td><td></td><td>0.12443265006233252</td><td>0.34841142017453103</td></tr>
+<tr><td>8</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑧</span></td><td>ハヤテノオジョー</td><td>牝3</td><td>斎藤</td><td>55.0</td><td>34.3</td><td>9</td><td></td><td>0.11367910029015436</td><td>3.8991931399522946</td></tr>
+<tr><td>11</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑪</span></td><td>ミスマリーゴールド</td><td>牝3</td><td>▲石田</td><td>52.0</td><td>67.1</td><td>13</td><td></td><td>0.09384828216541574</td><td>6.2972197332993955</td></tr>
+<tr><td>6</td><td><span class="umabadge w8">17</span> <span class="rankicon">⑥</span></td><td>フルフィルメント</td><td>牝3</td><td>▲石神道</td><td>52.0</td><td>18.7</td><td>6</td><td></td><td>0.05460908160995541</td><td>1.021189826106166</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w2">4</span> <span class="rankicon">🥈</span></td><td>ハッピーローヴァー</td><td>牝3</td><td>角田和</td><td>55.0</td><td>19.9</td><td>7</td><td></td><td>0.04980181230277601</td><td>0.9910560648252426</td></tr>
+<tr><td>9</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑨</span></td><td>ティンクルバレット</td><td>牝3</td><td>☆西塚</td><td>54.0</td><td>13.7</td><td>5</td><td></td><td>0.04630514474513413</td><td>0.6343804830083375</td></tr>
+<tr><td>14</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑭</span></td><td>キョウエイクローム</td><td>牝3</td><td>国分恭</td><td>55.0</td><td>182.3</td><td>15</td><td></td><td>0.031819088480326635</td><td>5.800619829963546</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑤</span></td><td>ノーブルマドンナ</td><td>牝3</td><td>▲和田陽</td><td>52.0</td><td>140.7</td><td>14</td><td></td><td>0.031819088480326635</td><td>4.476945749181957</td></tr>
+<tr><td>13</td><td><span class="umabadge w7">14</span> <span class="rankicon">⑬</span></td><td>ディアーモルタル</td><td>牝3</td><td>松若</td><td>55.0</td><td>40.3</td><td>12</td><td></td><td>0.031819088480326635</td><td>1.2823092657571633</td></tr>
+<tr><td>15</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑮</span></td><td>ルルマーレ</td><td>牝3</td><td>杉原</td><td>55.0</td><td>38.3</td><td>11</td><td></td><td>0.030977081454771658</td><td>1.1864222197177543</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w1">2</span> <span class="rankicon">④</span></td><td>ダブルチャレンジ</td><td>牝3</td><td>長岡</td><td>55.0</td><td>35.5</td><td>10</td><td></td><td>0.02554744240858471</td><td>0.9069342055047572</td></tr>
+<tr><td>12</td><td><span class="umabadge w6">12</span> <span class="rankicon">⑫</span></td><td>グラディオール</td><td>牝3</td><td>小沢</td><td>55.0</td><td>28.8</td><td>8</td><td></td><td>0.025166909243828448</td><td>0.7248069862222594</td></tr>
+<tr><td>17</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑰</span></td><td>フェンネル</td><td>牝3</td><td>△鷲頭</td><td>53.0</td><td>253.3</td><td>17</td><td></td><td>0.022154909553011998</td><td>5.611838589777939</td></tr>
+<tr><td>16</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑯</span></td><td>グレーターグレイ</td><td>牝3</td><td>△柴田裕</td><td>53.0</td><td>210.3</td><td>16</td><td></td><td>0.01879413737502972</td><td>3.9524070899687507</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="win-strong"><td>10</td><td>1</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑩</span><span class="predtag win">勝ち濃厚</span></td><td>エコロアビス</td><td>牝3</td><td>▲田山</td><td>52</td><td><span class="odds1">8.3</span></td><td>4</td><td></td><td>3.788</td></tr>
+<tr class="hit-1"><td>1</td><td>2</td><td><span class="umabadge w1">1</span> <span class="rankicon">🥇</span></td><td>シェーロドラート</td><td>牝3</td><td>菊沢</td><td>55</td><td><span class="odds1">2.8</span></td><td><span class="pop1">1</span></td><td></td><td>3.252</td></tr>
+<tr class="hit-3"><td>3</td><td>3</td><td><span class="umabadge w5">10</span> <span class="rankicon">🥉</span></td><td>ゴッドアイ</td><td>牝3</td><td>鮫島駿</td><td>55</td><td><span class="odds1">3.5</span></td><td><span class="pop1">2</span></td><td></td><td>3.201</td></tr>
+<tr><td>7</td><td>4</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑦</span></td><td>バランソワール</td><td>牝3</td><td>丹内</td><td>55</td><td><span class="odds1">7.3</span></td><td><span class="pop1">3</span></td><td></td><td>3.078</td></tr>
+<tr><td>11</td><td>5</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑪</span></td><td>ミスマリーゴールド</td><td>牝3</td><td>▲石田</td><td>52</td><td>67.1</td><td><span class="pop10">13</span></td><td></td><td>2.874</td></tr>
+<tr><td>6</td><td>6</td><td><span class="umabadge w8">17</span> <span class="rankicon">⑥</span></td><td>フルフィルメント</td><td>牝3</td><td>▲石神道</td><td>52</td><td>18.7</td><td>6</td><td></td><td>2.675</td></tr>
+<tr><td>8</td><td>7</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑧</span></td><td>ハヤテノオジョー</td><td>牝3</td><td>斎藤</td><td>55</td><td>34.3</td><td>9</td><td></td><td>2.573</td></tr>
+<tr><td>15</td><td>8</td><td><span class="umabadge w2">3</span> <span class="rankicon">⑮</span></td><td>ルルマーレ</td><td>牝3</td><td>杉原</td><td>55</td><td>38.3</td><td><span class="pop10">11</span></td><td></td><td>2.194</td></tr>
+<tr class="hit-3"><td>2</td><td>9</td><td><span class="umabadge w2">4</span> <span class="rankicon">🥈</span></td><td>ハッピーローヴァー</td><td>牝3</td><td>角田和</td><td>55</td><td>19.9</td><td>7</td><td></td><td>2.182</td></tr>
+<tr><td>9</td><td>10</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑨</span></td><td>ティンクルバレット</td><td>牝3</td><td>☆西塚</td><td>54</td><td>13.7</td><td>5</td><td></td><td>1.782</td></tr>
+<tr><td>13</td><td>11</td><td><span class="umabadge w7">14</span> <span class="rankicon">⑬</span></td><td>ディアーモルタル</td><td>牝3</td><td>松若</td><td>55</td><td>40.3</td><td><span class="pop10">12</span></td><td></td><td>1.718</td></tr>
+<tr><td>14</td><td>12</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑭</span></td><td>キョウエイクローム</td><td>牝3</td><td>国分恭</td><td>55</td><td><span class="odds3">182.3</span></td><td><span class="pop10">15</span></td><td></td><td>1.708</td></tr>
+<tr class="hit-5"><td>5</td><td>13</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑤</span></td><td>ノーブルマドンナ</td><td>牝3</td><td>▲和田陽</td><td>52</td><td><span class="odds3">140.7</span></td><td><span class="pop10">14</span></td><td></td><td>1.654</td></tr>
+<tr class="hit-5"><td>4</td><td>14</td><td><span class="umabadge w1">2</span> <span class="rankicon">④</span></td><td>ダブルチャレンジ</td><td>牝3</td><td>長岡</td><td>55</td><td>35.5</td><td><span class="pop10">10</span></td><td></td><td>1.440</td></tr>
+<tr><td>12</td><td>15</td><td><span class="umabadge w6">12</span> <span class="rankicon">⑫</span></td><td>グラディオール</td><td>牝3</td><td>小沢</td><td>55</td><td>28.8</td><td>8</td><td></td><td>1.340</td></tr>
+<tr><td>17</td><td>16</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑰</span></td><td>フェンネル</td><td>牝3</td><td>△鷲頭</td><td>53</td><td><span class="odds3">253.3</span></td><td><span class="pop10">17</span></td><td></td><td>0.866</td></tr>
+<tr><td>16</td><td>17</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑯</span></td><td>グレーターグレイ</td><td>牝3</td><td>△柴田裕</td><td>53</td><td><span class="odds3">210.3</span></td><td><span class="pop10">16</span></td><td></td><td>0.532</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>10</td>
+      <td>0.0129</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>10</td>
+      <td>1</td>
+      <td>0.0128</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>8</td>
+      <td>0.0114</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>16</td>
+      <td>10</td>
+      <td>0.0113</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>16</td>
+      <td>1</td>
+      <td>0.0110</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>8</td>
+      <td>1</td>
+      <td>0.0110</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>10</td>
+      <td>8</td>
+      <td>0.0107</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>8</td>
+      <td>10</td>
+      <td>0.0104</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>16</td>
+      <td>8</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>10</td>
+      <td>16</td>
+      <td>0.0094</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>1</td>
+      <td>16</td>
+      <td>0.0094</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>16</td>
+      <td>1</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>11</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>16</td>
+      <td>8</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>16</td>
+      <td>10</td>
+      <td>0.0089</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>10</td>
+      <td>11</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>11</td>
+      <td>1</td>
+      <td>0.0086</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>8</td>
+      <td>16</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>16</td>
+      <td>11</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>1</td>
+      <td>16</td>
+      <td>0.0079</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>17</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>8</td>
+      <td>16</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>16</td>
+      <td>11</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>8</td>
+      <td>11</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>10</td>
+      <td>16</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>11</td>
+      <td>8</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>10</td>
+      <td>17</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>16</td>
+      <td>1</td>
+      <td>0.0071</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>1</td>
+      <td>15</td>
+      <td>0.0069</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>1</td>
+      <td>280</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>4</td>
+      <td>370</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>1</td>
+      <td>150</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>10</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>1-4</td>
+      <td>1930</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>1-4</td>
+      <td>2630</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>4-10</td>
+      <td>1020</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>1-4</td>
+      <td>640</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>1-10</td>
+      <td>280</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>1-4-10</td>
+      <td>1970</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>1-4-10</td>
+      <td>9620</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race big-hit-card" id="r202610010603"><h2><span class="race-title hit">小倉 3R 4歳以上1勝クラス</span> <span class="racecond">ダ1000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(12%) / ワイドBOX5(9%) / 単勝①(7%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010603')">的中🎯(三連複BOX4｜<span class="mult m3">+10.7倍</span> / 三連単BOX4｜<span class="mult m3">+10.2倍</span> / 三連複BOX5｜<span class="mult m1">+4.3倍</span> / 他+9)</span><div id="hitdetail-202610010603" class="hitdetail"><b>的中内訳</b><ul><li><b>三連複BOX4</b>｜<span class="mult m3">+10.7倍</span></li><li><b>三連単BOX4</b>｜<span class="mult m3">+10.2倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m1">+4.3倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m1">+4.1倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m1">+4.0倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+2.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m1">+2.6倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m1">+2.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.7倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+1.6倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.6倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬連BOX5</small></span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.977</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.121, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 6) <b>score=8.3040</b><br>#2 umaren (3, 11) <b>score=7.8555</b><br>#3 umaren (3, 4) <b>score=7.8075</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr class="hit-5"><td>4</td><td><span class="umabadge w3">3</span> <span class="rankicon">④</span></td><td>マオノクラッシュ</td><td>牝4</td><td>▲小林美</td><td>53.0</td><td>3.1</td><td>1</td><td></td><td>0.4545240608495411</td><td>1.4090245886335775</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w4">6</span> <span class="rankicon">🥈</span></td><td>シャーンゴッセ</td><td>セン6</td><td>△鷲頭</td><td>56.0</td><td>5.5</td><td>2</td><td></td><td>0.3769803737436513</td><td>2.073392055590082</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w7">11</span> <span class="rankicon">🥇</span></td><td>クインズシフォン</td><td>牝4</td><td>丹内</td><td>56.0</td><td>7.9</td><td>4</td><td></td><td>0.3187152129579688</td><td>2.5178501823679533</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w3">4</span> <span class="rankicon">🥉</span></td><td>イチトゼロノアイダ</td><td>牝4</td><td>▲舟山</td><td>53.0</td><td>7.6</td><td>3</td><td></td><td>0.2468614255913282</td><td>1.8761468344940944</td></tr>
+<tr><td>6</td><td><span class="umabadge w6">9</span> <span class="rankicon">⑥</span></td><td>レネネト</td><td>牝4</td><td>▲田山</td><td>53.0</td><td>11.4</td><td>7</td><td></td><td>0.16519217592620924</td><td>1.8831908055587854</td></tr>
+<tr><td>7</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑦</span></td><td>マカニ</td><td>牝4</td><td>▲石田</td><td>53.0</td><td>13.6</td><td>8</td><td></td><td>0.1554945377706229</td><td>2.114725713680471</td></tr>
+<tr><td>13</td><td><span class="umabadge w8">13</span> <span class="rankicon">⑬</span></td><td>エコロレオナ</td><td>牝4</td><td>松本</td><td>56.0</td><td>10.5</td><td>5</td><td></td><td>0.11910717704400484</td><td>1.2506253589620508</td></tr>
+<tr><td>10</td><td><span class="umabadge w4">5</span> <span class="rankicon">⑩</span></td><td>グッドヴァイブス</td><td>牡5</td><td>鮫島駿</td><td>58.0</td><td>10.7</td><td>6</td><td></td><td>0.0886511171301791</td><td>0.9485669532929164</td></tr>
+<tr><td>8</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑧</span></td><td>アルヘンティニータ</td><td>牝5</td><td>杉原</td><td>56.0</td><td>14.0</td><td>9</td><td></td><td>0.08710294040826669</td><td>1.2194411657157336</td></tr>
+<tr><td>12</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑫</span></td><td>オコジュ</td><td>牝6</td><td>嶋田</td><td>56.0</td><td>37.8</td><td>11</td><td></td><td>0.06327322020585523</td><td>2.3917277237813273</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑤</span></td><td>ヨーグルトナン</td><td>牝4</td><td>☆西塚</td><td>55.0</td><td>74.0</td><td>12</td><td></td><td>0.06134887011882066</td><td>4.539816388792729</td></tr>
+<tr><td>11</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>カジカライズ</td><td>牡5</td><td>▲大久保</td><td>55.0</td><td>144.8</td><td>13</td><td></td><td>0.04708934836368482</td><td>6.818537643061562</td></tr>
+<tr><td></td><td><span class="umabadge w6">10</span></td><td>エコロカディス</td><td>セン4</td><td>石神道</td><td>55.0</td><td>-3.0</td><td>9999</td><td></td><td>0.04408454044203645</td><td>-0.13225362132610935</td></tr>
+<tr><td>9</td><td><span class="umabadge w5">7</span> <span class="rankicon">⑨</span></td><td>スターチスブーケ</td><td>牝5</td><td>菊沢</td><td>56.0</td><td>31.9</td><td>10</td><td></td><td>0.037316816841260585</td><td>1.1904064572362125</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-5"><td>4</td><td>1</td><td><span class="umabadge w3">3</span> <span class="rankicon">④</span></td><td>マオノクラッシュ</td><td>牝4</td><td>▲小林美</td><td>53</td><td><span class="odds1">3.1</span></td><td><span class="pop1">1</span></td><td></td><td>4.210</td></tr>
+<tr class="hit-3"><td>2</td><td>2</td><td><span class="umabadge w4">6</span> <span class="rankicon">🥈</span></td><td>シャーンゴッセ</td><td>セン6</td><td>△鷲頭</td><td>56</td><td><span class="odds1">5.5</span></td><td><span class="pop1">2</span></td><td></td><td>4.094</td></tr>
+<tr class="hit-1"><td>1</td><td>3</td><td><span class="umabadge w7">11</span> <span class="rankicon">🥇</span></td><td>クインズシフォン</td><td>牝4</td><td>丹内</td><td>56</td><td><span class="odds1">7.9</span></td><td>4</td><td></td><td>3.645</td></tr>
+<tr class="hit-3"><td>3</td><td>4</td><td><span class="umabadge w3">4</span> <span class="rankicon">🥉</span></td><td>イチトゼロノアイダ</td><td>牝4</td><td>▲舟山</td><td>53</td><td><span class="odds1">7.6</span></td><td><span class="pop1">3</span></td><td></td><td>3.597</td></tr>
+<tr><td>6</td><td>5</td><td><span class="umabadge w6">9</span> <span class="rankicon">⑥</span></td><td>レネネト</td><td>牝4</td><td>▲田山</td><td>53</td><td>11.4</td><td>7</td><td></td><td>3.392</td></tr>
+<tr><td>10</td><td>6</td><td><span class="umabadge w4">5</span> <span class="rankicon">⑩</span></td><td>グッドヴァイブス</td><td>牡5</td><td>鮫島駿</td><td>58</td><td>10.7</td><td>6</td><td></td><td>3.277</td></tr>
+<tr><td>7</td><td>7</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑦</span></td><td>マカニ</td><td>牝4</td><td>▲石田</td><td>53</td><td>13.6</td><td>8</td><td></td><td>3.019</td></tr>
+<tr><td>13</td><td>8</td><td><span class="umabadge w8">13</span> <span class="rankicon">⑬</span></td><td>エコロレオナ</td><td>牝4</td><td>松本</td><td>56</td><td>10.5</td><td>5</td><td></td><td>2.793</td></tr>
+<tr><td>8</td><td>9</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑧</span></td><td>アルヘンティニータ</td><td>牝5</td><td>杉原</td><td>56</td><td>14.0</td><td>9</td><td></td><td>2.694</td></tr>
+<tr><td>12</td><td>10</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑫</span></td><td>オコジュ</td><td>牝6</td><td>嶋田</td><td>56</td><td>37.8</td><td><span class="pop10">11</span></td><td></td><td>2.645</td></tr>
+<tr class="hit-5"><td>5</td><td>11</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑤</span></td><td>ヨーグルトナン</td><td>牝4</td><td>☆西塚</td><td>55</td><td>74.0</td><td><span class="pop10">12</span></td><td></td><td>2.354</td></tr>
+<tr><td>9</td><td>12</td><td><span class="umabadge w5">7</span> <span class="rankicon">⑨</span></td><td>スターチスブーケ</td><td>牝5</td><td>菊沢</td><td>56</td><td>31.9</td><td><span class="pop10">10</span></td><td></td><td>2.277</td></tr>
+<tr><td>11</td><td>13</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>カジカライズ</td><td>牡5</td><td>▲大久保</td><td>55</td><td><span class="odds3">144.8</span></td><td><span class="pop10">13</span></td><td></td><td>1.990</td></tr>
+<tr><td></td><td>14</td><td><span class="umabadge w6">10</span></td><td>エコロカディス</td><td>セン4</td><td>石神道</td><td>55</td><td><span class="odds1">-3.0</span></td><td><span class="pop10">9999</span></td><td></td><td>1.685</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>11</td>
+      <td>0.0137</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0133</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>4</td>
+      <td>0.0131</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3</td>
+      <td>4</td>
+      <td>0.0127</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>11</td>
+      <td>6</td>
+      <td>0.0121</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>6</td>
+      <td>0.0115</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>11</td>
+      <td>3</td>
+      <td>0.0113</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>3</td>
+      <td>6</td>
+      <td>0.0108</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>4</td>
+      <td>3</td>
+      <td>0.0107</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>9</td>
+      <td>0.0106</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>6</td>
+      <td>3</td>
+      <td>0.0104</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3</td>
+      <td>9</td>
+      <td>0.0103</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3</td>
+      <td>6</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>6</td>
+      <td>3</td>
+      <td>0.0097</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>5</td>
+      <td>0.0095</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3</td>
+      <td>5</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>9</td>
+      <td>6</td>
+      <td>0.0090</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>9</td>
+      <td>3</td>
+      <td>0.0084</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>5</td>
+      <td>6</td>
+      <td>0.0079</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>3</td>
+      <td>6</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>6</td>
+      <td>3</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>11</td>
+      <td>4</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>5</td>
+      <td>3</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>8</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4</td>
+      <td>11</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0.0071</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>3</td>
+      <td>6</td>
+      <td>0.0067</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>3</td>
+      <td>4</td>
+      <td>0.0066</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>6</td>
+      <td>3</td>
+      <td>0.0065</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0065</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>11</td>
+      <td>790</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>4</td>
+      <td>260</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>11</td>
+      <td>220</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>6</td>
+      <td>170</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>6-11</td>
+      <td>1560</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>11-6</td>
+      <td>3340</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>4-11</td>
+      <td>1190</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>4-6</td>
+      <td>650</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>6-11</td>
+      <td>560</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>4-6-11</td>
+      <td>4280</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>11-6-4</td>
+      <td>24420</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race" id="r202610010605"><h2><span class="race-title">小倉 5R 3歳新馬</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(17%) / ワイドBOX5(10%) / 単勝minoddstop5(8%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 2.057</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.165, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (7, 9) <b>score=5.7479</b><br>#2 umaren (5, 9) <b>score=5.6781</b><br>#3 umaren (5, 7) <b>score=5.6204</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td>9</td><td><span class="umabadge w7">7</span> <span class="rankicon">⑨</span></td><td>メイショウハクレイ</td><td>牡3</td><td>丸山</td><td>57.0</td><td>15.4</td><td>7</td><td></td><td>0.07696616183559679</td><td>1.1852788922681907</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w8">9</span> <span class="rankicon">🥉</span></td><td>エイシンウィスパー</td><td>牝3</td><td>松若</td><td>55.0</td><td>3.7</td><td>2</td><td></td><td>0.07696616183559679</td><td>0.28477479879170814</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑤</span></td><td>カフジマリボー</td><td>牡3</td><td>古川吉</td><td>57.0</td><td>39.6</td><td>9</td><td></td><td>0.07404855448682936</td><td>2.9323227576784427</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w4">4</span> <span class="rankicon">④</span></td><td>オモイヲノセテ</td><td>牝3</td><td>横山琉</td><td>55.0</td><td>36.1</td><td>8</td><td></td><td>0.07404855448682936</td><td>2.67315281697454</td></tr>
+<tr><td>8</td><td><span class="umabadge w5">5</span> <span class="rankicon">⑧</span></td><td>レットフィールマン</td><td>牝3</td><td>角田和</td><td>55.0</td><td>7.3</td><td>4</td><td></td><td>0.07404855448682936</td><td>0.5405544477538543</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w7">8</span> <span class="rankicon">🥈</span></td><td>ハナコトバ</td><td>牝3</td><td>◇今村</td><td>53.0</td><td>6.9</td><td>3</td><td></td><td>0.06466068746752664</td><td>0.4461587435259338</td></tr>
+<tr><td>7</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑦</span></td><td>ラルス</td><td>牡3</td><td>▲大久保</td><td>54.0</td><td>10.1</td><td>5</td><td></td><td>0.055644608364728176</td><td>0.5620105444837545</td></tr>
+<tr><td>6</td><td><span class="umabadge w3">3</span> <span class="rankicon">⑥</span></td><td>マテンロウプリンス</td><td>牡3</td><td>斎藤</td><td>57.0</td><td>12.3</td><td>6</td><td></td><td>0.055644608364728176</td><td>0.6844286828861567</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w8">10</span> <span class="rankicon">🥇</span></td><td>アンジュドジョワ</td><td>牝3</td><td>小沢</td><td>55.0</td><td>2.4</td><td>1</td><td></td><td>0.055644608364728176</td><td>0.1335470600753476</td></tr>
+<tr><td></td><td><span class="umabadge w6">6</span></td><td>マーゴットショット</td><td>牡3</td><td>松本</td><td>57.0</td><td>-2.0</td><td>9999</td><td></td><td>0.046270093174857745</td><td>-0.09254018634971549</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-3"><td>3</td><td>1</td><td><span class="umabadge w8">9</span> <span class="rankicon">🥉</span></td><td>エイシンウィスパー</td><td>牝3</td><td>松若</td><td>55</td><td><span class="odds1">3.7</span></td><td><span class="pop1">2</span></td><td></td><td>2.903</td></tr>
+<tr><td>9</td><td>2</td><td><span class="umabadge w7">7</span> <span class="rankicon">⑨</span></td><td>メイショウハクレイ</td><td>牡3</td><td>丸山</td><td>57</td><td>15.4</td><td>7</td><td></td><td>2.845</td></tr>
+<tr><td>8</td><td>3</td><td><span class="umabadge w5">5</span> <span class="rankicon">⑧</span></td><td>レットフィールマン</td><td>牝3</td><td>角田和</td><td>55</td><td><span class="odds1">7.3</span></td><td>4</td><td></td><td>2.775</td></tr>
+<tr class="hit-5"><td>5</td><td>4</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑤</span></td><td>カフジマリボー</td><td>牡3</td><td>古川吉</td><td>57</td><td>39.6</td><td>9</td><td></td><td>2.646</td></tr>
+<tr class="hit-5"><td>4</td><td>5</td><td><span class="umabadge w4">4</span> <span class="rankicon">④</span></td><td>オモイヲノセテ</td><td>牝3</td><td>横山琉</td><td>55</td><td>36.1</td><td>8</td><td></td><td>2.642</td></tr>
+<tr class="hit-1"><td>1</td><td>6</td><td><span class="umabadge w8">10</span> <span class="rankicon">🥇</span></td><td>アンジュドジョワ</td><td>牝3</td><td>小沢</td><td>55</td><td><span class="odds1">2.4</span></td><td><span class="pop1">1</span></td><td></td><td>2.376</td></tr>
+<tr class="hit-3"><td>2</td><td>7</td><td><span class="umabadge w7">8</span> <span class="rankicon">🥈</span></td><td>ハナコトバ</td><td>牝3</td><td>◇今村</td><td>53</td><td><span class="odds1">6.9</span></td><td><span class="pop1">3</span></td><td></td><td>2.373</td></tr>
+<tr><td>6</td><td>8</td><td><span class="umabadge w3">3</span> <span class="rankicon">⑥</span></td><td>マテンロウプリンス</td><td>牡3</td><td>斎藤</td><td>57</td><td>12.3</td><td>6</td><td></td><td>2.308</td></tr>
+<tr><td>7</td><td>9</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑦</span></td><td>ラルス</td><td>牡3</td><td>▲大久保</td><td>54</td><td>10.1</td><td>5</td><td></td><td>2.245</td></tr>
+<tr><td></td><td>10</td><td><span class="umabadge w6">6</span></td><td>マーゴットショット</td><td>牡3</td><td>松本</td><td>57</td><td><span class="odds1">-2.0</span></td><td><span class="pop10">9999</span></td><td></td><td>1.679</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>9</td>
+      <td>7</td>
+      <td>5</td>
+      <td>0.0064</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>9</td>
+      <td>5</td>
+      <td>0.0064</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>5</td>
+      <td>7</td>
+      <td>0.0063</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>9</td>
+      <td>7</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>5</td>
+      <td>9</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>7</td>
+      <td>9</td>
+      <td>0.0061</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>7</td>
+      <td>1</td>
+      <td>0.0057</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>7</td>
+      <td>4</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>9</td>
+      <td>1</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>9</td>
+      <td>4</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>1</td>
+      <td>7</td>
+      <td>0.0054</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>4</td>
+      <td>7</td>
+      <td>0.0054</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>1</td>
+      <td>9</td>
+      <td>0.0053</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>4</td>
+      <td>9</td>
+      <td>0.0053</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>9</td>
+      <td>7</td>
+      <td>0.0052</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0.0052</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>5</td>
+      <td>4</td>
+      <td>0.0052</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>9</td>
+      <td>7</td>
+      <td>0.0052</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>7</td>
+      <td>9</td>
+      <td>0.0051</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>7</td>
+      <td>9</td>
+      <td>0.0051</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>9</td>
+      <td>1</td>
+      <td>0.0051</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>1</td>
+      <td>5</td>
+      <td>0.0051</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>9</td>
+      <td>4</td>
+      <td>0.0051</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>4</td>
+      <td>5</td>
+      <td>0.0050</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>9</td>
+      <td>5</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>9</td>
+      <td>5</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>1</td>
+      <td>9</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>4</td>
+      <td>9</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>5</td>
+      <td>1</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>5</td>
+      <td>4</td>
+      <td>0.0048</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>10</td>
+      <td>240</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>8</td>
+      <td>150</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>9</td>
+      <td>120</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>10</td>
+      <td>110</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>8-10</td>
+      <td>720</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>10-8</td>
+      <td>1160</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>8-9</td>
+      <td>440</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>8-10</td>
+      <td>290</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>9-10</td>
+      <td>190</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>8-9-10</td>
+      <td>700</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>10-8-9</td>
+      <td>3120</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race big-hit-card" id="r202610010606"><h2><span class="race-title hit">小倉 6R 3歳未勝利</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★★☆☆☆｜Hit18.5%</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(8%) / 単勝minoddstop3(7%) / ワイドBOX4(7%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010606')">的中🎯(馬連流4｜<span class="mult m1">+3.8倍</span> / 馬連流5｜<span class="mult m1">+2.8倍</span> / 三連単BOX4｜<span class="mult m1">+2.8倍</span> / 他+13)</span><div id="hitdetail-202610010606" class="hitdetail"><b>的中内訳</b><ul><li><b>馬連流4</b>｜<span class="mult m1">+3.8倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+2.8倍</span></li><li><b>三連単BOX4</b>｜<span class="mult m1">+2.8倍</span></li><li><b>三連複BOX4</b>｜<span class="mult m1">+2.3倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.1倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.9倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+1.8倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.6倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.6倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.9倍</span></li></ul></div><span class="bigHit">大的中🔥<small>ワイドBOX5</small></span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.741</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.081, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (3, 14) <b>score=7.7681</b><br>#2 wide (10, 14) <b>score=7.6537</b><br>#3 wide (3, 10) <b>score=7.4577</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr class="hit-1"><td>1</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span></td><td>ムスクレスト</td><td>牡3</td><td>鮫島駿</td><td>57.0</td><td>4.7</td><td>2</td><td></td><td>0.2437651952136602</td><td>1.145696417504203</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w5">10</span> <span class="rankicon">🥉</span></td><td>パーシャングレー</td><td>牡3</td><td>斎藤</td><td>57.0</td><td>2.8</td><td>1</td><td></td><td>0.24338237009566402</td><td>0.6814706362678592</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w7">14</span> <span class="rankicon">🥈</span></td><td>オックスアイ</td><td>牡3</td><td>丹内</td><td>57.0</td><td>5.0</td><td>3</td><td></td><td>0.1949126467984039</td><td>0.9745632339920195</td></tr>
+<tr><td>7</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑦</span></td><td>ギオンバヤシ</td><td>牡3</td><td>古川吉</td><td>57.0</td><td>12.6</td><td>5</td><td></td><td>0.064862807114384</td><td>0.8172713696412384</td></tr>
+<tr><td>11</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑪</span></td><td>ナムラオリガミ</td><td>牝3</td><td>▲田山</td><td>52.0</td><td>22.1</td><td>7</td><td></td><td>0.04158766957220362</td><td>0.9190874975457001</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w1">2</span> <span class="rankicon">⑤</span></td><td>チェンドル</td><td>牝3</td><td>★河原田</td><td>51.0</td><td>32.7</td><td>9</td><td></td><td>0.03621864203287073</td><td>1.184349594474873</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w2">4</span> <span class="rankicon">④</span></td><td>アスコットダンス</td><td>牝3</td><td>丸山</td><td>55.0</td><td>22.6</td><td>8</td><td></td><td>0.036144385617602866</td><td>0.8168631149578248</td></tr>
+<tr><td>6</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑥</span></td><td>セリエンクーニゲン</td><td>牝3</td><td>▲舟山</td><td>52.0</td><td>6.5</td><td>4</td><td></td><td>0.03370400005443212</td><td>0.2190760003538088</td></tr>
+<tr><td>10</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑩</span></td><td>ベルトナリテ</td><td>牝3</td><td>吉田隼</td><td>55.0</td><td>13.4</td><td>6</td><td></td><td>0.03308834447181984</td><td>0.44338381592238585</td></tr>
+<tr><td>8</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑧</span></td><td>ナムラライラック</td><td>牝3</td><td>▲大久保</td><td>52.0</td><td>115.2</td><td>13</td><td></td><td>0.024124545087636305</td><td>2.7791475940957024</td></tr>
+<tr><td>9</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑨</span></td><td>レジェルテ</td><td>牡3</td><td>▲和田陽</td><td>54.0</td><td>52.6</td><td>10</td><td></td><td>0.021483240320252138</td><td>1.1300184408452625</td></tr>
+<tr><td>12</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑫</span></td><td>ショウナンライラ</td><td>牡3</td><td>小沢</td><td>57.0</td><td>61.2</td><td>11</td><td></td><td>0.021483240320252138</td><td>1.314774307599431</td></tr>
+<tr><td>16</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑯</span></td><td>ハイラブエナン</td><td>牝3</td><td>△柴田裕</td><td>53.0</td><td>213.1</td><td>15</td><td></td><td>0.021483240320252138</td><td>4.578078512245731</td></tr>
+<tr><td>15</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑮</span></td><td>チッタデラモーレ</td><td>牡3</td><td>菊沢</td><td>57.0</td><td>74.2</td><td>12</td><td></td><td>0.021483240320252138</td><td>1.5940564317627086</td></tr>
+<tr><td>13</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑬</span></td><td>タマリスペクト</td><td>牡3</td><td>横山琉</td><td>57.0</td><td>189.2</td><td>14</td><td></td><td>0.018548403293653717</td><td>3.509357903159283</td></tr>
+<tr><td>14</td><td><span class="umabadge w6">12</span> <span class="rankicon">⑭</span></td><td>ミュークトーマス</td><td>牡3</td><td>▲石田</td><td>54.0</td><td>223.8</td><td>16</td><td></td><td>0.01801084431293314</td><td>4.030826957234437</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-3 win-strong"><td>2</td><td>1</td><td><span class="umabadge w7">14</span> <span class="rankicon">🥈</span><span class="predtag win">勝ち濃厚</span></td><td>オックスアイ</td><td>牡3</td><td>丹内</td><td>57</td><td><span class="odds1">5.0</span></td><td><span class="pop1">3</span></td><td></td><td>3.982</td></tr>
+<tr class="hit-1"><td>1</td><td>2</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span></td><td>ムスクレスト</td><td>牡3</td><td>鮫島駿</td><td>57</td><td><span class="odds1">4.7</span></td><td><span class="pop1">2</span></td><td></td><td>3.786</td></tr>
+<tr class="hit-3"><td>3</td><td>3</td><td><span class="umabadge w5">10</span> <span class="rankicon">🥉</span></td><td>パーシャングレー</td><td>牡3</td><td>斎藤</td><td>57</td><td><span class="odds1">2.8</span></td><td><span class="pop1">1</span></td><td></td><td>3.672</td></tr>
+<tr><td>7</td><td>4</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑦</span></td><td>ギオンバヤシ</td><td>牡3</td><td>古川吉</td><td>57</td><td>12.6</td><td>5</td><td></td><td>2.365</td></tr>
+<tr><td>11</td><td>5</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑪</span></td><td>ナムラオリガミ</td><td>牝3</td><td>▲田山</td><td>52</td><td>22.1</td><td>7</td><td></td><td>2.143</td></tr>
+<tr><td>15</td><td>6</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑮</span></td><td>チッタデラモーレ</td><td>牡3</td><td>菊沢</td><td>57</td><td>74.2</td><td><span class="pop10">12</span></td><td></td><td>2.074</td></tr>
+<tr class="hit-5"><td>4</td><td>7</td><td><span class="umabadge w2">4</span> <span class="rankicon">④</span></td><td>アスコットダンス</td><td>牝3</td><td>丸山</td><td>55</td><td>22.6</td><td>8</td><td></td><td>1.936</td></tr>
+<tr><td>6</td><td>8</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑥</span></td><td>セリエンクーニゲン</td><td>牝3</td><td>▲舟山</td><td>52</td><td><span class="odds1">6.5</span></td><td>4</td><td></td><td>1.837</td></tr>
+<tr class="hit-5"><td>5</td><td>9</td><td><span class="umabadge w1">2</span> <span class="rankicon">⑤</span></td><td>チェンドル</td><td>牝3</td><td>★河原田</td><td>51</td><td>32.7</td><td>9</td><td></td><td>1.822</td></tr>
+<tr><td>10</td><td>10</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑩</span></td><td>ベルトナリテ</td><td>牝3</td><td>吉田隼</td><td>55</td><td>13.4</td><td>6</td><td></td><td>1.734</td></tr>
+<tr><td>16</td><td>11</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑯</span></td><td>ハイラブエナン</td><td>牝3</td><td>△柴田裕</td><td>53</td><td><span class="odds3">213.1</span></td><td><span class="pop10">15</span></td><td></td><td>1.316</td></tr>
+<tr><td>12</td><td>12</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑫</span></td><td>ショウナンライラ</td><td>牡3</td><td>小沢</td><td>57</td><td>61.2</td><td><span class="pop10">11</span></td><td></td><td>1.226</td></tr>
+<tr><td>9</td><td>13</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑨</span></td><td>レジェルテ</td><td>牡3</td><td>▲和田陽</td><td>54</td><td>52.6</td><td><span class="pop10">10</span></td><td></td><td>1.131</td></tr>
+<tr><td>8</td><td>14</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑧</span></td><td>ナムラライラック</td><td>牝3</td><td>▲大久保</td><td>52</td><td><span class="odds3">115.2</span></td><td><span class="pop10">13</span></td><td></td><td>1.063</td></tr>
+<tr><td>13</td><td>15</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑬</span></td><td>タマリスペクト</td><td>牡3</td><td>横山琉</td><td>57</td><td><span class="odds3">189.2</span></td><td><span class="pop10">14</span></td><td></td><td>0.903</td></tr>
+<tr><td>14</td><td>16</td><td><span class="umabadge w6">12</span> <span class="rankicon">⑭</span></td><td>ミュークトーマス</td><td>牡3</td><td>▲石田</td><td>54</td><td><span class="odds3">223.8</span></td><td><span class="pop10">16</span></td><td></td><td>0.467</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>10</td>
+      <td>0.0532</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>10</td>
+      <td>3</td>
+      <td>0.0502</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>10</td>
+      <td>0.0494</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0.0450</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>10</td>
+      <td>14</td>
+      <td>0.0418</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>3</td>
+      <td>14</td>
+      <td>0.0404</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0144</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>11</td>
+      <td>0.0134</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>10</td>
+      <td>11</td>
+      <td>0.0121</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>13</td>
+      <td>0.0115</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>14</td>
+      <td>11</td>
+      <td>0.0109</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>16</td>
+      <td>0.0108</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>13</td>
+      <td>0.0107</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>11</td>
+      <td>3</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>16</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>10</td>
+      <td>13</td>
+      <td>0.0097</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>4</td>
+      <td>0.0094</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>10</td>
+      <td>16</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.0090</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>4</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>14</td>
+      <td>13</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>11</td>
+      <td>14</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0.0085</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>10</td>
+      <td>11</td>
+      <td>0.0083</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>14</td>
+      <td>16</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>10</td>
+      <td>4</td>
+      <td>0.0079</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>8</td>
+      <td>0.0079</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0.0075</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>3</td>
+      <td>470</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>14</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>3</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>10</td>
+      <td>110</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>3-14</td>
+      <td>1130</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>3-14</td>
+      <td>2150</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-14</td>
+      <td>390</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-10</td>
+      <td>280</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>10-14</td>
+      <td>240</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>3-10-14</td>
+      <td>920</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>3-14-10</td>
+      <td>6630</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race big-hit-card" id="r202610010607"><h2><span class="race-title hit">小倉 7R 4歳以上1勝クラス</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(16%) / 馬単BOX4(12%) / 単勝①(8%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010607')">的中🎯(三連単BOX4｜<span class="mult m1">+3.3倍</span> / 三連複BOX4｜<span class="mult m1">+2.7倍</span> / ワイド流4｜<span class="mult m1">+2.4倍</span> / 他+11)</span><div id="hitdetail-202610010607" class="hitdetail"><b>的中内訳</b><ul><li><b>三連単BOX4</b>｜<span class="mult m1">+3.3倍</span></li><li><b>三連複BOX4</b>｜<span class="mult m1">+2.7倍</span></li><li><b>ワイド流4</b>｜<span class="mult m1">+2.4倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m1">+2.3倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m1">+2.2倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m1">+2.0倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+1.8倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.5倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+1.4倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+1.4倍</span></li><li><b>三連単BOX5</b>｜<span class="mult m0">+1.3倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+1.2倍</span></li><li><b>三連複BOX5</b>｜<span class="mult m0">+1.1倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.9倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬連BOX5</small></span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.964</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.163, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 8) <b>score=7.8049</b><br>#2 umaren (8, 13) <b>score=7.5487</b><br>#3 umaren (3, 13) <b>score=7.2070</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr class="hit-3"><td>3</td><td><span class="umabadge w5">8</span> <span class="rankicon">🥉</span></td><td>ハギノコラソン</td><td>牝4</td><td>◇今村</td><td>53.0</td><td>3.8</td><td>2</td><td></td><td>0.5723833207235384</td><td>2.1750566187494456</td></tr>
+<tr><td>6</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑥</span></td><td>アロマフェリス</td><td>牝4</td><td>斎藤</td><td>55.0</td><td>3.7</td><td>1</td><td></td><td>0.3733395294217741</td><td>1.3813562588605643</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span></td><td>ミラクルキャッツ</td><td>牝6</td><td>丹内</td><td>56.0</td><td>4.5</td><td>3</td><td></td><td>0.3307664305762614</td><td>1.4884489375931764</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w7">13</span> <span class="rankicon">🥈</span></td><td>ノーブルアクト</td><td>牝6</td><td>▲水沼</td><td>53.0</td><td>6.3</td><td>4</td><td></td><td>0.15457028391424482</td><td>0.9737927886597424</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑤</span></td><td>ラテライト</td><td>牝4</td><td>鮫島駿</td><td>55.0</td><td>7.8</td><td>5</td><td></td><td>0.109128433691228</td><td>0.8512017827915784</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w3">4</span> <span class="rankicon">④</span></td><td>ヴァイオパイシーズ</td><td>牝4</td><td>菊沢</td><td>55.0</td><td>47.2</td><td>9</td><td></td><td>0.10706998468407795</td><td>5.05370327708848</td></tr>
+<tr><td>12</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑫</span></td><td>ウィンターガーデン</td><td>牝5</td><td>松若</td><td>56.0</td><td>16.5</td><td>6</td><td></td><td>0.06087809754875313</td><td>1.0044886095544268</td></tr>
+<tr><td>13</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑬</span></td><td>ココボロ</td><td>牝5</td><td>▲土田</td><td>53.0</td><td>156.2</td><td>13</td><td></td><td>0.06047077152959457</td><td>9.445534512922672</td></tr>
+<tr><td>8</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑧</span></td><td>ピリカサンライズ</td><td>牝4</td><td>★河原田</td><td>51.0</td><td>71.7</td><td>10</td><td></td><td>0.05666140913046137</td><td>4.06262303465408</td></tr>
+<tr><td>10</td><td><span class="umabadge w6">10</span> <span class="rankicon">⑩</span></td><td>プルーヴンウィナー</td><td>牝5</td><td>▲古川奈</td><td>53.0</td><td>18.9</td><td>7</td><td></td><td>0.047865120697534305</td><td>0.9046507811833983</td></tr>
+<tr><td>9</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑨</span></td><td>ブライティアブーケ</td><td>牝4</td><td>杉原</td><td>55.0</td><td>27.6</td><td>8</td><td></td><td>0.046200954108642174</td><td>1.275146333398524</td></tr>
+<tr><td>15</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑮</span></td><td>ヴェレノージ</td><td>牝6</td><td>△柴田裕</td><td>54.0</td><td>215.1</td><td>15</td><td></td><td>0.039400205402026336</td><td>8.474984181975865</td></tr>
+<tr><td>14</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑭</span></td><td>ハッピービバーク</td><td>牝4</td><td>▲舟山</td><td>52.0</td><td>124.3</td><td>12</td><td></td><td>0.03198643853382444</td><td>3.975914309754378</td></tr>
+<tr><td>11</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>パーリーラスター</td><td>牝4</td><td>横山琉</td><td>55.0</td><td>79.2</td><td>11</td><td></td><td>0.02819419811097794</td><td>2.232980490389453</td></tr>
+<tr><td>7</td><td><span class="umabadge w4">6</span> <span class="rankicon">⑦</span></td><td>ノーマジック</td><td>牝5</td><td>小林凌</td><td>56.0</td><td>167.3</td><td>14</td><td></td><td>0.025931973131937673</td><td>4.338419104973173</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-3 win-strong"><td>3</td><td>1</td><td><span class="umabadge w5">8</span> <span class="rankicon">🥉</span><span class="predtag win">勝ち濃厚</span></td><td>ハギノコラソン</td><td>牝4</td><td>◇今村</td><td>53</td><td><span class="odds1">3.8</span></td><td><span class="pop1">2</span></td><td></td><td>4.073</td></tr>
+<tr class="hit-1 third-strong"><td>1</td><td>2</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span><span class="predtag third">3着濃厚</span></td><td>ミラクルキャッツ</td><td>牝6</td><td>丹内</td><td>56</td><td><span class="odds1">4.5</span></td><td><span class="pop1">3</span></td><td></td><td>3.732</td></tr>
+<tr class="hit-3"><td>2</td><td>3</td><td><span class="umabadge w7">13</span> <span class="rankicon">🥈</span></td><td>ノーブルアクト</td><td>牝6</td><td>▲水沼</td><td>53</td><td><span class="odds1">6.3</span></td><td>4</td><td></td><td>3.475</td></tr>
+<tr><td>12</td><td>4</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑫</span></td><td>ウィンターガーデン</td><td>牝5</td><td>松若</td><td>56</td><td>16.5</td><td>6</td><td></td><td>3.084</td></tr>
+<tr><td>6</td><td>5</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑥</span></td><td>アロマフェリス</td><td>牝4</td><td>斎藤</td><td>55</td><td><span class="odds1">3.7</span></td><td><span class="pop1">1</span></td><td></td><td>3.026</td></tr>
+<tr class="hit-5"><td>5</td><td>6</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑤</span></td><td>ラテライト</td><td>牝4</td><td>鮫島駿</td><td>55</td><td><span class="odds1">7.8</span></td><td>5</td><td></td><td>2.914</td></tr>
+<tr><td>13</td><td>7</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑬</span></td><td>ココボロ</td><td>牝5</td><td>▲土田</td><td>53</td><td><span class="odds3">156.2</span></td><td><span class="pop10">13</span></td><td></td><td>2.882</td></tr>
+<tr class="hit-5"><td>4</td><td>8</td><td><span class="umabadge w3">4</span> <span class="rankicon">④</span></td><td>ヴァイオパイシーズ</td><td>牝4</td><td>菊沢</td><td>55</td><td>47.2</td><td>9</td><td></td><td>2.642</td></tr>
+<tr><td>15</td><td>9</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑮</span></td><td>ヴェレノージ</td><td>牝6</td><td>△柴田裕</td><td>54</td><td><span class="odds3">215.1</span></td><td><span class="pop10">15</span></td><td></td><td>2.489</td></tr>
+<tr><td>10</td><td>10</td><td><span class="umabadge w6">10</span> <span class="rankicon">⑩</span></td><td>プルーヴンウィナー</td><td>牝5</td><td>▲古川奈</td><td>53</td><td>18.9</td><td>7</td><td></td><td>2.487</td></tr>
+<tr><td>8</td><td>11</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑧</span></td><td>ピリカサンライズ</td><td>牝4</td><td>★河原田</td><td>51</td><td>71.7</td><td><span class="pop10">10</span></td><td></td><td>2.006</td></tr>
+<tr><td>14</td><td>12</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑭</span></td><td>ハッピービバーク</td><td>牝4</td><td>▲舟山</td><td>52</td><td><span class="odds3">124.3</span></td><td><span class="pop10">12</span></td><td></td><td>1.930</td></tr>
+<tr><td>11</td><td>13</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑪</span></td><td>パーリーラスター</td><td>牝4</td><td>横山琉</td><td>55</td><td>79.2</td><td><span class="pop10">11</span></td><td></td><td>1.702</td></tr>
+<tr><td>9</td><td>14</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑨</span></td><td>ブライティアブーケ</td><td>牝4</td><td>杉原</td><td>55</td><td>27.6</td><td>8</td><td></td><td>1.676</td></tr>
+<tr><td>7</td><td>15</td><td><span class="umabadge w4">6</span> <span class="rankicon">⑦</span></td><td>ノーマジック</td><td>牝5</td><td>小林凌</td><td>56</td><td><span class="odds3">167.3</span></td><td><span class="pop10">14</span></td><td></td><td>1.582</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>13</td>
+      <td>0.0168</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0157</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.0153</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0.0135</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>8</td>
+      <td>0.0126</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0.0120</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>7</td>
+      <td>0.0114</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>12</td>
+      <td>0.0107</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>8</td>
+      <td>7</td>
+      <td>0.0103</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>7</td>
+      <td>3</td>
+      <td>0.0098</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>8</td>
+      <td>12</td>
+      <td>0.0097</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>14</td>
+      <td>0.0096</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>15</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>12</td>
+      <td>3</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>8</td>
+      <td>14</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>8</td>
+      <td>15</td>
+      <td>0.0084</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>7</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>14</td>
+      <td>3</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>7</td>
+      <td>8</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>15</td>
+      <td>3</td>
+      <td>0.0078</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>12</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>7</td>
+      <td>13</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>12</td>
+      <td>8</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>3</td>
+      <td>4</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>12</td>
+      <td>13</td>
+      <td>0.0071</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>7</td>
+      <td>0.0071</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>14</td>
+      <td>0.0069</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>3</td>
+      <td>450</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>13</td>
+      <td>200</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>3</td>
+      <td>180</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>8</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>3-13</td>
+      <td>1400</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>3-13</td>
+      <td>2700</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-13</td>
+      <td>490</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>8-13</td>
+      <td>400</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-8</td>
+      <td>310</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>3-8-13</td>
+      <td>1090</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>3-13-8</td>
+      <td>8030</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race big-hit-card" id="r202610010608"><h2><span class="race-title hit">小倉 8R 4歳以上1勝クラス</span> <span class="racecond">芝1800m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(11%) / 三連単BOX5(10%) / 単勝minoddstop5(10%)</span><span class="hitbadge" onclick="toggleHitDetail('hitdetail-202610010608')">的中🎯(馬単流4｜<span class="mult m2">+5.2倍</span> / 馬単流5｜<span class="mult m1">+3.9倍</span> / 単勝①｜<span class="mult m1">+3.5倍</span> / 他+12)</span><div id="hitdetail-202610010608" class="hitdetail"><b>的中内訳</b><ul><li><b>馬単流4</b>｜<span class="mult m2">+5.2倍</span></li><li><b>馬単流5</b>｜<span class="mult m1">+3.9倍</span></li><li><b>単勝①</b>｜<span class="mult m1">+3.5倍</span></li><li><b>馬連流4</b>｜<span class="mult m1">+3.0倍</span></li><li><b>馬連流5</b>｜<span class="mult m1">+2.2倍</span></li><li><b>馬連BOX4</b>｜<span class="mult m0">+1.5倍</span></li><li><b>馬単BOX4</b>｜<span class="mult m0">+1.3倍</span></li><li><b>単勝minoddstop3</b>｜<span class="mult m0">+1.2倍</span></li><li><b>ワイド流4</b>｜<span class="mult m0">+1.1倍</span></li><li><b>馬連BOX5</b>｜<span class="mult m0">+0.9倍</span></li><li><b>ワイド流5</b>｜<span class="mult m0">+0.8倍</span></li><li><b>馬単BOX5</b>｜<span class="mult m0">+0.8倍</span></li><li><b>単勝minoddstop5</b>｜<span class="mult m0">+0.7倍</span></li><li><b>ワイドBOX4</b>｜<span class="mult m0">+0.6倍</span></li><li><b>ワイドBOX5</b>｜<span class="mult m0">+0.3倍</span></li></ul></div><span class="bigHit">大的中🔥<small>馬連BOX5</small></span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.978</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.107, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (3, 13) <b>score=7.5336</b><br>#2 umaren (2, 3) <b>score=7.3790</b><br>#3 umaren (3, 12) <b>score=7.2240</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr class="hit-1"><td>1</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span></td><td>エアビッグマム</td><td>牝4</td><td>☆西塚</td><td>54.0</td><td>3.5</td><td>1</td><td></td><td>0.29500202162829287</td><td>1.0325070756990251</td></tr>
+<tr><td>10</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑩</span></td><td>グランセゾン</td><td>牝4</td><td>▲田山</td><td>52.0</td><td>5.5</td><td>3</td><td></td><td>0.2768701125846419</td><td>1.5227856192155305</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w6">12</span> <span class="rankicon">🥈</span></td><td>マイネルアウルム</td><td>牡4</td><td>▲石神道</td><td>54.0</td><td>6.4</td><td>4</td><td></td><td>0.19916940043820996</td><td>1.2746841628045438</td></tr>
+<tr><td>7</td><td><span class="umabadge w1">2</span> <span class="rankicon">⑦</span></td><td>モズイージス</td><td>牡5</td><td>△柴田裕</td><td>56.0</td><td>52.6</td><td>10</td><td></td><td>0.17463959548364688</td><td>9.186042722439826</td></tr>
+<tr><td>9</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑨</span></td><td>スピアッジャローザ</td><td>牝4</td><td>横山琉</td><td>55.0</td><td>17.5</td><td>7</td><td></td><td>0.11849212199392363</td><td>2.0736121348936636</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w7">14</span> <span class="rankicon">🥉</span></td><td>フォルテフィオーレ</td><td>牡5</td><td>斎藤</td><td>58.0</td><td>4.0</td><td>2</td><td></td><td>0.10822640194065856</td><td>0.43290560776263426</td></tr>
+<tr><td>6</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑥</span></td><td>クイーンズワーフ</td><td>牝5</td><td>★河原田</td><td>52.0</td><td>12.4</td><td>5</td><td></td><td>0.07250579191651811</td><td>0.8990718197648246</td></tr>
+<tr><td>8</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑧</span></td><td>シャインバオバブ</td><td>牡4</td><td>松本</td><td>57.0</td><td>14.6</td><td>6</td><td></td><td>0.07082639736167261</td><td>1.03406540148042</td></tr>
+<tr><td>14</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑭</span></td><td>スタードメイソン</td><td>牝4</td><td>▲和田陽</td><td>52.0</td><td>18.1</td><td>8</td><td></td><td>0.05721935570965902</td><td>1.0356703383448282</td></tr>
+<tr><td>15</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑮</span></td><td>ドゥラルーナ</td><td>牝4</td><td>小沢</td><td>55.0</td><td>65.2</td><td>12</td><td></td><td>0.04680599070883863</td><td>3.051750594216279</td></tr>
+<tr><td>11</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑪</span></td><td>ロジウムエポック</td><td>牡6</td><td>▲舟山</td><td>55.0</td><td>74.4</td><td>13</td><td></td><td>0.03931815349679163</td><td>2.9252706201612977</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w5">10</span> <span class="rankicon">④</span></td><td>ラッキーダンス</td><td>牝4</td><td>▲石田</td><td>52.0</td><td>87.4</td><td>14</td><td></td><td>0.037440757997721764</td><td>3.2723222490008825</td></tr>
+<tr class="hit-5"><td>5</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑤</span></td><td>ヴォラヴィア</td><td>牡4</td><td>△鷲頭</td><td>55.0</td><td>32.6</td><td>9</td><td></td><td>0.033530684207683396</td><td>1.0931003051704788</td></tr>
+<tr><td>12</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑫</span></td><td>キタノクニカラ</td><td>牝4</td><td>▲古川奈</td><td>52.0</td><td>92.0</td><td>15</td><td></td><td>0.02796836632088327</td><td>2.5730897015212606</td></tr>
+<tr><td>13</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑬</span></td><td>サイモンイロハニー</td><td>牝4</td><td>▲橋木</td><td>52.0</td><td>118.8</td><td>16</td><td></td><td>0.027457378341620743</td><td>3.2619365469845443</td></tr>
+<tr><td>16</td><td><span class="umabadge w2">4</span> <span class="rankicon">⑯</span></td><td>アストラッド</td><td>牝5</td><td>▲小林美</td><td>53.0</td><td>64.1</td><td>11</td><td></td><td>0.021214383786834358</td><td>1.3598420007360823</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="hit-1 win-strong"><td>1</td><td>1</td><td><span class="umabadge w2">3</span> <span class="rankicon">🥇</span><span class="predtag win">勝ち濃厚</span></td><td>エアビッグマム</td><td>牝4</td><td>☆西塚</td><td>54</td><td><span class="odds1">3.5</span></td><td><span class="pop1">1</span></td><td></td><td>3.930</td></tr>
+<tr><td>10</td><td>2</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑩</span></td><td>グランセゾン</td><td>牝4</td><td>▲田山</td><td>52</td><td><span class="odds1">5.5</span></td><td><span class="pop1">3</span></td><td></td><td>3.604</td></tr>
+<tr><td>7</td><td>3</td><td><span class="umabadge w1">2</span> <span class="rankicon">⑦</span></td><td>モズイージス</td><td>牡5</td><td>△柴田裕</td><td>56</td><td>52.6</td><td><span class="pop10">10</span></td><td></td><td>3.449</td></tr>
+<tr class="hit-3"><td>2</td><td>4</td><td><span class="umabadge w6">12</span> <span class="rankicon">🥈</span></td><td>マイネルアウルム</td><td>牡4</td><td>▲石神道</td><td>54</td><td><span class="odds1">6.4</span></td><td>4</td><td></td><td>3.294</td></tr>
+<tr><td>8</td><td>5</td><td><span class="umabadge w3">6</span> <span class="rankicon">⑧</span></td><td>シャインバオバブ</td><td>牡4</td><td>松本</td><td>57</td><td>14.6</td><td>6</td><td></td><td>2.798</td></tr>
+<tr class="hit-3"><td>3</td><td>6</td><td><span class="umabadge w7">14</span> <span class="rankicon">🥉</span></td><td>フォルテフィオーレ</td><td>牡5</td><td>斎藤</td><td>58</td><td><span class="odds1">4.0</span></td><td><span class="pop1">2</span></td><td></td><td>2.781</td></tr>
+<tr><td>6</td><td>7</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑥</span></td><td>クイーンズワーフ</td><td>牝5</td><td>★河原田</td><td>52</td><td>12.4</td><td>5</td><td></td><td>2.762</td></tr>
+<tr><td>9</td><td>8</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑨</span></td><td>スピアッジャローザ</td><td>牝4</td><td>横山琉</td><td>55</td><td>17.5</td><td>7</td><td></td><td>2.696</td></tr>
+<tr><td>11</td><td>9</td><td><span class="umabadge w4">8</span> <span class="rankicon">⑪</span></td><td>ロジウムエポック</td><td>牡6</td><td>▲舟山</td><td>55</td><td>74.4</td><td><span class="pop10">13</span></td><td></td><td>2.566</td></tr>
+<tr><td>15</td><td>10</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑮</span></td><td>ドゥラルーナ</td><td>牝4</td><td>小沢</td><td>55</td><td>65.2</td><td><span class="pop10">12</span></td><td></td><td>2.301</td></tr>
+<tr class="hit-5"><td>5</td><td>11</td><td><span class="umabadge w8">15</span> <span class="rankicon">⑤</span></td><td>ヴォラヴィア</td><td>牡4</td><td>△鷲頭</td><td>55</td><td>32.6</td><td>9</td><td></td><td>1.862</td></tr>
+<tr class="hit-5"><td>4</td><td>12</td><td><span class="umabadge w5">10</span> <span class="rankicon">④</span></td><td>ラッキーダンス</td><td>牝4</td><td>▲石田</td><td>52</td><td>87.4</td><td><span class="pop10">14</span></td><td></td><td>1.830</td></tr>
+<tr><td>14</td><td>13</td><td><span class="umabadge w1">1</span> <span class="rankicon">⑭</span></td><td>スタードメイソン</td><td>牝4</td><td>▲和田陽</td><td>52</td><td>18.1</td><td>8</td><td></td><td>1.641</td></tr>
+<tr><td>12</td><td>14</td><td><span class="umabadge w8">16</span> <span class="rankicon">⑫</span></td><td>キタノクニカラ</td><td>牝4</td><td>▲古川奈</td><td>52</td><td>92.0</td><td><span class="pop10">15</span></td><td></td><td>1.589</td></tr>
+<tr><td>16</td><td>15</td><td><span class="umabadge w2">4</span> <span class="rankicon">⑯</span></td><td>アストラッド</td><td>牝5</td><td>▲小林美</td><td>53</td><td>64.1</td><td><span class="pop10">11</span></td><td></td><td>1.520</td></tr>
+<tr><td>13</td><td>16</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑬</span></td><td>サイモンイロハニー</td><td>牝4</td><td>▲橋木</td><td>52</td><td><span class="odds3">118.8</span></td><td><span class="pop10">16</span></td><td></td><td>1.233</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>2</td>
+      <td>0.0146</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>2</td>
+      <td>13</td>
+      <td>0.0140</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0.0134</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>12</td>
+      <td>0.0125</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>13</td>
+      <td>0.0125</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>12</td>
+      <td>13</td>
+      <td>0.0116</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0.0116</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>12</td>
+      <td>0.0115</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0112</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>2</td>
+      <td>12</td>
+      <td>0.0103</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>3</td>
+      <td>13</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>12</td>
+      <td>2</td>
+      <td>0.0099</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>12</td>
+      <td>3</td>
+      <td>0.0096</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>12</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0091</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0.0086</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>12</td>
+      <td>3</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>6</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>14</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>11</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>6</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>13</td>
+      <td>7</td>
+      <td>0.0069</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>14</td>
+      <td>0.0069</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0067</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>6</td>
+      <td>13</td>
+      <td>0.0065</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>14</td>
+      <td>13</td>
+      <td>0.0064</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>7</td>
+      <td>0.0063</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>11</td>
+      <td>13</td>
+      <td>0.0063</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>2</td>
+      <td>6</td>
+      <td>0.0063</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>3</td>
+      <td>350</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>12</td>
+      <td>160</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>14</td>
+      <td>140</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>3</td>
+      <td>130</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>3-12</td>
+      <td>900</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>3-12</td>
+      <td>1560</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>12-14</td>
+      <td>430</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-12</td>
+      <td>330</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>3-14</td>
+      <td>310</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>3-12-14</td>
+      <td>1160</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>3-12-14</td>
+      <td>5100</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race" id="r202610010609"><h2><span class="race-title">小倉 9R かささぎ賞</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(16%) / 馬単BOX4(8%) / 馬連BOX4(7%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 2.022</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.165, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (9, 11) <b>score=7.8123</b><br>#2 umaren (1, 11) <b>score=7.4703</b><br>#3 umaren (3, 11) <b>score=7.4027</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td>15</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑮</span></td><td>クワイエットアイ</td><td>牡3</td><td>柴田裕</td><td>57.0</td><td>19.5</td><td>9</td><td></td><td>0.37493214919081935</td><td>7.311176909220977</td></tr>
+<tr><td>14</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑭</span></td><td>トップアタック</td><td>牡3</td><td>松若</td><td>57.0</td><td>7.0</td><td>5</td><td></td><td>0.36669306109825633</td><td>2.5668514276877943</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w1">1</span> <span class="rankicon">④</span></td><td>フィオラーノ</td><td>牡3</td><td>松本</td><td>57.0</td><td>19.3</td><td>8</td><td></td><td>0.2814202404228062</td><td>5.43141064016016</td></tr>
+<tr class="hit-5"><td>4</td><td><span class="umabadge w2">3</span> <span class="rankicon">④</span></td><td>カイショー</td><td>牝3</td><td>斎藤</td><td>55.0</td><td>3.4</td><td>1</td><td></td><td>0.22466275635569136</td><td>0.7638533716093506</td></tr>
+<tr><td>11</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑪</span></td><td>ラスベガスサイン</td><td>牝3</td><td>小林美</td><td>55.0</td><td>16.7</td><td>7</td><td></td><td>0.21071624756746796</td><td>3.5189613343767148</td></tr>
+<tr><td>10</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑩</span></td><td>ミトノリン</td><td>牝3</td><td>丹内</td><td>55.0</td><td>6.5</td><td>4</td><td></td><td>0.18717046151220937</td><td>1.2166079998293609</td></tr>
+<tr class="hit-1"><td>1</td><td><span class="umabadge w8">15</span> <span class="rankicon">🥇</span></td><td>クリエープキー</td><td>牝3</td><td>富田</td><td>55.0</td><td>21.8</td><td>10</td><td></td><td>0.1416653223271171</td><td>3.088304026731153</td></tr>
+<tr class="hit-3"><td>3</td><td><span class="umabadge w6">10</span> <span class="rankicon">🥉</span></td><td>ドルチェミスト</td><td>牝3</td><td>鮫島駿</td><td>55.0</td><td>16.4</td><td>6</td><td></td><td>0.12101928988577969</td><td>1.9847163541267867</td></tr>
+<tr><td>7</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑦</span></td><td>ジャスパールビー</td><td>牝3</td><td>田山</td><td>55.0</td><td>73.0</td><td>11</td><td></td><td>0.11974243665690903</td><td>8.74119787595436</td></tr>
+<tr><td>9</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑨</span></td><td>ポペット</td><td>牝3</td><td>古川吉</td><td>55.0</td><td>5.5</td><td>2</td><td></td><td>0.11458601111503398</td><td>0.6302230611326869</td></tr>
+<tr class="hit-3"><td>2</td><td><span class="umabadge w3">4</span> <span class="rankicon">🥈</span></td><td>ネネキリマル</td><td>牡3</td><td>国分恭</td><td>57.0</td><td>5.7</td><td>3</td><td></td><td>0.10827056653078009</td><td>0.6171422292254465</td></tr>
+<tr><td>8</td><td><span class="umabadge w4">6</span> <span class="rankicon">⑧</span></td><td>ワタシイノッテマス</td><td>牡3</td><td>丸野勝</td><td>57.0</td><td>201.9</td><td>14</td><td></td><td>0.05666715399338711</td><td>11.441098391264857</td></tr>
+<tr><td>12</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑫</span></td><td>エンヴィーミー</td><td>牝3</td><td>石神道</td><td>55.0</td><td>86.4</td><td>12</td><td></td><td>0.04018776492257747</td><td>3.4722228893106934</td></tr>
+<tr><td>13</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑬</span></td><td>ジュジュドール</td><td>牝3</td><td>横山琉</td><td>55.0</td><td>125.7</td><td>13</td><td></td><td>0.035956970741063306</td><td>4.519791222151658</td></tr>
+<tr><td>6</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑥</span></td><td>ハネマン</td><td>牝3</td><td>嶋田</td><td>55.0</td><td>208.6</td><td>15</td><td></td><td>0.027028561879729452</td><td>5.638158008111564</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr><td>15</td><td>1</td><td><span class="umabadge w6">11</span> <span class="rankicon">⑮</span></td><td>クワイエットアイ</td><td>牡3</td><td>柴田裕</td><td>57</td><td>19.5</td><td>9</td><td></td><td>3.959</td></tr>
+<tr><td>14</td><td>2</td><td><span class="umabadge w5">9</span> <span class="rankicon">⑭</span></td><td>トップアタック</td><td>牡3</td><td>松若</td><td>57</td><td><span class="odds1">7.0</span></td><td>5</td><td></td><td>3.853</td></tr>
+<tr class="hit-5"><td>4</td><td>3</td><td><span class="umabadge w1">1</span> <span class="rankicon">④</span></td><td>フィオラーノ</td><td>牡3</td><td>松本</td><td>57</td><td>19.3</td><td>8</td><td></td><td>3.511</td></tr>
+<tr class="hit-5"><td>4</td><td>4</td><td><span class="umabadge w2">3</span> <span class="rankicon">④</span></td><td>カイショー</td><td>牝3</td><td>斎藤</td><td>55</td><td><span class="odds1">3.4</span></td><td><span class="pop1">1</span></td><td></td><td>3.443</td></tr>
+<tr class="hit-3"><td>3</td><td>5</td><td><span class="umabadge w6">10</span> <span class="rankicon">🥉</span></td><td>ドルチェミスト</td><td>牝3</td><td>鮫島駿</td><td>55</td><td>16.4</td><td>6</td><td></td><td>3.225</td></tr>
+<tr class="hit-1"><td>1</td><td>6</td><td><span class="umabadge w8">15</span> <span class="rankicon">🥇</span></td><td>クリエープキー</td><td>牝3</td><td>富田</td><td>55</td><td>21.8</td><td><span class="pop10">10</span></td><td></td><td>3.208</td></tr>
+<tr><td>10</td><td>7</td><td><span class="umabadge w2">2</span> <span class="rankicon">⑩</span></td><td>ミトノリン</td><td>牝3</td><td>丹内</td><td>55</td><td><span class="odds1">6.5</span></td><td>4</td><td></td><td>3.108</td></tr>
+<tr><td>9</td><td>8</td><td><span class="umabadge w8">14</span> <span class="rankicon">⑨</span></td><td>ポペット</td><td>牝3</td><td>古川吉</td><td>55</td><td><span class="odds1">5.5</span></td><td><span class="pop1">2</span></td><td></td><td>2.987</td></tr>
+<tr><td>11</td><td>9</td><td><span class="umabadge w4">7</span> <span class="rankicon">⑪</span></td><td>ラスベガスサイン</td><td>牝3</td><td>小林美</td><td>55</td><td>16.7</td><td>7</td><td></td><td>2.843</td></tr>
+<tr class="hit-3"><td>2</td><td>10</td><td><span class="umabadge w3">4</span> <span class="rankicon">🥈</span></td><td>ネネキリマル</td><td>牡3</td><td>国分恭</td><td>57</td><td><span class="odds1">5.7</span></td><td><span class="pop1">3</span></td><td></td><td>2.711</td></tr>
+<tr><td>7</td><td>11</td><td><span class="umabadge w3">5</span> <span class="rankicon">⑦</span></td><td>ジャスパールビー</td><td>牝3</td><td>田山</td><td>55</td><td>73.0</td><td><span class="pop10">11</span></td><td></td><td>2.453</td></tr>
+<tr><td>8</td><td>12</td><td><span class="umabadge w4">6</span> <span class="rankicon">⑧</span></td><td>ワタシイノッテマス</td><td>牡3</td><td>丸野勝</td><td>57</td><td><span class="odds3">201.9</span></td><td><span class="pop10">14</span></td><td></td><td>2.336</td></tr>
+<tr><td>13</td><td>13</td><td><span class="umabadge w7">13</span> <span class="rankicon">⑬</span></td><td>ジュジュドール</td><td>牝3</td><td>横山琉</td><td>55</td><td><span class="odds3">125.7</span></td><td><span class="pop10">13</span></td><td></td><td>1.710</td></tr>
+<tr><td>12</td><td>14</td><td><span class="umabadge w7">12</span> <span class="rankicon">⑫</span></td><td>エンヴィーミー</td><td>牝3</td><td>石神道</td><td>55</td><td>86.4</td><td><span class="pop10">12</span></td><td></td><td>1.623</td></tr>
+<tr><td>6</td><td>15</td><td><span class="umabadge w5">8</span> <span class="rankicon">⑥</span></td><td>ハネマン</td><td>牝3</td><td>嶋田</td><td>55</td><td><span class="odds3">208.6</span></td><td><span class="pop10">15</span></td><td></td><td>0.998</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>1</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>1</td>
+      <td>0.0098</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>3</td>
+      <td>0.0094</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>1</td>
+      <td>9</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>3</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>1</td>
+      <td>11</td>
+      <td>0.0088</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>3</td>
+      <td>9</td>
+      <td>0.0086</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>11</td>
+      <td>9</td>
+      <td>0.0085</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>9</td>
+      <td>11</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>3</td>
+      <td>11</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>11</td>
+      <td>9</td>
+      <td>0.0078</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>10</td>
+      <td>0.0076</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>9</td>
+      <td>11</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>15</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>10</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>15</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>2</td>
+      <td>0.0067</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>10</td>
+      <td>9</td>
+      <td>0.0066</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0.0066</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>15</td>
+      <td>9</td>
+      <td>0.0065</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>10</td>
+      <td>11</td>
+      <td>0.0063</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>15</td>
+      <td>11</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>1</td>
+      <td>3</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0.0061</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>9</td>
+      <td>14</td>
+      <td>0.0060</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>11</td>
+      <td>9</td>
+      <td>0.0059</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>2</td>
+      <td>9</td>
+      <td>0.0058</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>11</td>
+      <td>14</td>
+      <td>0.0058</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>11</td>
+      <td>9</td>
+      <td>0.0057</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>9</td>
+      <td>11</td>
+      <td>0.0057</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<h3>払い戻し（確定）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>式別</th>
+      <th>組み合わせ</th>
+      <th>払戻(円/100円)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>単勝</td>
+      <td>15</td>
+      <td>2180</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>15</td>
+      <td>490</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>10</td>
+      <td>370</td>
+    </tr>
+    <tr>
+      <td>複勝</td>
+      <td>4</td>
+      <td>290</td>
+    </tr>
+    <tr>
+      <td>馬連</td>
+      <td>4-15</td>
+      <td>5780</td>
+    </tr>
+    <tr>
+      <td>馬単</td>
+      <td>15-4</td>
+      <td>18110</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>10-15</td>
+      <td>2380</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>4-10</td>
+      <td>2350</td>
+    </tr>
+    <tr>
+      <td>ワイド</td>
+      <td>4-15</td>
+      <td>1780</td>
+    </tr>
+    <tr>
+      <td>三連複</td>
+      <td>4-10-15</td>
+      <td>35510</td>
+    </tr>
+    <tr>
+      <td>三連単</td>
+      <td>15-4-10</td>
+      <td>278540</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="race" id="r202610010610"><h2><span class="race-title">小倉 10R 由布院特別</span> <span class="racecond">ダ1700m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：ワイドBOX5｜次点 ワイドBOX5(23%) / 単勝minoddstop5(9%) / 単勝①(7%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 2.026</div>
+<div class="note"><b>推奨買い目</b>: ワイドBOX5 (model_score=0.227, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 wide (2, 9) <b>score=8.7101</b><br>#2 wide (2, 8) <b>score=8.5127</b><br>#3 wide (8, 9) <b>score=8.4922</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td></td><td><span class="umabadge w5">9</span></td><td>ポッドフォルク</td><td>牡4</td><td>中井</td><td>57.0</td><td>7.0</td><td>4</td><td></td><td>0.5353443376243083</td><td>3.7474103633701583</td></tr>
+<tr><td></td><td><span class="umabadge w5">10</span></td><td>ディアウス</td><td>牡4</td><td>吉田隼</td><td>57.0</td><td>6.7</td><td>3</td><td></td><td>0.4663681634092825</td><td>3.1246666948421926</td></tr>
+<tr><td></td><td><span class="umabadge w3">6</span></td><td>ギマール</td><td>牡5</td><td>国分恭</td><td>58.0</td><td>7.2</td><td>5</td><td></td><td>0.3377988271233739</td><td>2.432151555288292</td></tr>
+<tr><td></td><td><span class="umabadge w1">2</span></td><td>ライフゲート</td><td>セン4</td><td>丹内</td><td>57.0</td><td>4.1</td><td>1</td><td></td><td>0.3330294531738012</td><td>1.365420758012585</td></tr>
+<tr><td></td><td><span class="umabadge w4">8</span></td><td>パフ</td><td>牡5</td><td>西塚</td><td>58.0</td><td>6.6</td><td>2</td><td></td><td>0.3056428525486093</td><td>2.017242826820821</td></tr>
+<tr><td></td><td><span class="umabadge w6">12</span></td><td>タイセイミッション</td><td>セン5</td><td>黛</td><td>58.0</td><td>8.6</td><td>6</td><td></td><td>0.2734495019438349</td><td>2.35166571671698</td></tr>
+<tr><td></td><td><span class="umabadge w6">11</span></td><td>サンキャメロン</td><td>牝5</td><td>松本</td><td>56.0</td><td>54.7</td><td>15</td><td></td><td>0.2563859169965474</td><td>14.024309659711143</td></tr>
+<tr><td></td><td><span class="umabadge w2">4</span></td><td>マルカブリッツ</td><td>牡6</td><td>小沢</td><td>58.0</td><td>34.2</td><td>11</td><td></td><td>0.2549234176366472</td><td>8.718380883173335</td></tr>
+<tr><td></td><td><span class="umabadge w7">14</span></td><td>サンライズシュガー</td><td>牡4</td><td>加藤</td><td>57.0</td><td>17.8</td><td>8</td><td></td><td>0.18759816630953388</td><td>3.3392473603097033</td></tr>
+<tr><td></td><td><span class="umabadge w8">16</span></td><td>ヤマニンガラッシア</td><td>牡9</td><td>横山琉</td><td>58.0</td><td>32.7</td><td>10</td><td></td><td>0.13003207101969155</td><td>4.252048722343914</td></tr>
+<tr><td></td><td><span class="umabadge w1">1</span></td><td>メイショウソウセキ</td><td>牡4</td><td>角田和</td><td>57.0</td><td>36.7</td><td>13</td><td></td><td>0.10846989562080785</td><td>3.9808451692836484</td></tr>
+<tr><td></td><td><span class="umabadge w8">15</span></td><td>アストラカ</td><td>セン5</td><td>富田</td><td>58.0</td><td>38.7</td><td>14</td><td></td><td>0.08229997967705716</td><td>3.185009213502112</td></tr>
+<tr><td></td><td><span class="umabadge w2">3</span></td><td>タイヨウフレア</td><td>牝4</td><td>古川吉</td><td>55.0</td><td>32.1</td><td>9</td><td></td><td>0.07540568489025398</td><td>2.4205224849771527</td></tr>
+<tr><td></td><td><span class="umabadge w4">7</span></td><td>グレイスオブゴッド</td><td>牝6</td><td>長岡</td><td>56.0</td><td>35.0</td><td>12</td><td></td><td>0.05856025690445916</td><td>2.0496089916560707</td></tr>
+<tr><td></td><td><span class="umabadge w7">13</span></td><td>グランキングオー</td><td>牡4</td><td>鮫島駿</td><td>57.0</td><td>17.6</td><td>7</td><td></td><td>0.05081383635185723</td><td>0.8943235197926873</td></tr>
+<tr><td></td><td><span class="umabadge w3">5</span></td><td>キングロコマイカイ</td><td>牡7</td><td>菊沢</td><td>58.0</td><td>73.0</td><td>16</td><td></td><td>0.043629664921376855</td><td>3.1849655392605105</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr><td></td><td>1</td><td><span class="umabadge w1">2</span></td><td>ライフゲート</td><td>セン4</td><td>丹内</td><td>57</td><td><span class="odds1">4.1</span></td><td><span class="pop1">1</span></td><td></td><td>4.365</td></tr>
+<tr><td></td><td>2</td><td><span class="umabadge w5">9</span></td><td>ポッドフォルク</td><td>牡4</td><td>中井</td><td>57</td><td><span class="odds1">7.0</span></td><td>4</td><td></td><td>4.345</td></tr>
+<tr><td></td><td>3</td><td><span class="umabadge w4">8</span></td><td>パフ</td><td>牡5</td><td>西塚</td><td>58</td><td><span class="odds1">6.6</span></td><td><span class="pop1">2</span></td><td></td><td>4.147</td></tr>
+<tr><td></td><td>4</td><td><span class="umabadge w6">12</span></td><td>タイセイミッション</td><td>セン5</td><td>黛</td><td>58</td><td><span class="odds1">8.6</span></td><td>6</td><td></td><td>3.808</td></tr>
+<tr><td></td><td>5</td><td><span class="umabadge w5">10</span></td><td>ディアウス</td><td>牡4</td><td>吉田隼</td><td>57</td><td><span class="odds1">6.7</span></td><td><span class="pop1">3</span></td><td></td><td>3.750</td></tr>
+<tr><td></td><td>6</td><td><span class="umabadge w2">4</span></td><td>マルカブリッツ</td><td>牡6</td><td>小沢</td><td>58</td><td>34.2</td><td><span class="pop10">11</span></td><td></td><td>3.747</td></tr>
+<tr><td></td><td>7</td><td><span class="umabadge w3">6</span></td><td>ギマール</td><td>牡5</td><td>国分恭</td><td>58</td><td><span class="odds1">7.2</span></td><td>5</td><td></td><td>3.562</td></tr>
+<tr><td></td><td>8</td><td><span class="umabadge w6">11</span></td><td>サンキャメロン</td><td>牝5</td><td>松本</td><td>56</td><td>54.7</td><td><span class="pop10">15</span></td><td></td><td>3.463</td></tr>
+<tr><td></td><td>9</td><td><span class="umabadge w7">14</span></td><td>サンライズシュガー</td><td>牡4</td><td>加藤</td><td>57</td><td>17.8</td><td>8</td><td></td><td>3.446</td></tr>
+<tr><td></td><td>10</td><td><span class="umabadge w8">15</span></td><td>アストラカ</td><td>セン5</td><td>富田</td><td>58</td><td>38.7</td><td><span class="pop10">14</span></td><td></td><td>3.238</td></tr>
+<tr><td></td><td>11</td><td><span class="umabadge w8">16</span></td><td>ヤマニンガラッシア</td><td>牡9</td><td>横山琉</td><td>58</td><td>32.7</td><td><span class="pop10">10</span></td><td></td><td>3.183</td></tr>
+<tr><td></td><td>12</td><td><span class="umabadge w2">3</span></td><td>タイヨウフレア</td><td>牝4</td><td>古川吉</td><td>55</td><td>32.1</td><td>9</td><td></td><td>2.958</td></tr>
+<tr><td></td><td>13</td><td><span class="umabadge w1">1</span></td><td>メイショウソウセキ</td><td>牡4</td><td>角田和</td><td>57</td><td>36.7</td><td><span class="pop10">13</span></td><td></td><td>2.956</td></tr>
+<tr><td></td><td>14</td><td><span class="umabadge w4">7</span></td><td>グレイスオブゴッド</td><td>牝6</td><td>長岡</td><td>56</td><td>35.0</td><td><span class="pop10">12</span></td><td></td><td>2.777</td></tr>
+<tr><td></td><td>15</td><td><span class="umabadge w3">5</span></td><td>キングロコマイカイ</td><td>牡7</td><td>菊沢</td><td>58</td><td>73.0</td><td><span class="pop10">16</span></td><td></td><td>2.347</td></tr>
+<tr><td></td><td>16</td><td><span class="umabadge w7">13</span></td><td>グランキングオー</td><td>牡4</td><td>鮫島駿</td><td>57</td><td>17.6</td><td>7</td><td></td><td>2.196</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2</td>
+      <td>9</td>
+      <td>8</td>
+      <td>0.0105</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2</td>
+      <td>8</td>
+      <td>0.0104</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8</td>
+      <td>9</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>8</td>
+      <td>2</td>
+      <td>0.0099</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2</td>
+      <td>9</td>
+      <td>0.0095</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>9</td>
+      <td>2</td>
+      <td>0.0095</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>9</td>
+      <td>12</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2</td>
+      <td>12</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>9</td>
+      <td>10</td>
+      <td>0.0071</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>9</td>
+      <td>4</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2</td>
+      <td>10</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2</td>
+      <td>4</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>12</td>
+      <td>9</td>
+      <td>0.0067</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>12</td>
+      <td>2</td>
+      <td>0.0066</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>10</td>
+      <td>9</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4</td>
+      <td>9</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>10</td>
+      <td>2</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>4</td>
+      <td>2</td>
+      <td>0.0061</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>2</td>
+      <td>9</td>
+      <td>0.0061</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>9</td>
+      <td>2</td>
+      <td>0.0060</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>9</td>
+      <td>6</td>
+      <td>0.0058</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8</td>
+      <td>12</td>
+      <td>0.0058</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>2</td>
+      <td>6</td>
+      <td>0.0058</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>8</td>
+      <td>12</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>2</td>
+      <td>9</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+      <td>9</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>9</td>
+      <td>2</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2</td>
+      <td>12</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>9</td>
+      <td>2</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8</td>
+      <td>10</td>
+      <td>0.0055</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<div class="note">払い戻し：未確定</div>
+</div>
+<div class="race" id="r202610010611"><h2><span class="race-title">小倉 11R 小倉日経賞</span> <span class="racecond">芝2000m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：馬連BOX5｜次点 馬連BOX5(24%) / 馬単BOX4(9%) / 単勝minoddstop5(6%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.932</div>
+<div class="note"><b>推奨買い目</b>: 馬連BOX5 (model_score=0.241, 点数=10, 投資目安=1,000円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 umaren (4, 12) <b>score=7.2605</b><br>#2 umaren (4, 11) <b>score=6.8821</b><br>#3 umaren (2, 4) <b>score=6.6775</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td></td><td><span class="umabadge w8">11</span></td><td>アスクドゥポルテ</td><td>牡6</td><td>西塚</td><td>57.0</td><td>8.1</td><td>5</td><td></td><td>0.0544800323817988</td><td>0.44128826229257023</td></tr>
+<tr><td></td><td><span class="umabadge w4">4</span></td><td>バトルボーン</td><td>牡7</td><td>杉原</td><td>58.0</td><td>5.1</td><td>2</td><td></td><td>0.052821719189981194</td><td>0.2693907678689041</td></tr>
+<tr><td></td><td><span class="umabadge w5">5</span></td><td>キングノジョー</td><td>牡4</td><td>舟山</td><td>56.0</td><td>5.7</td><td>3</td><td></td><td>0.04514732283860457</td><td>0.2573397401800461</td></tr>
+<tr><td></td><td><span class="umabadge w8">12</span></td><td>シルトホルン</td><td>牡6</td><td>鮫島駿</td><td>58.0</td><td>6.7</td><td>4</td><td></td><td>0.033370608835272014</td><td>0.2235830791963225</td></tr>
+<tr><td></td><td><span class="umabadge w2">2</span></td><td>ヴィンセンシオ</td><td>牡4</td><td>吉田隼</td><td>56.0</td><td>3.9</td><td>1</td><td></td><td>0.03152536505754784</td><td>0.12294892372443658</td></tr>
+<tr><td></td><td><span class="umabadge w6">7</span></td><td>カネフラ</td><td>牡6</td><td>松本</td><td>57.0</td><td>57.1</td><td>11</td><td></td><td>0.03140748052311746</td><td>1.7933671378700071</td></tr>
+<tr><td></td><td><span class="umabadge w5">6</span></td><td>マイネルメモリー</td><td>牡6</td><td>丹内</td><td>57.0</td><td>13.5</td><td>7</td><td></td><td>0.025933540549935193</td><td>0.3501027974241251</td></tr>
+<tr><td></td><td><span class="umabadge w1">1</span></td><td>コスモブッドレア</td><td>牡5</td><td>菊沢</td><td>57.0</td><td>33.6</td><td>10</td><td></td><td>0.024813454223602923</td><td>0.8337320619130583</td></tr>
+<tr><td></td><td><span class="umabadge w3">3</span></td><td>ザイツィンガー</td><td>牡10</td><td>松若</td><td>57.0</td><td>58.7</td><td>12</td><td></td><td>0.021856886131068207</td><td>1.2829992158937038</td></tr>
+<tr><td></td><td><span class="umabadge w6">8</span></td><td>ドラゴンヘッド</td><td>牡6</td><td>横山琉</td><td>57.0</td><td>18.4</td><td>8</td><td></td><td>0.020502378568053408</td><td>0.3772437656521827</td></tr>
+<tr><td></td><td><span class="umabadge w7">9</span></td><td>ダンテスヴュー</td><td>牡7</td><td>古川吉</td><td>57.0</td><td>20.8</td><td>9</td><td></td><td>0.018105373641404694</td><td>0.37659177174121766</td></tr>
+<tr><td></td><td><span class="umabadge w7">10</span></td><td>レーゼドラマ</td><td>牝4</td><td>斎藤</td><td>54.0</td><td>8.6</td><td>6</td><td></td><td>0.017619575696840663</td><td>0.15152835099282969</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="win-strong"><td></td><td>1</td><td><span class="umabadge w4">4</span><span class="predtag win">勝ち濃厚</span></td><td>バトルボーン</td><td>牡7</td><td>杉原</td><td>58</td><td><span class="odds1">5.1</span></td><td><span class="pop1">2</span></td><td></td><td>3.773</td></tr>
+<tr class="third-strong"><td></td><td>2</td><td><span class="umabadge w8">12</span><span class="predtag third">3着濃厚</span></td><td>シルトホルン</td><td>牡6</td><td>鮫島駿</td><td>58</td><td><span class="odds1">6.7</span></td><td>4</td><td></td><td>3.488</td></tr>
+<tr><td></td><td>3</td><td><span class="umabadge w8">11</span></td><td>アスクドゥポルテ</td><td>牡6</td><td>西塚</td><td>57</td><td><span class="odds1">8.1</span></td><td>5</td><td></td><td>3.109</td></tr>
+<tr><td></td><td>4</td><td><span class="umabadge w2">2</span></td><td>ヴィンセンシオ</td><td>牡4</td><td>吉田隼</td><td>56</td><td><span class="odds1">3.9</span></td><td><span class="pop1">1</span></td><td></td><td>2.905</td></tr>
+<tr><td></td><td>5</td><td><span class="umabadge w5">5</span></td><td>キングノジョー</td><td>牡4</td><td>舟山</td><td>56</td><td><span class="odds1">5.7</span></td><td><span class="pop1">3</span></td><td></td><td>2.664</td></tr>
+<tr><td></td><td>6</td><td><span class="umabadge w5">6</span></td><td>マイネルメモリー</td><td>牡6</td><td>丹内</td><td>57</td><td>13.5</td><td>7</td><td></td><td>2.602</td></tr>
+<tr><td></td><td>7</td><td><span class="umabadge w7">9</span></td><td>ダンテスヴュー</td><td>牡7</td><td>古川吉</td><td>57</td><td>20.8</td><td>9</td><td></td><td>2.497</td></tr>
+<tr><td></td><td>8</td><td><span class="umabadge w6">8</span></td><td>ドラゴンヘッド</td><td>牡6</td><td>横山琉</td><td>57</td><td>18.4</td><td>8</td><td></td><td>1.857</td></tr>
+<tr><td></td><td>9</td><td><span class="umabadge w7">10</span></td><td>レーゼドラマ</td><td>牝4</td><td>斎藤</td><td>54</td><td><span class="odds1">8.6</span></td><td>6</td><td></td><td>1.825</td></tr>
+<tr><td></td><td>10</td><td><span class="umabadge w6">7</span></td><td>カネフラ</td><td>牡6</td><td>松本</td><td>57</td><td>57.1</td><td><span class="pop10">11</span></td><td></td><td>1.775</td></tr>
+<tr><td></td><td>11</td><td><span class="umabadge w1">1</span></td><td>コスモブッドレア</td><td>牡5</td><td>菊沢</td><td>57</td><td>33.6</td><td><span class="pop10">10</span></td><td></td><td>1.719</td></tr>
+<tr><td></td><td>12</td><td><span class="umabadge w3">3</span></td><td>ザイツィンガー</td><td>牡10</td><td>松若</td><td>57</td><td>58.7</td><td><span class="pop10">12</span></td><td></td><td>1.392</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>4</td>
+      <td>12</td>
+      <td>11</td>
+      <td>0.0187</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>4</td>
+      <td>11</td>
+      <td>0.0172</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>11</td>
+      <td>12</td>
+      <td>0.0167</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>12</td>
+      <td>2</td>
+      <td>0.0153</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>4</td>
+      <td>12</td>
+      <td>0.0142</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>4</td>
+      <td>2</td>
+      <td>0.0140</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>11</td>
+      <td>4</td>
+      <td>0.0138</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+      <td>12</td>
+      <td>0.0131</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>12</td>
+      <td>4</td>
+      <td>0.0128</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>12</td>
+      <td>5</td>
+      <td>0.0120</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>12</td>
+      <td>6</td>
+      <td>0.0113</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>4</td>
+      <td>5</td>
+      <td>0.0110</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>2</td>
+      <td>4</td>
+      <td>0.0108</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4</td>
+      <td>12</td>
+      <td>0.0108</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>4</td>
+      <td>6</td>
+      <td>0.0103</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>12</td>
+      <td>9</td>
+      <td>0.0102</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>5</td>
+      <td>12</td>
+      <td>0.0099</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>12</td>
+      <td>4</td>
+      <td>0.0098</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>11</td>
+      <td>2</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>4</td>
+      <td>9</td>
+      <td>0.0093</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>6</td>
+      <td>12</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+      <td>11</td>
+      <td>0.0090</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>5</td>
+      <td>4</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>9</td>
+      <td>12</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>4</td>
+      <td>12</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>4</td>
+      <td>2</td>
+      <td>0.0079</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>6</td>
+      <td>4</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4</td>
+      <td>11</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>4</td>
+      <td>12</td>
+      <td>0.0074</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>11</td>
+      <td>5</td>
+      <td>0.0073</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<div class="note">払い戻し：未確定</div>
+</div>
+<div class="race" id="r202610010612"><h2><span class="race-title">小倉 12R 4歳以上1勝クラス</span> <span class="racecond">芝1200m 良</span><span class="racecond">自信★☆☆☆☆｜Hit16.1%｜中荒</span><span class="racecond">推奨：単勝minoddstop5｜次点 単勝minoddstop5(11%) / 馬連流5(7%) / 単勝①(6%)</span></h2>
+<div class="note">荒れ指数(Entropy, top8 score): 1.971</div>
+<div class="note"><b>推奨買い目</b>: 単勝minoddstop5 (model_score=0.111, 点数=5, 投資目安=500円) <span class="racecond">✅ BUY（閾値 0.00）</span><br>#1 tansho (13,) <b>score=2.8444</b><br>#2 tansho (2,) <b>score=2.5529</b><br>#3 tansho (8,) <b>score=2.4350</b></div>
+<div class="grid">
+<div>
+<h3>単勝モデル（分類）</h3>
+<table><thead><tr><th>結果</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>単勝Pred</th><th>EV(単勝)</th></tr></thead><tbody><tr><td></td><td><span class="umabadge w7">13</span></td><td>ジーティーエスピ</td><td>牡4</td><td>丹内</td><td>58.0</td><td>4.9</td><td>1</td><td></td><td>0.20300135073425732</td><td>0.9947066185978609</td></tr>
+<tr><td></td><td><span class="umabadge w4">8</span></td><td>ヤマニンレセディ</td><td>牝4</td><td>横山琉</td><td>56.0</td><td>5.7</td><td>3</td><td></td><td>0.15566345043261096</td><td>0.8872816674658824</td></tr>
+<tr><td></td><td><span class="umabadge w7">14</span></td><td>ヒットザグラウンド</td><td>牝4</td><td>角田和</td><td>56.0</td><td>10.4</td><td>5</td><td></td><td>0.11458601111503398</td><td>1.1916945155963534</td></tr>
+<tr><td></td><td><span class="umabadge w1">2</span></td><td>ヴァージル</td><td>牡4</td><td>斎藤</td><td>58.0</td><td>5.1</td><td>2</td><td></td><td>0.08804034751886482</td><td>0.44900577234621053</td></tr>
+<tr><td></td><td><span class="umabadge w2">3</span></td><td>グランテレーズ</td><td>牝5</td><td>鮫島駿</td><td>56.0</td><td>12.4</td><td>6</td><td></td><td>0.05243654289193859</td><td>0.6502131318600385</td></tr>
+<tr><td></td><td><span class="umabadge w3">6</span></td><td>パリコレジェンヌ</td><td>牝4</td><td>古川吉</td><td>56.0</td><td>14.1</td><td>7</td><td></td><td>0.03987430511306553</td><td>0.5622277020942239</td></tr>
+<tr><td></td><td><span class="umabadge w1">1</span></td><td>ルパヴィヨン</td><td>牝4</td><td>菊沢</td><td>56.0</td><td>8.6</td><td>4</td><td></td><td>0.03870469940998084</td><td>0.33286041492583524</td></tr>
+<tr><td></td><td><span class="umabadge w8">17</span></td><td>トモサカエ</td><td>牝5</td><td>中井</td><td>56.0</td><td>70.6</td><td>17</td><td></td><td>0.03133427308788835</td><td>2.2121996800049173</td></tr>
+<tr><td></td><td><span class="umabadge w8">16</span></td><td>シャインズオンユー</td><td>牡5</td><td>松若</td><td>58.0</td><td>34.7</td><td>12</td><td></td><td>0.029447626587558822</td><td>1.0218326425882913</td></tr>
+<tr><td></td><td><span class="umabadge w7">15</span></td><td>モルティフレーバー</td><td>牝4</td><td>小沢</td><td>56.0</td><td>22.0</td><td>9</td><td></td><td>0.028285222157628832</td><td>0.6222748874678343</td></tr>
+<tr><td></td><td><span class="umabadge w5">9</span></td><td>ツィスカリーゼ</td><td>牡6</td><td>的場</td><td>58.0</td><td>36.7</td><td>13</td><td></td><td>0.0279132344182369</td><td>1.0244157031492942</td></tr>
+<tr><td></td><td><span class="umabadge w6">12</span></td><td>シャドフ</td><td>牝5</td><td>▲舟山</td><td>53.0</td><td>23.2</td><td>10</td><td></td><td>0.027623497220824706</td><td>0.6408651355231332</td></tr>
+<tr><td></td><td><span class="umabadge w3">5</span></td><td>レインオンミー</td><td>牡4</td><td>◇今村</td><td>56.0</td><td>17.2</td><td>8</td><td></td><td>0.027244095812651744</td><td>0.46859844797760997</td></tr>
+<tr><td></td><td><span class="umabadge w6">11</span></td><td>テクノデザイン</td><td>牝6</td><td>松本</td><td>56.0</td><td>48.0</td><td>14</td><td></td><td>0.026736954018625473</td><td>1.2833737928940228</td></tr>
+<tr><td></td><td><span class="umabadge w2">4</span></td><td>ドライグ</td><td>牡6</td><td>△鷲頭</td><td>56.0</td><td>58.9</td><td>16</td><td></td><td>0.022784334951654463</td><td>1.3419973286524478</td></tr>
+<tr><td></td><td><span class="umabadge w5">10</span></td><td>ランスオブプライム</td><td>牝5</td><td>国分恭</td><td>56.0</td><td>54.0</td><td>15</td><td></td><td>0.022154909553011998</td><td>1.1963651158626478</td></tr>
+<tr><td></td><td><span class="umabadge w8">18</span></td><td>フーレイ</td><td>牝7</td><td>富田</td><td>56.0</td><td>80.1</td><td>18</td><td></td><td>0.022154909553011998</td><td>1.774608255196261</td></tr>
+<tr><td></td><td><span class="umabadge w4">7</span></td><td>タマモブラウンタイ</td><td>牡4</td><td>△柴田裕</td><td>56.0</td><td>29.6</td><td>11</td><td></td><td>0.02016770627140798</td><td>0.5969641056336762</td></tr></tbody></table>
+<div class="note">EV(単勝)=単勝Pred×単勝オッズ</div>
+</div>
+<div>
+<h3>3連系モデル（ランキング）</h3>
+<table><thead><tr><th>結果</th><th>予測順位</th><th>馬番</th><th>馬名</th><th>性齢</th><th>騎手</th><th>斤量</th><th>単勝</th><th>人気</th><th>上り</th><th>Score</th></tr></thead><tbody><tr class="win-strong"><td></td><td>1</td><td><span class="umabadge w7">13</span><span class="predtag win">勝ち濃厚</span></td><td>ジーティーエスピ</td><td>牡4</td><td>丹内</td><td>58</td><td><span class="odds1">4.9</span></td><td><span class="pop1">1</span></td><td></td><td>2.844</td></tr>
+<tr><td></td><td>2</td><td><span class="umabadge w1">2</span></td><td>ヴァージル</td><td>牡4</td><td>斎藤</td><td>58</td><td><span class="odds1">5.1</span></td><td><span class="pop1">2</span></td><td></td><td>2.553</td></tr>
+<tr><td></td><td>3</td><td><span class="umabadge w4">8</span></td><td>ヤマニンレセディ</td><td>牝4</td><td>横山琉</td><td>56</td><td><span class="odds1">5.7</span></td><td><span class="pop1">3</span></td><td></td><td>2.435</td></tr>
+<tr><td></td><td>4</td><td><span class="umabadge w7">14</span></td><td>ヒットザグラウンド</td><td>牝4</td><td>角田和</td><td>56</td><td>10.4</td><td>5</td><td></td><td>2.276</td></tr>
+<tr><td></td><td>5</td><td><span class="umabadge w2">3</span></td><td>グランテレーズ</td><td>牝5</td><td>鮫島駿</td><td>56</td><td>12.4</td><td>6</td><td></td><td>1.934</td></tr>
+<tr><td></td><td>6</td><td><span class="umabadge w1">1</span></td><td>ルパヴィヨン</td><td>牝4</td><td>菊沢</td><td>56</td><td><span class="odds1">8.6</span></td><td>4</td><td></td><td>1.885</td></tr>
+<tr><td></td><td>7</td><td><span class="umabadge w8">17</span></td><td>トモサカエ</td><td>牝5</td><td>中井</td><td>56</td><td>70.6</td><td><span class="pop10">17</span></td><td></td><td>1.442</td></tr>
+<tr><td></td><td>8</td><td><span class="umabadge w3">6</span></td><td>パリコレジェンヌ</td><td>牝4</td><td>古川吉</td><td>56</td><td>14.1</td><td>7</td><td></td><td>1.400</td></tr>
+<tr><td></td><td>9</td><td><span class="umabadge w6">12</span></td><td>シャドフ</td><td>牝5</td><td>▲舟山</td><td>53</td><td>23.2</td><td><span class="pop10">10</span></td><td></td><td>1.302</td></tr>
+<tr><td></td><td>10</td><td><span class="umabadge w7">15</span></td><td>モルティフレーバー</td><td>牝4</td><td>小沢</td><td>56</td><td>22.0</td><td>9</td><td></td><td>1.209</td></tr>
+<tr><td></td><td>11</td><td><span class="umabadge w8">16</span></td><td>シャインズオンユー</td><td>牡5</td><td>松若</td><td>58</td><td>34.7</td><td><span class="pop10">12</span></td><td></td><td>1.130</td></tr>
+<tr><td></td><td>12</td><td><span class="umabadge w5">9</span></td><td>ツィスカリーゼ</td><td>牡6</td><td>的場</td><td>58</td><td>36.7</td><td><span class="pop10">13</span></td><td></td><td>1.059</td></tr>
+<tr><td></td><td>13</td><td><span class="umabadge w8">18</span></td><td>フーレイ</td><td>牝7</td><td>富田</td><td>56</td><td>80.1</td><td><span class="pop10">18</span></td><td></td><td>1.056</td></tr>
+<tr><td></td><td>14</td><td><span class="umabadge w3">5</span></td><td>レインオンミー</td><td>牡4</td><td>◇今村</td><td>56</td><td>17.2</td><td>8</td><td></td><td>1.007</td></tr>
+<tr><td></td><td>15</td><td><span class="umabadge w2">4</span></td><td>ドライグ</td><td>牡6</td><td>△鷲頭</td><td>56</td><td>58.9</td><td><span class="pop10">16</span></td><td></td><td>0.860</td></tr>
+<tr><td></td><td>16</td><td><span class="umabadge w6">11</span></td><td>テクノデザイン</td><td>牝6</td><td>松本</td><td>56</td><td>48.0</td><td><span class="pop10">14</span></td><td></td><td>0.783</td></tr>
+<tr><td></td><td>17</td><td><span class="umabadge w5">10</span></td><td>ランスオブプライム</td><td>牝5</td><td>国分恭</td><td>56</td><td>54.0</td><td><span class="pop10">15</span></td><td></td><td>0.716</td></tr>
+<tr><td></td><td>18</td><td><span class="umabadge w4">7</span></td><td>タマモブラウンタイ</td><td>牡4</td><td>△柴田裕</td><td>56</td><td>29.6</td><td><span class="pop10">11</span></td><td></td><td>0.461</td></tr></tbody></table>
+</div>
+</div>
+<h3>3連単 Top30（近似確率）</h3>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>1着</th>
+      <th>2着</th>
+      <th>3着</th>
+      <th>確率(近似)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>13</td>
+      <td>2</td>
+      <td>8</td>
+      <td>0.0144</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>2</td>
+      <td>0.0140</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>13</td>
+      <td>8</td>
+      <td>0.0134</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>2</td>
+      <td>0.0127</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>2</td>
+      <td>14</td>
+      <td>0.0123</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.0118</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>2</td>
+      <td>13</td>
+      <td>0.0115</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>14</td>
+      <td>2</td>
+      <td>0.0115</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>13</td>
+      <td>14</td>
+      <td>0.0114</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>14</td>
+      <td>0.0106</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>14</td>
+      <td>8</td>
+      <td>0.0102</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>13</td>
+      <td>2</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>14</td>
+      <td>13</td>
+      <td>0.0097</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>14</td>
+      <td>0.0096</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>2</td>
+      <td>13</td>
+      <td>0.0092</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>13</td>
+      <td>8</td>
+      <td>0.0090</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>2</td>
+      <td>3</td>
+      <td>0.0087</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0.0083</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>14</td>
+      <td>13</td>
+      <td>0.0082</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>8</td>
+      <td>13</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>13</td>
+      <td>1</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>2</td>
+      <td>0.0077</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>3</td>
+      <td>0.0075</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>1</td>
+      <td>2</td>
+      <td>0.0073</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>8</td>
+      <td>1</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>3</td>
+      <td>8</td>
+      <td>0.0068</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>13</td>
+      <td>3</td>
+      <td>0.0068</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>8</td>
+      <td>14</td>
+      <td>0.0067</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>13</td>
+      <td>0.0065</td>
+    </tr>
+  </tbody>
+</table>
+<div class="note">※確率はランキングScoreからの近似（Plackett–Luce）。レース内の相対比較に使ってください。</div>
+<div class="note">払い戻し：未確定</div>
+</div></body></html>

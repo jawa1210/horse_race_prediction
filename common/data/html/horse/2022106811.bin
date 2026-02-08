@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -345,7 +345,7 @@ $('.login_show').remove();
 <li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
 <li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
 <li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
-<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
+<li ><a href="https://db.netkeiba.com/classic/" title="クラシック">クラシック</a></li>
 <li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
 </ul>
 </div><!-- /.genre_menu -->
@@ -671,6 +671,10 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=75243&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 75243 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=75242&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 75242 );"/></a>
+</li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=71285&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 71285 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=70276&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 70276 );"/></a>
@@ -686,10 +690,6 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=69990&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 69990 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=69975&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 69975 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=69973&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 69973 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2022106811&no=69972&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 69972 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->
@@ -857,7 +857,7 @@ get_horse_detail_note('2022106811', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-1,080万円
+1,410万円
 </td>
 </tr>
 <tr>
@@ -869,7 +869,7 @@ get_horse_detail_note('2022106811', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>11戦0勝 [<a href="/horse/result/2022106811/" title="全競走成績">0-2-2-7</a>]</td>
+<td>12戦0勝 [<a href="/horse/result/2022106811/" title="全競走成績">0-3-2-7</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>

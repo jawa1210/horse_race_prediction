@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -336,19 +336,21 @@ $('.login_show').remove();
 }
 </script>
 
+
 <div class="genre_menu fc">
-<ul>
-<li ><a href="https://db.netkeiba.com/" title="競馬データTOP">競馬データTOP</a></li>
-<li class='active'><a href="https://db.netkeiba.com/horse/top.html" title="競走馬">競走馬</a></li>
-<li ><a href="https://db.netkeiba.com/jockey/top.html" title="騎手">騎手</a></li>
-<li ><a href="https://db.netkeiba.com/trainer/top.html" title="調教師">調教師</a></li>
-<li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
-<li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
-<li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
-<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
-<li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
-</ul>
+    <ul>
+        <li ><a href="https://db.netkeiba.com/" title="競馬データTOP">競馬データTOP</a></li>
+        <li class='active'><a href="https://db.netkeiba.com/horse/top.html" title="競走馬">競走馬</a></li>
+        <li ><a href="https://db.netkeiba.com/jockey/top.html" title="騎手">騎手</a></li>
+        <li ><a href="https://db.netkeiba.com/trainer/top.html" title="調教師">調教師</a></li>
+        <li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
+        <li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
+        <li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
+	<li ><a href="https://db.netkeiba.com/classic/" title="クラシック">クラシック</a></li>
+	<li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
+    </ul>
 </div><!-- /.genre_menu -->
+
 <div id="contents" class="fc">
 
 <style>
@@ -863,7 +865,7 @@ get_horse_detail_note('2023103549', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>近親馬</th>
-<td><a href="/horse/2024106030/" title="ベルスールの2024">ベルスールの2024</a><a href="/horse//" title=""></a></td>
+<td><a href="/horse/2024106030/" title="ベルスールの2024">ベルスールの2024</a>、<a href="/horse/2025107673/" title="ベルスールの2025">ベルスールの2025</a></td>
 </tr>
 </table>
 <span id="horse_pedigree_box">

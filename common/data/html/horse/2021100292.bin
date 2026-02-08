@@ -60,7 +60,7 @@ var _bbs_action_api_url     = 'https://bbs.netkeiba.com/';
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.user/common/js/user.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.newsapi//common/js/newsapi.action.js?2016042101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.db//common/js/social.action.js"></script>
-<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs/common/js/bbs.action.js?2018053101"></script>
+<script type="text/javascript" src="https://cdn.netkeiba.com/img.bbs//common/js/bbs.action.js?2018053101"></script>
 <script type="text/javascript" src="https://cdn.netkeiba.com/img.regist.sp//common/js/monthly_goods_link.js?2017080201"></script>
 
 <meta http-equiv="content-language" content="ja">
@@ -345,7 +345,7 @@ $('.login_show').remove();
 <li ><a href="https://db.netkeiba.com/owner/top.html" title="馬主">馬主</a></li>
 <li ><a href="https://db.netkeiba.com/breeder/top.html" title="生産者">生産者</a></li>
 <li ><a href="https://db.netkeiba.com/?pid=race_top" title="レース">レース</a></li>
-<li ><a href="https://db.netkeiba.com/?pid=classic_index" title="クラシック">クラシック</a></li>
+<li ><a href="https://db.netkeiba.com/classic/" title="クラシック">クラシック</a></li>
 <li ><a href="https://db.sp.netkeiba.com/winner_search/home" title="勝ち馬サーチ">勝ち馬サーチ</a></li>
 </ul>
 </div><!-- /.genre_menu -->
@@ -660,12 +660,14 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 }
 </script>
 <div class="db_photo_box fc">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=37304&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=41289&tn=yes&tmp=no" alt="" width="230" height="164" class="db_photo_main" id="HorseMainPhoto" style="object-fit: contain; background-color: #f5f5f5"/>
 
 <div class="Slid_List Photo_Slid">
 <ul id="Horse_Photo_Slide">
 <li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=76193&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 76193 );"/></a>
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=97898&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 97898 );"/></a>
+</li><li><a href="javascript:void(0);">
+<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=97891&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 97891 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=76191&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 76191 );"/></a>
 </li><li><a href="javascript:void(0);">
@@ -682,8 +684,6 @@ document.getElementById( "HorseMainPhoto" ).setAttribute( "src", "https://db.net
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=41178&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 41178 );"/></a>
 </li><li><a href="javascript:void(0);">
 <img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=37307&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 37307 );"/></a>
-</li><li><a href="javascript:void(0);">
-<img src="https://db.netkeiba.com/show_photo.php?horse_id=2021100292&no=37306&tn=yes&tmp=no" width="64" height="45"style="object-fit: contain; background-color: #f5f5f5" onClick="javascript:changeHorseMainPhoto( 37306 );"/></a>
 </li>
 </ul>
 </div><!-- /.Slid_List Photo_Slid -->
@@ -845,7 +845,7 @@ get_horse_detail_note('2021100292', 'Horse_Note_Box');
 <th>獲得賞金 (中央)</th>
 <td>
 
-5,617万円
+6,022万円
 </td>
 </tr>
 <tr>
@@ -857,7 +857,7 @@ get_horse_detail_note('2021100292', 'Horse_Note_Box');
 </tr>
 <tr>
 <th>通算成績</th>
-<td>19戦2勝 [<a href="/horse/result/2021100292/" title="全競走成績">2-4-4-9</a>]</td>
+<td>20戦2勝 [<a href="/horse/result/2021100292/" title="全競走成績">2-4-5-9</a>]</td>
 </tr>
 <tr>
 <th>主な勝鞍</th>
